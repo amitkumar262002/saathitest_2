@@ -1,0 +1,54 @@
+{
+  "name": "saathi-tv",
+  "version": "1.0.0",
+  "description": "Saathi TV - Random Video Chat Application",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "test": "concurrently \"cd backend && npm test\" \"cd frontend && npm test\"",
+    "lint": "concurrently \"cd backend && npm run lint\" \"cd frontend && npm run lint\"",
+    "lint:fix": "concurrently \"cd backend && npm run lint:fix\" \"cd frontend && npm run lint:fix\"",
+    "clean": "rimraf backend/node_modules frontend/node_modules node_modules",
+    "setup": "npm run install:all",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "deploy:frontend": "cd frontend && npm run build && echo 'Deploy dist folder to your hosting provider'",
+    "deploy:backend": "echo 'Deploy backend folder to your hosting provider'"
+  },
+  "keywords": [
+    "video-chat",
+    "webrtc",
+    "socket.io",
+    "random-chat",
+    "social",
+    "communication",
+    "pwa",
+    "mobile-responsive"
+  ],
+  "author": "Saathi TV Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "rimraf": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saathi-tv/saathi-tv.git"
+  },
+  "bugs": {
+    "url": "https://github.com/saathi-tv/saathi-tv/issues"
+  },
+  "homepage": "https://saathi-tv.com"
+}
