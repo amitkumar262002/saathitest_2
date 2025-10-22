@@ -55,18 +55,27 @@ class SimpleWebRTCFix {
     }
     
     setupSocketListeners() {
+        // Listen for room joined event
+        this.socket.on('roomJoined', (roomId) => {
+            console.log('🏠 Joined room:', roomId);
+            this.roomId = roomId;
+            this.updateStatus('Room joined, waiting for peer...');
+        });
+        
         // Listen for room events
         this.socket.on('user-joined', (data) => {
             console.log('👥 User joined, I am initiator', data);
             this.isInitiator = true;
             this.roomId = data.roomId;
-            this.startConnection();
+            this.updateStatus('Peer found! Starting connection...');
+            setTimeout(() => this.startConnection(), 500); // Small delay
         });
         
         this.socket.on('peer-ready', (data) => {
             console.log('👥 Peer ready, I am receiver', data);
             this.isInitiator = false;
             this.roomId = data.roomId;
+            this.updateStatus('Peer found! Waiting for connection...');
             // Wait for offer
         });
         

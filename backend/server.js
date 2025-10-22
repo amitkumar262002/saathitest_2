@@ -57,17 +57,46 @@ app.use('/api/', limiter);
 // Serve static files from frontend
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Room and user management
+// Enhanced Room and User Management with Live Tracking
 class RoomManager {
     constructor() {
         this.rooms = new Map();
         this.users = new Map();
         this.waitingUsers = new Map();
+        this.onlineUsers = new Set(); // Track all online users
+        this.usersInRooms = new Map(); // Track users currently in rooms
         this.userStats = {
             totalConnections: 0,
             activeUsers: 0,
-            totalRooms: 0
+            totalRooms: 0,
+            onlineUsers: 0,
+            usersInRooms: 0,
+            waitingUsers: 0
         };
+        
+        // Start periodic stats broadcast
+        this.startStatsUpdater();
+    }
+    
+    startStatsUpdater() {
+        setInterval(() => {
+            this.updateStats();
+            this.broadcastStats();
+        }, 2000); // Update every 2 seconds
+    }
+    
+    updateStats() {
+        this.userStats.onlineUsers = this.onlineUsers.size;
+        this.userStats.usersInRooms = this.usersInRooms.size;
+        this.userStats.waitingUsers = this.waitingUsers.size;
+        this.userStats.activeUsers = this.users.size;
+        this.userStats.totalRooms = this.rooms.size;
+    }
+    
+    broadcastStats() {
+        const stats = this.getStats();
+        io.emit('userStats', stats);
+        console.log('📊 Broadcasting stats:', stats);
     }
 
     addUser(socketId, userInfo) {
@@ -78,8 +107,10 @@ class RoomManager {
             roomId: null,
             isActive: true
         });
+        this.onlineUsers.add(socketId);
         this.userStats.activeUsers++;
         this.userStats.totalConnections++;
+        console.log(`👤 User ${socketId} added. Online users: ${this.onlineUsers.size}`);
     }
 
     removeUser(socketId) {
@@ -93,9 +124,14 @@ class RoomManager {
             // Remove from waiting list
             this.waitingUsers.delete(socketId);
             
+            // Remove from online users
+            this.onlineUsers.delete(socketId);
+            this.usersInRooms.delete(socketId);
+            
             // Remove user
             this.users.delete(socketId);
             this.userStats.activeUsers--;
+            console.log(`👤 User ${socketId} removed. Online users: ${this.onlineUsers.size}`);
         }
     }
 
@@ -103,20 +139,26 @@ class RoomManager {
         const user = this.users.get(socketId);
         if (!user) return null;
 
+        console.log(`🔍 Finding match for user ${socketId}. Waiting users: ${this.waitingUsers.size}`);
+
         // Look for waiting users with compatible preferences
         for (const [waitingSocketId, waitingUser] of this.waitingUsers) {
             if (waitingSocketId === socketId) continue;
+            
+            console.log(`🤝 Checking compatibility with ${waitingSocketId}`);
             
             // Check compatibility
             if (this.isCompatible(user, waitingUser, preferences)) {
                 // Remove from waiting list
                 this.waitingUsers.delete(waitingSocketId);
+                console.log(`✅ Match found! ${socketId} <-> ${waitingSocketId}`);
                 return waitingSocketId;
             }
         }
 
         // No match found, add to waiting list
         this.waitingUsers.set(socketId, { ...user, preferences });
+        console.log(`⏳ No match found for ${socketId}. Added to waiting list. Total waiting: ${this.waitingUsers.size}`);
         return null;
     }
 
@@ -161,7 +203,12 @@ class RoomManager {
         if (user1) user1.roomId = roomId;
         if (user2) user2.roomId = roomId;
 
+        // Track users in rooms
+        this.usersInRooms.set(user1Id, roomId);
+        this.usersInRooms.set(user2Id, roomId);
+
         this.userStats.totalRooms++;
+        console.log(`🏠 Room ${roomId} created for users ${user1Id} and ${user2Id}`);
         return roomId;
     }
 
