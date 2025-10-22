@@ -89,6 +89,16 @@ class SaathiTV {
                 console.log('Connected to server');
                 this.isConnected = true;
                 this.updateConnectionStatus('Connected', 'connected');
+                
+                // Connect WebRTC manager to socket after connection is established
+                if (window.webRTCManager) {
+                    window.webRTCManager.setSocket(this.socket);
+                }
+                
+                // Connect chat manager to socket
+                if (window.chatManager) {
+                    window.chatManager.setSocket(this.socket);
+                }
             });
 
             this.socket.on('disconnect', () => {
@@ -107,15 +117,20 @@ class SaathiTV {
                 this.updateConnectionStatus('Connected to room', 'connected');
             });
 
-            this.socket.on('userJoined', (userId) => {
-                console.log('User joined:', userId);
+            this.socket.on('user-joined', (data) => {
+                console.log('User joined:', data);
                 this.updateConnectionStatus('User found!', 'connected');
             });
 
-            this.socket.on('userLeft', () => {
+            this.socket.on('user-left', () => {
                 console.log('User left the room');
                 this.updateConnectionStatus('User disconnected', 'disconnected');
                 this.handleUserLeft();
+            });
+
+            this.socket.on('waiting', (data) => {
+                console.log('Waiting for match:', data);
+                this.updateConnectionStatus(data.message || 'Looking for someone...', 'connecting');
             });
 
         } catch (error) {
