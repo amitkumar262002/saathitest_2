@@ -1,0 +1,65 @@
+# Jekyll Configuration for GitHub Pages
+title: Saathi TV
+description: Video Chat Application
+baseurl: ""
+url: "https://amitkumar262002.github.io/saathitest_2"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: jekyll-theme-primer
+
+# Exclude files and directories from processing
+exclude:
+  - node_modules/
+  - backend/node_modules/
+  - frontend/node_modules/
+  - package.json
+  - package-lock.json
+  - backend/package.json
+  - backend/package-lock.json
+  - frontend/package.json
+  - frontend/package-lock.json
+  - backend/server.js
+  - backend/Dockerfile
+  - frontend/Dockerfile
+  - docker-compose.yml
+  - start.bat
+  - kill-port.bat
+  - "*.log"
+  - "*.tmp"
+  - .git/
+  - .gitignore
+  - README.md
+
+# Include only web content for GitHub Pages
+include:
+  - frontend/index.html
+  - frontend/css/
+  - frontend/js/
+  - frontend/assets/
+  - frontend/pages/
+  - frontend/manifest.json
+  - frontend/sw.js
+
+# Plugin settings
+plugins:
+  - jekyll-github-metadata
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# GitHub Pages specific settings
+github:
+  repository_name: saathitest_2
+  owner_name: amitkumar262002
+
+# SEO settings
+author: amitkumar262002
+twitter:
+  username: amitkumar262002
+
+# Liquid settings to prevent template errors
+liquid:
+  error_mode: warn
+  strict_filters: false
+  strict_variables: false
