@@ -77,10 +77,26 @@ class SaathiTV {
     }
 
     connectToServer() {
+        // Connection handled by ultra-simple-fix.js
+        console.log('🔄 Connection handled by ultra-simple-fix.js');
+        
+        // Wait for ultra simple fix to establish connection
+        const waitForConnection = () => {
+            if (window.ultraSimpleFix && window.ultraSimpleFix.socket && window.ultraSimpleFix.connected) {
+                this.socket = window.ultraSimpleFix.socket;
+                this.isConnected = true;
+                console.log('✅ Using ultra simple fix socket');
+                return;
+            }
+            setTimeout(waitForConnection, 1000);
+        };
+        
+        waitForConnection();
+        return;
+        
         try {
-            // Connect to backend server
-            const serverUrl = 'http://localhost:3000'; // Force localhost for local testing
-            
+            // OLD CODE - DISABLED
+            const serverUrl = 'http://localhost:3000';
             this.socket = io(serverUrl);
             
             this.socket.on('connect', () => {
