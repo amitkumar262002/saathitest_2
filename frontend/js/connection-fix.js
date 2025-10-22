@@ -12,7 +12,7 @@ if (originalIO) {
         if (window.location.hostname === 'localhost' || 
             window.location.hostname === '127.0.0.1' ||
             window.FORCE_LOCALHOST) {
-            url = 'http://localhost:3000';
+            url = 'http://localhost:3001';
         }
         
         console.log('🔌 Connecting to:', url);
@@ -24,7 +24,7 @@ if (originalIO) {
 function testConnection() {
     console.log('🧪 Testing connection...');
     
-    const testSocket = io('http://localhost:3000');
+    const testSocket = io('http://localhost:3001');
     
     testSocket.on('connect', () => {
         console.log('✅ Test connection successful!');

@@ -96,7 +96,7 @@ class SaathiTV {
         
         try {
             // OLD CODE - DISABLED
-            const serverUrl = 'http://localhost:3000';
+            const serverUrl = 'http://localhost:3001';
             this.socket = io(serverUrl);
             
             this.socket.on('connect', () => {

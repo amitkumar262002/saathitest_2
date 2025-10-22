@@ -23,8 +23,9 @@ class UltraSimpleFix {
         console.log('🔌 Connecting directly to localhost:3000...');
         
         try {
-            // Direct connection
-            this.socket = io('http://localhost:3000', {
+            // Direct connection - try both ports
+            console.log('🔍 Trying port 3001 first...');
+            this.socket = io('http://localhost:3001', {
                 forceNew: true,
                 reconnection: true,
                 timeout: 5000
