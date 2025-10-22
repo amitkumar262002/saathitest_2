@@ -1,0 +1,86 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Ring -->
+  <circle cx="60" cy="60" r="55" stroke="url(#goldGradient)" stroke-width="4" fill="none" opacity="0.8"/>
+  
+  <!-- Inner Ring -->
+  <circle cx="60" cy="60" r="45" stroke="url(#goldGradient)" stroke-width="2" fill="none" opacity="0.6"/>
+  
+  <!-- Background Circle -->
+  <circle cx="60" cy="60" r="50" fill="url(#backgroundGradient)" opacity="0.9"/>
+  
+  <!-- TV Screen Shape -->
+  <rect x="35" y="35" width="50" height="35" rx="8" fill="url(#screenGradient)" stroke="url(#goldGradient)" stroke-width="2"/>
+  
+  <!-- Screen Reflection -->
+  <rect x="38" y="38" width="20" height="15" rx="4" fill="rgba(255,255,255,0.3)"/>
+  
+  <!-- Signal Waves -->
+  <path d="M25 25 Q30 20 35 25" stroke="url(#goldGradient)" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M85 25 Q90 20 95 25" stroke="url(#goldGradient)" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M20 30 Q27 22 35 30" stroke="url(#goldGradient)" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M85 30 Q93 22 100 30" stroke="url(#goldGradient)" stroke-width="2" fill="none" opacity="0.5"/>
+  
+  <!-- Connection Dots -->
+  <circle cx="30" cy="85" r="3" fill="url(#goldGradient)" opacity="0.8">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="90" cy="85" r="3" fill="url(#goldGradient)" opacity="0.8">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Main Text -->
+  <text x="60" y="85" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="16" font-weight="900" fill="url(#textGradient)">Saathi</text>
+  <text x="60" y="100" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="12" font-weight="900" fill="url(#textGradient)">TV</text>
+  
+  <!-- Decorative Stars -->
+  <g opacity="0.7">
+    <path d="M15 15 L17 20 L22 20 L18 23 L20 28 L15 25 L10 28 L12 23 L8 20 L13 20 Z" fill="url(#goldGradient)">
+      <animateTransform attributeName="transform" type="rotate" values="0 15 15;360 15 15" dur="4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M105 15 L107 20 L112 20 L108 23 L110 28 L105 25 L100 28 L102 23 L98 20 L103 20 Z" fill="url(#goldGradient)">
+      <animateTransform attributeName="transform" type="rotate" values="360 105 15;0 105 15" dur="4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Pulse Ring -->
+  <circle cx="60" cy="60" r="35" stroke="url(#goldGradient)" stroke-width="1" fill="none" opacity="0.4">
+    <animate attributeName="r" values="35;65;35" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="30%" style="stop-color:#FFA500"/>
+      <stop offset="70%" style="stop-color:#FF8C00"/>
+      <stop offset="100%" style="stop-color:#FF6B35"/>
+    </linearGradient>
+    
+    <radialGradient id="backgroundGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16213e"/>
+      <stop offset="100%" style="stop-color:#0f3460"/>
+    </radialGradient>
+    
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50"/>
+      <stop offset="100%" style="stop-color:#34495e"/>
+    </linearGradient>
+    
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FFA500"/>
+      <stop offset="100%" style="stop-color:#FF8C00"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

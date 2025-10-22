@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer Circle with Gradient -->
+  <circle cx="100" cy="100" r="95" fill="url(#logoGradient)" filter="url(#glow)" opacity="0.9"/>
+  
+  <!-- Inner Circle -->
+  <circle cx="100" cy="100" r="80" fill="#1a1a2e" stroke="url(#logoGradient)" stroke-width="3"/>
+  
+  <!-- Video Camera Icon -->
+  <g transform="translate(100, 85)">
+    <!-- Camera Body -->
+    <rect x="-25" y="-15" width="35" height="25" rx="3" fill="url(#logoGradient)" filter="url(#shadow)"/>
+    <!-- Camera Lens -->
+    <circle cx="-15" cy="-2.5" r="8" fill="#1a1a2e" stroke="url(#logoGradient)" stroke-width="2"/>
+    <circle cx="-15" cy="-2.5" r="5" fill="url(#logoGradient)"/>
+    <!-- Camera Side -->
+    <rect x="10" y="-8" width="12" height="12" rx="2" fill="url(#logoGradient)" opacity="0.8"/>
+    <!-- Recording Light -->
+    <circle cx="5" cy="-12" r="2" fill="#FF4444">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Connection Waves -->
+  <g transform="translate(100, 100)">
+    <circle cx="0" cy="0" r="35" fill="none" stroke="url(#logoGradient)" stroke-width="2" opacity="0.6">
+      <animate attributeName="r" values="35;45;35" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="0" cy="0" r="45" fill="none" stroke="url(#logoGradient)" stroke-width="1" opacity="0.4">
+      <animate attributeName="r" values="45;55;45" dur="3s" repeatCount="indefinite" begin="1s"/>
+      <animate attributeName="opacity" values="0.4;0.1;0.4" dur="3s" repeatCount="indefinite" begin="1s"/>
+    </circle>
+  </g>
+  
+  <!-- Text "S" -->
+  <text x="100" y="130" font-family="Arial Black, sans-serif" font-size="32" font-weight="bold" 
+        text-anchor="middle" fill="url(#textGradient)" filter="url(#shadow)">S</text>
+  
+  <!-- Text "TV" -->
+  <text x="100" y="150" font-family="Arial, sans-serif" font-size="14" font-weight="bold" 
+        text-anchor="middle" fill="url(#textGradient)" opacity="0.9">TV</text>
+  
+  <!-- Decorative Stars -->
+  <g fill="url(#logoGradient)" opacity="0.7">
+    <polygon points="30,40 32,46 38,46 33,50 35,56 30,52 25,56 27,50 22,46 28,46" transform="scale(0.8)">
+      <animateTransform attributeName="transform" type="rotate" values="0 30 46;360 30 46" dur="10s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="170,40 172,46 178,46 173,50 175,56 170,52 165,56 167,50 162,46 168,46" transform="scale(0.6)">
+      <animateTransform attributeName="transform" type="rotate" values="360 170 46;0 170 46" dur="8s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="40,160 42,166 48,166 43,170 45,176 40,172 35,176 37,170 32,166 38,166" transform="scale(0.5)">
+      <animateTransform attributeName="transform" type="rotate" values="0 40 166;360 40 166" dur="12s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+</svg>

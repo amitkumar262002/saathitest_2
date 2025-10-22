@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Loading...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #000 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(255, 140, 0, 0.05) 0%, transparent 50%);
+            animation: backgroundPulse 4s ease-in-out infinite alternate;
+        }
+
+        .splash-container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: containerFadeIn 1s ease-out;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .logo-circle {
+            width: 200px;
+            height: 200px;
+            border: 6px solid transparent;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            background-clip: padding-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            animation: logoGlow 2s ease-in-out infinite alternate;
+            padding: 25px;
+        }
+
+        .splash-logo-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9));
+            animation: logo360Rotate 5s linear infinite;
+        }
+
+        /* 360 Degree Continuous Rotation */
+        @keyframes logo360Rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* Rotating Border */
+        .logo-circle::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: conic-gradient(from 0deg, #FFD700, #FFA500, #FF8C00, #FFD700);
+            border-radius: 50%;
+            z-index: -1;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        .app-name {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: textGlow 2s ease-in-out infinite alternate;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.4rem;
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+            font-weight: 300;
+        }
+
+        .loading-container {
+            width: 350px;
+            margin: 0 auto;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FF8C00, #FFD700);
+            background-size: 200% 100%;
+            border-radius: 3px;
+            width: 0%;
+            animation: loadingProgress 5s ease-in-out forwards, shimmer 2s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            margin-top: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+            font-weight: 400;
+        }
+
+        .loading-percentage {
+            color: #FFD700;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            animation: numberCount 5s ease-in-out forwards;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FFD700, #FFA500);
+            animation: float 8s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .particle:nth-child(1) { 
+            width: 8px; height: 8px; 
+            top: 15%; left: 10%; 
+            animation-delay: 0s; 
+        }
+        .particle:nth-child(2) { 
+            width: 6px; height: 6px; 
+            top: 70%; left: 15%; 
+            animation-delay: 1s; 
+        }
+        .particle:nth-child(3) { 
+            width: 10px; height: 10px; 
+            top: 30%; right: 12%; 
+            animation-delay: 2s; 
+        }
+        .particle:nth-child(4) { 
+            width: 7px; height: 7px; 
+            bottom: 25%; right: 20%; 
+            animation-delay: 3s; 
+        }
+        .particle:nth-child(5) { 
+            width: 9px; height: 9px; 
+            top: 50%; left: 85%; 
+            animation-delay: 4s; 
+        }
+        .particle:nth-child(6) { 
+            width: 5px; height: 5px; 
+            top: 80%; right: 30%; 
+            animation-delay: 2.5s; 
+        }
+
+        /* Enhanced Animations */
+        @keyframes containerFadeIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes backgroundPulse {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes logoGlow {
+            0% { 
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.6),
+                           inset 0 0 30px rgba(255, 215, 0, 0.2);
+            }
+            100% { 
+                box-shadow: 0 0 60px rgba(255, 215, 0, 0.9),
+                           0 0 90px rgba(255, 165, 0, 0.7),
+                           inset 0 0 50px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.6),
+                            0 0 40px rgba(255, 165, 0, 0.4);
+            }
+            100% { 
+                text-shadow: 0 0 30px rgba(255, 215, 0, 0.9),
+                            0 0 60px rgba(255, 165, 0, 0.7),
+                            0 0 90px rgba(255, 140, 0, 0.5);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            20% { width: 25%; }
+            40% { width: 50%; }
+            60% { width: 75%; }
+            80% { width: 90%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        @keyframes numberCount {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotate(0deg); 
+                opacity: 0.7; 
+            }
+            25% { 
+                transform: translateY(-30px) translateX(10px) rotate(90deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: translateY(-60px) translateX(-10px) rotate(180deg); 
+                opacity: 0.8; 
+            }
+            75% { 
+                transform: translateY(-30px) translateX(15px) rotate(270deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .logo-circle {
+                width: 160px;
+                height: 160px;
+                padding: 20px;
+            }
+
+            .app-name {
+                font-size: 2.8rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .loading-container {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-circle {
+                width: 130px;
+                height: 130px;
+                padding: 15px;
+            }
+
+            .app-name {
+                font-size: 2.2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .loading-container {
+                width: 240px;
+            }
+        }
+
+        /* Exit Animation */
+        .splash-exit {
+            animation: splashExit 0.8s ease-in-out forwards;
+        }
+
+        @keyframes splashExit {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <div class="splash-container" id="splashContainer">
+        <div class="logo-container">
+            <div class="logo-circle">
+                <img src="assets/saathi-tv-logo-new.svg" alt="Saathi TV" class="splash-logo-svg">
+            </div>
+        </div>
+    
+        <h1 class="app-name">Saathi TV</h1>
+        <p class="tagline">Connect with the world through video chat</p>
+    
+        <div class="loading-container">
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-percentage" id="loadingPercentage">0%</div>
+            <p class="loading-text">Preparing amazing connections...</p>
+        </div>
+    </div>
+
+    <script>
+        // Animate loading percentage
+        let percentage = 0;
+        const percentageElement = document.getElementById('loadingPercentage');
+        
+        const updatePercentage = () => {
+            if (percentage <= 100) {
+                percentageElement.textContent = percentage + '%';
+                percentage += Math.random() * 3 + 1; // Random increment for realistic feel
+                setTimeout(updatePercentage, 50);
+            }
+        };
+        
+        updatePercentage();
+
+        // Auto redirect after 5 seconds with exit animation
+        setTimeout(() => {
+            const container = document.getElementById('splashContainer');
+            container.classList.add('splash-exit');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 800);
+        }, 5000);
+
+        // Add interactive particles on click
+        document.addEventListener('click', (e) => {
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = (e.clientX + Math.random() * 40 - 20) + 'px';
+                particle.style.top = (e.clientY + Math.random() * 40 - 20) + 'px';
+                particle.style.width = (Math.random() * 8 + 4) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = `radial-gradient(circle, #FFD700, #FFA500)`;
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.animation = 'float 3s ease-out forwards';
+                particle.style.zIndex = '1000';
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 3000);
+            }
+        });
+
+        // Preload main page resources
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'prefetch';
+        preloadLink.href = 'index.html';
+        document.head.appendChild(preloadLink);
+    </script>
+</body>
+</html>

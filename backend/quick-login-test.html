@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Login Test - Saathi TV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+            transition: all 0.3s ease;
+            width: 250px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .success { background: rgba(0, 255, 0, 0.2); }
+        .error { background: rgba(255, 0, 0, 0.2); }
+        input {
+            width: 200px;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        input::placeholder { color: rgba(255, 255, 255, 0.7); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Quick Login Test</h1>
+        <p>Test Firebase authentication quickly</p>
+        
+        <div id="status" class="status">
+            Loading Firebase...
+        </div>
+        
+        <div id="loginSection">
+            <h3>🔐 Google Login</h3>
+            <button onclick="testGoogleLogin()">Sign in with Google</button>
+            
+            <h3>📧 Email Login</h3>
+            <input type="email" id="testEmail" placeholder="Email" value="test@example.com"><br>
+            <input type="password" id="testPassword" placeholder="Password" value="123456"><br>
+            <button onclick="testEmailLogin()">Sign in with Email</button>
+            
+            <h3>📝 Create Account</h3>
+            <input type="text" id="testName" placeholder="Name" value="Test User"><br>
+            <input type="email" id="testSignupEmail" placeholder="Email" value="newuser@example.com"><br>
+            <input type="password" id="testSignupPassword" placeholder="Password" value="123456"><br>
+            <button onclick="testEmailSignup()">Create Account</button>
+        </div>
+        
+        <div id="userSection" style="display: none;">
+            <h3>👤 Logged In User</h3>
+            <div id="userInfo"></div>
+            <button onclick="testSignOut()">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXrbJQJhjfwp4ugkp2dAckoXodtPqH73E",
+            authDomain: "saathi-5fa22.firebaseapp.com",
+            databaseURL: "https://saathi-5fa22-default-rtdb.firebaseio.com",
+            projectId: "saathi-5fa22",
+            storageBucket: "saathi-5fa22.firebasestorage.app",
+            messagingSenderId: "189814220535",
+            appId: "1:189814220535:web:c22305089ff101282b95f2"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        const status = document.getElementById('status');
+        const loginSection = document.getElementById('loginSection');
+        const userSection = document.getElementById('userSection');
+        const userInfo = document.getElementById('userInfo');
+        
+        function updateStatus(message, type = 'status') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            console.log(message);
+        }
+        
+        function showUser(user) {
+            loginSection.style.display = 'none';
+            userSection.style.display = 'block';
+            userInfo.innerHTML = `
+                <p><strong>Name:</strong> ${user.displayName || 'Not set'}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>UID:</strong> ${user.uid}</p>
+                <p><strong>Verified:</strong> ${user.emailVerified ? 'Yes' : 'No'}</p>
+            `;
+        }
+        
+        function showLogin() {
+            loginSection.style.display = 'block';
+            userSection.style.display = 'none';
+        }
+        
+        // Google Login Test
+        async function testGoogleLogin() {
+            try {
+                updateStatus('🔍 Starting Google login...');
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                updateStatus('✅ Google login successful!', 'success');
+                showUser(result.user);
+            } catch (error) {
+                updateStatus('❌ Google login failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Email Login Test
+        async function testEmailLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            try {
+                updateStatus('🔍 Starting email login...');
+                const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+                updateStatus('✅ Email login successful!', 'success');
+                showUser(result.user);
+            } catch (error) {
+                updateStatus('❌ Email login failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Email Signup Test
+        async function testEmailSignup() {
+            const name = document.getElementById('testName').value;
+            const email = document.getElementById('testSignupEmail').value;
+            const password = document.getElementById('testSignupPassword').value;
+            
+            try {
+                updateStatus('🔍 Creating account...');
+                const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                await result.user.updateProfile({ displayName: name });
+                updateStatus('✅ Account created successfully!', 'success');
+                showUser(result.user);
+            } catch (error) {
+                updateStatus('❌ Account creation failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Sign Out Test
+        async function testSignOut() {
+            try {
+                await firebase.auth().signOut();
+                updateStatus('✅ Signed out successfully!', 'success');
+                showLogin();
+            } catch (error) {
+                updateStatus('❌ Sign out failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Listen for auth state changes
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                updateStatus('✅ User is signed in: ' + user.email, 'success');
+                showUser(user);
+            } else {
+                updateStatus('ℹ️ No user signed in');
+                showLogin();
+            }
+        });
+        
+        // Initialize
+        updateStatus('🔥 Firebase initialized! Ready to test.');
+    </script>
+</body>
+</html>

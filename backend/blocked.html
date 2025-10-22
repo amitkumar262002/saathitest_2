@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Blocked - Saathi TV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .blocked-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .blocked-icon {
+            font-size: 5rem;
+            color: #f44336;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .blocked-title {
+            font-size: 2.5rem;
+            color: #f44336;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .blocked-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .violation-details {
+            background: rgba(244, 67, 54, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 4px solid #f44336;
+        }
+
+        .violation-details h3 {
+            color: #f44336;
+            margin-bottom: 15px;
+        }
+
+        .violation-list {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+        }
+
+        .violation-list li {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .violation-list li::before {
+            content: '❌';
+            position: absolute;
+            left: 0;
+        }
+
+        .appeal-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .appeal-section h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            margin: 20px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .timer {
+            font-size: 1.1rem;
+            color: #FFD700;
+            margin: 20px 0;
+        }
+
+        .security-info {
+            background: rgba(33, 150, 243, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+
+        .security-info h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .blocked-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .blocked-title {
+                font-size: 2rem;
+            }
+            
+            .blocked-icon {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="blocked-container">
+        <div class="blocked-icon">🚫</div>
+        <h1 class="blocked-title">Account Blocked</h1>
+        <p class="blocked-message">
+            Your access to Saathi TV has been temporarily restricted due to violations of our community guidelines.
+        </p>
+
+        <div class="violation-details">
+            <h3>⚠️ Common Violations</h3>
+            <ul class="violation-list">
+                <li>Inappropriate content or nudity</li>
+                <li>Harassment or offensive behavior</li>
+                <li>Spam or commercial activities</li>
+                <li>Multiple user reports</li>
+                <li>AI-detected policy violations</li>
+            </ul>
+        </div>
+
+        <div class="security-info">
+            <h4>🤖 AI Security System</h4>
+            <p>Our advanced AI continuously monitors video streams to ensure user safety. Violations are detected automatically and result in immediate blocking.</p>
+        </div>
+
+        <div class="timer" id="blockTimer">
+            Block expires in: <span id="timeRemaining">Loading...</span>
+        </div>
+
+        <div class="appeal-section">
+            <h3>📝 Appeal Process</h3>
+            <p>If you believe this block was issued in error, you can appeal by contacting our support team:</p>
+            
+            <div class="contact-info">
+                <div class="contact-item" onclick="copyEmail('support@saathi-tv.com')">
+                    <span>📧</span>
+                    <span>support@saathi-tv.com</span>
+                </div>
+                <div class="contact-item" onclick="copyEmail('appeals@saathi-tv.com')">
+                    <span>⚖️</span>
+                    <span>appeals@saathi-tv.com</span>
+                </div>
+                <div class="contact-item" onclick="window.open('tel:+1-800-SAATHI')">
+                    <span>📞</span>
+                    <span>+1-800-SAATHI</span>
+                </div>
+            </div>
+            
+            <p><small>Appeals are reviewed within 24-48 hours. Please include your device information and a detailed explanation.</small></p>
+        </div>
+
+        <button class="back-btn" onclick="goHome()">Return to Homepage</button>
+    </div>
+
+    <script>
+        // Set block expiration time (24 hours from now for demo)
+        const blockExpiration = Date.now() + (24 * 60 * 60 * 1000);
+        localStorage.setItem('blockExpiration', blockExpiration);
+
+        function updateTimer() {
+            const now = Date.now();
+            const timeLeft = blockExpiration - now;
+            
+            if (timeLeft <= 0) {
+                // Block expired, clear and redirect
+                localStorage.removeItem('blocked');
+                localStorage.removeItem('blockExpiration');
+                document.getElementById('timeRemaining').textContent = 'Block expired! You can now use Saathi TV again.';
+                document.querySelector('.back-btn').textContent = 'Continue to Saathi TV';
+                return;
+            }
+            
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            document.getElementById('timeRemaining').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update timer every second
+        updateTimer();
+        setInterval(updateTimer, 1000);
+
+        function copyEmail(email) {
+            navigator.clipboard.writeText(email).then(() => {
+                showNotification('Email copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = email;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Email copied to clipboard!');
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function goHome() {
+            // Check if block has expired
+            const now = Date.now();
+            const expiration = localStorage.getItem('blockExpiration');
+            
+            if (expiration && now >= parseInt(expiration)) {
+                // Block expired, clear it
+                localStorage.removeItem('blocked');
+                localStorage.removeItem('blockExpiration');
+            }
+            
+            window.location.href = 'index.html';
+        }
+
+        // Add slide-in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); }
+                to { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Prevent going back to chat while blocked
+        window.addEventListener('beforeunload', (e) => {
+            if (localStorage.getItem('blocked')) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>

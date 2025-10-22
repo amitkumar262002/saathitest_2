@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login System Test - Saathi TV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-btn:hover {
+            background: #F7931E;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .login-form {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .age-check {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Saathi TV Login System Test</h1>
+    
+    <div class="test-container">
+        <h2>1. System Initialization Check</h2>
+        <button class="test-btn" onclick="checkSystemInit()">Check System Initialization</button>
+        <div id="systemInitResult"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>2. Age Confirmation Test</h2>
+        <div class="age-check">
+            <label>
+                <input type="checkbox" id="testAgeConfirm"> I confirm that I am at least 18 years old
+            </label>
+        </div>
+        <button class="test-btn" onclick="testAgeConfirmation()">Test Age Confirmation</button>
+        <div id="ageConfirmResult"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>3. Social Login Test</h2>
+        <button class="test-btn" onclick="testSocialLogin('google')">Test Google Login</button>
+        <button class="test-btn" onclick="testSocialLogin('facebook')">Test Facebook Login</button>
+        <div id="socialLoginResult"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>4. Email Login Test</h2>
+        <div class="login-form">
+            <input type="email" id="testEmail" placeholder="Enter email" value="test@example.com">
+            <input type="password" id="testPassword" placeholder="Enter password (min 6 chars)" value="password123">
+            <button onclick="testEmailLogin()">Test Email Login</button>
+        </div>
+        <div id="emailLoginResult"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>5. Session Storage Test</h2>
+        <button class="test-btn" onclick="testSessionStorage()">Test Session Storage</button>
+        <button class="test-btn" onclick="clearAllSessions()">Clear All Sessions</button>
+        <div id="sessionStorageResult"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>6. Console Logs</h2>
+        <div id="consoleLogs" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></div>
+    </div>
+
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        let logs = [];
+
+        function addLog(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${type.toUpperCase()}: ${args.join(' ')}`);
+            updateConsoleLogs();
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog('log', ...args);
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('error', ...args);
+        };
+
+        function updateConsoleLogs() {
+            document.getElementById('consoleLogs').textContent = logs.slice(-20).join('\n');
+        }
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+
+        function checkSystemInit() {
+            let results = [];
+            
+            // Check if SecureLoginSystem is available
+            if (typeof SecureLoginSystem !== 'undefined') {
+                results.push('✅ SecureLoginSystem class is available');
+            } else {
+                results.push('❌ SecureLoginSystem class not found');
+            }
+            
+            // Check if window.secureLogin is initialized
+            if (window.secureLogin) {
+                results.push('✅ window.secureLogin is initialized');
+                results.push(`Initialization status: ${window.secureLogin.isInitialized}`);
+            } else {
+                results.push('❌ window.secureLogin not found');
+            }
+            
+            // Check global functions
+            const globalFunctions = ['loginWithGoogle', 'loginWithFacebook', 'showEmailLogin', 'handleEmailLogin'];
+            globalFunctions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    results.push(`✅ ${func} function available`);
+                } else {
+                    results.push(`❌ ${func} function missing`);
+                }
+            });
+            
+            showResult('systemInitResult', results.join('<br>'), results.some(r => r.includes('❌')) ? 'error' : 'success');
+        }
+
+        function testAgeConfirmation() {
+            const ageCheckbox = document.getElementById('testAgeConfirm');
+            
+            if (window.secureLogin && typeof window.secureLogin.checkAgeConfirmation === 'function') {
+                // Temporarily replace the age confirm element
+                const originalAgeConfirm = document.getElementById('ageConfirm');
+                const tempAgeConfirm = document.createElement('input');
+                tempAgeConfirm.type = 'checkbox';
+                tempAgeConfirm.id = 'ageConfirm';
+                tempAgeConfirm.checked = ageCheckbox.checked;
+                document.body.appendChild(tempAgeConfirm);
+                
+                const result = window.secureLogin.checkAgeConfirmation();
+                
+                // Clean up
+                tempAgeConfirm.remove();
+                
+                if (result) {
+                    showResult('ageConfirmResult', '✅ Age confirmation working correctly', 'success');
+                } else {
+                    showResult('ageConfirmResult', '❌ Age confirmation failed - please check the checkbox', 'error');
+                }
+            } else {
+                showResult('ageConfirmResult', '❌ Age confirmation function not available', 'error');
+            }
+        }
+
+        async function testSocialLogin(provider) {
+            if (window.secureLogin) {
+                try {
+                    showResult('socialLoginResult', `🔄 Testing ${provider} login...`, 'info');
+                    
+                    // Create temporary age confirmation
+                    const tempAgeConfirm = document.createElement('input');
+                    tempAgeConfirm.type = 'checkbox';
+                    tempAgeConfirm.id = 'ageConfirm';
+                    tempAgeConfirm.checked = true;
+                    document.body.appendChild(tempAgeConfirm);
+                    
+                    await window.secureLogin.socialLogin(provider);
+                    
+                    // Clean up
+                    tempAgeConfirm.remove();
+                    
+                } catch (error) {
+                    showResult('socialLoginResult', `❌ ${provider} login failed: ${error.message}`, 'error');
+                }
+            } else {
+                showResult('socialLoginResult', '❌ Login system not available', 'error');
+            }
+        }
+
+        async function testEmailLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            if (!email || !password) {
+                showResult('emailLoginResult', '❌ Please enter both email and password', 'error');
+                return;
+            }
+            
+            try {
+                showResult('emailLoginResult', '🔄 Testing email login...', 'info');
+                
+                if (window.secureLogin && typeof window.secureLogin.validateEmailLogin === 'function') {
+                    const user = await window.secureLogin.validateEmailLogin(email, password);
+                    
+                    if (user) {
+                        showResult('emailLoginResult', `✅ Email login validation successful! User: ${user.name} (${user.email})`, 'success');
+                        
+                        // Test complete login process
+                        await window.secureLogin.completeLogin(user, 'email', false);
+                        
+                    } else {
+                        showResult('emailLoginResult', '❌ Email login validation failed', 'error');
+                    }
+                } else {
+                    showResult('emailLoginResult', '❌ Email login validation function not available', 'error');
+                }
+                
+            } catch (error) {
+                showResult('emailLoginResult', `❌ Email login test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testSessionStorage() {
+            let results = [];
+            
+            // Check localStorage
+            const localKeys = Object.keys(localStorage);
+            results.push(`LocalStorage keys (${localKeys.length}): ${localKeys.join(', ') || 'None'}`);
+            
+            // Check sessionStorage
+            const sessionKeys = Object.keys(sessionStorage);
+            results.push(`SessionStorage keys (${sessionKeys.length}): ${sessionKeys.join(', ') || 'None'}`);
+            
+            // Check specific Saathi TV keys
+            const saathiKeys = ['saathiTV_secure_session', 'saathiTV_current_session', 'saathi_current_user'];
+            saathiKeys.forEach(key => {
+                const localValue = localStorage.getItem(key);
+                const sessionValue = sessionStorage.getItem(key);
+                
+                if (localValue) {
+                    results.push(`✅ ${key} found in localStorage`);
+                    try {
+                        const parsed = JSON.parse(localValue);
+                        results.push(`   User: ${parsed.user?.name || parsed.name || 'Unknown'}`);
+                    } catch (e) {
+                        results.push(`   Value: ${localValue.substring(0, 50)}...`);
+                    }
+                } else if (sessionValue) {
+                    results.push(`✅ ${key} found in sessionStorage`);
+                } else {
+                    results.push(`❌ ${key} not found`);
+                }
+            });
+            
+            showResult('sessionStorageResult', results.join('<br>'), 'info');
+        }
+
+        function clearAllSessions() {
+            localStorage.clear();
+            sessionStorage.clear();
+            showResult('sessionStorageResult', '✅ All sessions cleared', 'success');
+        }
+
+        // Auto-run system check on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkSystemInit();
+            }, 1000);
+        });
+    </script>
+
+    <!-- Load the actual login scripts for testing -->
+    <script src="js/secure-login.js"></script>
+    <script src="js/url-encryption.js"></script>
+</body>
+</html>
