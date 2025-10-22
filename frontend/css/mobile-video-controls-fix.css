@@ -1,0 +1,274 @@
+/* Mobile Video Controls Fix - Keep buttons floating above bottom */
+
+/* Enhanced Video Controls for Mobile */
+.video-controls {
+    position: fixed !important;
+    bottom: 80px !important; /* Keep above mobile browser UI */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    gap: 12px !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    padding: 12px 20px !important;
+    border-radius: 50px !important;
+    backdrop-filter: blur(15px) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    max-width: 90vw !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important; /* Firefox */
+}
+
+/* Hide scrollbar for Webkit browsers */
+.video-controls::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* Video Control Buttons */
+.video-control-btn {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    color: white !important;
+    font-size: 16px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.video-control-btn:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    transform: scale(1.05) !important;
+}
+
+.video-control-btn:active {
+    transform: scale(0.95) !important;
+}
+
+.video-control-btn.active {
+    background: #4CAF50 !important;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.video-control-btn.inactive {
+    background: #f44336 !important;
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.4) !important;
+}
+
+/* Ripple Effect */
+.video-control-btn.ripple {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.video-control-btn.ripple::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    transform: translate(-50%, -50%) !important;
+    transition: width 0.6s, height 0.6s !important;
+}
+
+.video-control-btn.ripple:active::before {
+    width: 300px !important;
+    height: 300px !important;
+}
+
+/* Icons inside buttons */
+.video-control-btn i {
+    font-size: 16px !important;
+    color: white !important;
+}
+
+.video-control-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+    fill: white !important;
+}
+
+.video-control-btn .flag {
+    font-size: 18px !important;
+}
+
+/* Mobile Specific Adjustments */
+@media (max-width: 768px) {
+    .video-controls {
+        bottom: 70px !important;
+        gap: 10px !important;
+        padding: 10px 16px !important;
+        max-width: 95vw !important;
+    }
+    
+    .video-control-btn {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 15px !important;
+    }
+    
+    .video-control-btn i {
+        font-size: 15px !important;
+    }
+    
+    .video-control-btn svg {
+        width: 15px !important;
+        height: 15px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-controls {
+        bottom: 60px !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+    }
+    
+    .video-control-btn {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 14px !important;
+        min-width: 40px !important;
+    }
+    
+    .video-control-btn i {
+        font-size: 14px !important;
+    }
+    
+    .video-control-btn svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .video-control-btn .flag {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .video-controls {
+        bottom: 50px !important;
+        gap: 6px !important;
+        padding: 6px 10px !important;
+    }
+    
+    .video-control-btn {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 13px !important;
+        min-width: 38px !important;
+    }
+    
+    .video-control-btn i {
+        font-size: 13px !important;
+    }
+    
+    .video-control-btn svg {
+        width: 13px !important;
+        height: 13px !important;
+    }
+}
+
+/* Prevent controls from going behind mobile browser UI */
+@media (max-height: 600px) {
+    .video-controls {
+        bottom: 40px !important;
+    }
+}
+
+@media (max-height: 500px) {
+    .video-controls {
+        bottom: 30px !important;
+        padding: 6px 12px !important;
+    }
+    
+    .video-control-btn {
+        width: 36px !important;
+        height: 36px !important;
+    }
+}
+
+/* iPhone X and similar devices with notch */
+@media (max-width: 414px) and (max-height: 896px) {
+    .video-controls {
+        bottom: 80px !important; /* Extra space for home indicator */
+    }
+}
+
+/* iPhone SE and small screens */
+@media (max-width: 375px) and (max-height: 667px) {
+    .video-controls {
+        bottom: 60px !important;
+    }
+}
+
+/* Landscape mode adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+    .video-controls {
+        bottom: 20px !important;
+        padding: 4px 8px !important;
+        gap: 4px !important;
+    }
+    
+    .video-control-btn {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 12px !important;
+    }
+    
+    .video-control-btn i {
+        font-size: 12px !important;
+    }
+    
+    .video-control-btn svg {
+        width: 12px !important;
+        height: 12px !important;
+    }
+}
+
+/* Floating animation */
+@keyframes float {
+    0%, 100% { transform: translateX(-50%) translateY(0px); }
+    50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+.video-controls {
+    animation: float 3s ease-in-out infinite !important;
+}
+
+/* Ensure controls stay visible during video playback */
+.video-chat-container .video-controls {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: all !important;
+}
+
+/* Prevent controls from interfering with video */
+.video-wrapper {
+    padding-bottom: 120px !important;
+}
+
+@media (max-width: 768px) {
+    .video-wrapper {
+        padding-bottom: 100px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-wrapper {
+        padding-bottom: 90px !important;
+    }
+}
