@@ -298,12 +298,13 @@ io.on('connection', (socket) => {
             socket.join(roomId);
             io.sockets.sockets.get(matchedUserId)?.join(roomId);
             
-            // Notify both users
+            // Notify both users they joined the room
             socket.emit('roomJoined', roomId);
-            socket.emit('user-joined', { roomId, userId: matchedUserId });
-            
             io.to(matchedUserId).emit('roomJoined', roomId);
-            io.to(matchedUserId).emit('user-joined', { roomId, userId: socket.id });
+            
+            // Only the first user (socket.id) should be the initiator
+            socket.emit('user-joined', { roomId, userId: matchedUserId, isInitiator: true });
+            io.to(matchedUserId).emit('peer-ready', { roomId, userId: socket.id, isInitiator: false });
             
             console.log(`Room ${roomId} created for users ${socket.id} and ${matchedUserId}`);
         } else {

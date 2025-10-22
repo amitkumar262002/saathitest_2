@@ -54,6 +54,10 @@ class WebRTCManager {
             this.handleUserJoined(data);
         });
 
+        this.socket.on('peer-ready', (data) => {
+            this.handlePeerReady(data);
+        });
+
         this.socket.on('user-left', () => {
             this.handleUserLeft();
         });
@@ -169,6 +173,18 @@ class WebRTCManager {
             console.error('❌ Error creating offer:', error);
             this.updateConnectionStatus('Connection failed');
         }
+    }
+
+    async handlePeerReady(data) {
+        console.log('👥 Peer ready, waiting for offer...', data);
+        this.isInitiator = false;
+        this.roomId = data.roomId;
+        
+        // Update status
+        this.updateConnectionStatus('Waiting for peer connection...');
+        
+        // Just set up the room ID, we'll create peer connection when we receive the offer
+        console.log('✅ Ready to receive offer from peer');
     }
 
     async handleOffer(data) {
