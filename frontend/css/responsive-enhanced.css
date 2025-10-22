@@ -1,0 +1,540 @@
+/* Enhanced Responsive Design for All Devices */
+
+/* Base responsive utilities */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Desktop First - Large screens */
+@media (min-width: 1200px) {
+    .ometv-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .video-side {
+        min-height: 600px;
+    }
+    
+    .ometv-chat {
+        width: 400px;
+        bottom: 120px;
+    }
+}
+
+/* Desktop - Standard screens */
+@media (max-width: 1199px) and (min-width: 992px) {
+    .ometv-container {
+        height: calc(100vh - 140px);
+    }
+    
+    .ometv-chat {
+        width: 350px;
+        bottom: 100px;
+    }
+    
+    .ometv-controls {
+        padding: 15px;
+    }
+}
+
+/* Tablet Landscape */
+@media (max-width: 991px) and (min-width: 769px) {
+    .ometv-container {
+        height: calc(100vh - 120px);
+    }
+    
+    .video-side {
+        min-height: 400px;
+    }
+    
+    .ometv-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    .control-group {
+        flex: 1;
+        min-width: 200px;
+        justify-content: center;
+    }
+    
+    .ometv-chat {
+        width: 320px;
+        bottom: 80px;
+        right: 15px;
+    }
+    
+    .pref-btn {
+        min-width: 70px;
+        padding: 8px 12px;
+    }
+}
+
+/* Tablet Portrait & Mobile Landscape */
+@media (max-width: 768px) {
+    .ometv-container {
+        flex-direction: column;
+        height: calc(100vh - 100px);
+    }
+    
+    .video-side {
+        height: 45vh;
+        width: 100%;
+    }
+    
+    .left-side {
+        border-right: none;
+        border-bottom: 1px solid #333;
+    }
+    
+    .ometv-controls {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 10px;
+        height: auto;
+        min-height: 120px;
+    }
+    
+    .control-group {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .left-controls {
+        order: 1;
+    }
+    
+    .center-controls {
+        order: 2;
+    }
+    
+    .right-controls {
+        order: 3;
+    }
+    
+    .next-btn-container {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        width: 100%;
+        padding: 0 15px;
+        margin-bottom: 10px;
+        justify-content: center;
+    }
+    
+    .ometv-chat {
+        position: relative;
+        width: 100%;
+        bottom: auto;
+        right: auto;
+        padding: 0 15px;
+        margin-top: 10px;
+    }
+    
+    .chat-input-container {
+        width: 100%;
+    }
+    
+    .status-badge {
+        min-width: auto;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .ometv-btn {
+        min-width: 70px;
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+    
+    .pref-btn {
+        min-width: 60px;
+        padding: 8px 10px;
+    }
+    
+    .pref-btn .flag,
+    .pref-btn .icon {
+        font-size: 18px;
+    }
+    
+    .pref-btn .label {
+        font-size: 10px;
+    }
+}
+
+/* Mobile Portrait */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .chat-header {
+        padding: 6px 10px;
+        height: 45px;
+    }
+    
+    .header-title {
+        font-size: 14px;
+    }
+    
+    .header-logo-img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Compact notifications */
+    .fix-notification {
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+        font-size: 11px;
+        max-width: 150px;
+        border-radius: 12px;
+    }
+    
+    /* Smaller modals */
+    .selector-content, .report-content {
+        padding: 15px;
+        max-width: 280px;
+        border-radius: 12px;
+    }
+    
+    .selector-content h3, .report-content h3 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+    
+    .selector-option, .report-reason {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .selector-option .option-icon {
+        font-size: 16px;
+    }
+    
+    .ometv-container {
+        height: calc(100vh - 80px);
+    }
+    
+    .video-side {
+        height: 42vh;
+    }
+    
+    .ometv-controls {
+        padding: 10px;
+        min-height: 100px;
+    }
+    
+    .control-group {
+        gap: 8px;
+    }
+    
+    .ometv-btn {
+        min-width: 60px;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    .pref-btn {
+        min-width: 50px;
+        padding: 6px 8px;
+    }
+    
+    .pref-btn .flag,
+    .pref-btn .icon {
+        font-size: 16px;
+    }
+    
+    .pref-btn .label {
+        font-size: 9px;
+    }
+    
+    .status-badge {
+        padding: 8px 12px;
+    }
+    
+    .status-badge .status-text {
+        font-size: 11px;
+    }
+    
+    .country-info {
+        font-size: 10px;
+    }
+    
+    .chat-input-container {
+        padding: 3px;
+    }
+    
+    #messageInput {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+    
+    .send-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .video-overlay {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+    }
+    
+    .report-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .video-label {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Ultra-small screens */
+@media (max-width: 360px) {
+    .ometv-controls {
+        padding: 8px;
+    }
+    
+    .ometv-btn {
+        min-width: 50px;
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .pref-btn {
+        min-width: 45px;
+        padding: 5px 6px;
+    }
+    
+    .status-badge {
+        padding: 6px 10px;
+    }
+    
+    .chat-input-container {
+        padding: 2px;
+    }
+    
+    #messageInput {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .send-btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+    .ometv-container {
+        flex-direction: row;
+        height: calc(100vh - 60px);
+    }
+    
+    .video-side {
+        height: 100%;
+        width: 50%;
+    }
+    
+    .left-side {
+        border-right: 1px solid #333;
+        border-bottom: none;
+    }
+    
+    .ometv-controls {
+        flex-direction: row;
+        height: 60px;
+        padding: 8px 15px;
+    }
+    
+    .control-group {
+        flex-direction: row;
+        width: auto;
+    }
+    
+    .ometv-chat {
+        position: absolute;
+        width: 280px;
+        bottom: 80px;
+        right: 15px;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .header-logo-img,
+    .home-logo-svg {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .selector-content,
+    .report-content {
+        background: #2a2a2a;
+        color: white;
+    }
+    
+    .selector-option,
+    .report-reason {
+        background: #3a3a3a;
+        border-color: #555;
+        color: white;
+    }
+    
+    .selector-option:hover,
+    .report-reason:hover {
+        background: #4a4a4a;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .ometv-btn,
+    .pref-btn,
+    .report-btn,
+    .send-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .video-control-btn {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .chat-input-container {
+        min-height: 44px;
+    }
+    
+    #messageInput {
+        min-height: 44px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Print styles */
+@media print {
+    .ometv-container,
+    .ometv-controls,
+    .ometv-chat {
+        display: none;
+    }
+    
+    .hero-section {
+        display: block;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-contrast: high) {
+    .ometv-btn,
+    .pref-btn {
+        border: 2px solid;
+    }
+    
+    .next-btn {
+        border-color: #4CAF50;
+    }
+    
+    .stop-btn {
+        border-color: #FF5722;
+    }
+    
+    .pref-btn {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* Focus improvements for keyboard navigation */
+.ometv-btn:focus,
+.pref-btn:focus,
+.report-btn:focus,
+.send-btn:focus {
+    outline: 2px solid #FFD700;
+    outline-offset: 2px;
+}
+
+#messageInput:focus {
+    outline: 2px solid #FF6B35;
+    outline-offset: 1px;
+}
+
+/* Loading states for better UX */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Enhanced button interactions */
+.ometv-btn:active,
+.pref-btn:active {
+    transform: scale(0.95);
+}
+
+.send-btn:active {
+    transform: scale(0.9);
+}
+
+/* Smooth scrolling for better UX */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better text rendering */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Improved selection styles */
+::selection {
+    background: rgba(255, 107, 53, 0.3);
+    color: white;
+}
+
+::-moz-selection {
+    background: rgba(255, 107, 53, 0.3);
+    color: white;
+}

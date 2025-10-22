@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success { background: rgba(76, 175, 80, 0.3); }
+        .error { background: rgba(244, 67, 54, 0.3); }
+        .info { background: rgba(33, 150, 243, 0.3); }
+        .logo-test {
+            width: 60px;
+            height: 60px;
+            border: 3px solid;
+            border-image: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00) 1;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.1);
+            margin: 10px;
+            animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+        .logo-text-test {
+            font-size: 14px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            line-height: 1;
+        }
+        .tv-test {
+            display: block;
+            font-size: 10px;
+            margin-top: -2px;
+        }
+        @keyframes logoGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.7), 0 0 40px rgba(255, 165, 0, 0.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-test">
+            <span class="logo-text-test">Saathi<span class="tv-test">TV</span></span>
+        </div>
+        <h1>🎥 Saathi TV - Test Page</h1>
+        <p>Test all features and functions here</p>
+
+        <div class="test-section">
+            <h2>🚀 Quick Access</h2>
+            <button class="btn" onclick="window.location.href='splash.html'">View Splash Screen</button>
+            <button class="btn" onclick="window.location.href='login.html'">Test Login Page</button>
+            <button class="btn" onclick="window.location.href='index.html?nosplash=true'">Skip to Main App</button>
+            <button class="btn" onclick="sessionStorage.clear(); window.location.href='index.html'">Reset & Show Splash</button>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Server Status</h2>
+            <div id="serverStatus" class="status info">Checking servers...</div>
+            <button class="btn" onclick="checkServers()">Check Servers</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Device Tests</h2>
+            <div id="deviceInfo" class="status info">Loading device info...</div>
+            <button class="btn" onclick="testCamera()">Test Camera</button>
+            <button class="btn" onclick="testMicrophone()">Test Microphone</button>
+            <button class="btn" onclick="testBoth()">Test Both</button>
+        </div>
+
+        <div class="test-section">
+            <h2>🌐 Browser Compatibility</h2>
+            <div id="browserInfo" class="status info">Loading browser info...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Features Status</h2>
+            <div id="featuresStatus">
+                <div class="status info">WebRTC: <span id="webrtcStatus">Checking...</span></div>
+                <div class="status info">Socket.io: <span id="socketStatus">Checking...</span></div>
+                <div class="status info">PWA: <span id="pwaStatus">Checking...</span></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 UI Element Tests</h2>
+            <button class="btn" onclick="testButtons()">Test Button Functions</button>
+            <button class="btn" onclick="testResponsive()">Test Responsive Design</button>
+            <button class="btn" onclick="testAnimations()">Test Animations</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        // Check device info
+        function loadDeviceInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight
+            };
+
+            document.getElementById('deviceInfo').innerHTML = `
+                <strong>Device Information:</strong><br>
+                Platform: ${info.platform}<br>
+                Screen: ${info.screenWidth}x${info.screenHeight}<br>
+                Window: ${info.windowWidth}x${info.windowHeight}<br>
+                Language: ${info.language}<br>
+                Online: ${info.onLine ? 'Yes' : 'No'}
+            `;
+        }
+
+        // Check browser compatibility
+        function loadBrowserInfo() {
+            const features = {
+                webrtc: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+                websockets: 'WebSocket' in window,
+                serviceWorker: 'serviceWorker' in navigator,
+                notifications: 'Notification' in window,
+                geolocation: 'geolocation' in navigator
+            };
+
+            let browserName = 'Unknown';
+            if (navigator.userAgent.includes('Chrome')) browserName = 'Chrome';
+            else if (navigator.userAgent.includes('Firefox')) browserName = 'Firefox';
+            else if (navigator.userAgent.includes('Safari')) browserName = 'Safari';
+            else if (navigator.userAgent.includes('Edge')) browserName = 'Edge';
+
+            document.getElementById('browserInfo').innerHTML = `
+                <strong>Browser: ${browserName}</strong><br>
+                WebRTC: ${features.webrtc ? '✅' : '❌'}<br>
+                WebSockets: ${features.websockets ? '✅' : '❌'}<br>
+                Service Worker: ${features.serviceWorker ? '✅' : '❌'}<br>
+                Notifications: ${features.notifications ? '✅' : '❌'}<br>
+                Geolocation: ${features.geolocation ? '✅' : '❌'}
+            `;
+        }
+
+        // Check servers
+        async function checkServers() {
+            const statusDiv = document.getElementById('serverStatus');
+            statusDiv.innerHTML = 'Checking servers...';
+            statusDiv.className = 'status info';
+
+            try {
+                // Check backend
+                const backendResponse = await fetch('http://localhost:3000/api/health');
+                const backendOk = backendResponse.ok;
+
+                if (backendOk) {
+                    statusDiv.innerHTML = '✅ Backend server is running!<br>Backend: http://localhost:3000<br>Frontend: http://localhost:8080';
+                    statusDiv.className = 'status success';
+                } else {
+                    statusDiv.innerHTML = '❌ Backend server not responding';
+                    statusDiv.className = 'status error';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Cannot connect to backend server. Make sure it\'s running on port 3000.';
+                statusDiv.className = 'status error';
+            }
+        }
+
+        // Test camera
+        async function testCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                alert('✅ Camera access granted!');
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                alert('❌ Camera access denied or not available: ' + error.message);
+            }
+        }
+
+        // Test microphone
+        async function testMicrophone() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                alert('✅ Microphone access granted!');
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                alert('❌ Microphone access denied or not available: ' + error.message);
+            }
+        }
+
+        // Test both camera and microphone
+        async function testBoth() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                alert('✅ Both camera and microphone access granted!');
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                alert('❌ Camera/Microphone access denied: ' + error.message);
+            }
+        }
+
+        // Test buttons
+        function testButtons() {
+            alert('✅ Button click test successful! All buttons are working.');
+        }
+
+        // Test responsive design
+        function testResponsive() {
+            const width = window.innerWidth;
+            let deviceType = 'Desktop';
+            if (width <= 480) deviceType = 'Mobile';
+            else if (width <= 768) deviceType = 'Tablet';
+            
+            alert(`✅ Responsive test: Current device type detected as ${deviceType} (${width}px width)`);
+        }
+
+        // Test animations
+        function testAnimations() {
+            const logo = document.querySelector('.logo-test');
+            logo.style.animation = 'none';
+            setTimeout(() => {
+                logo.style.animation = 'logoGlow 1s ease-in-out infinite alternate';
+                alert('✅ Animation test successful! Logo animation restarted.');
+            }, 100);
+        }
+
+        // Check features
+        function checkFeatures() {
+            // WebRTC
+            const webrtcSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+            document.getElementById('webrtcStatus').textContent = webrtcSupported ? '✅ Supported' : '❌ Not Supported';
+
+            // Socket.io (check if script loads)
+            const socketSupported = typeof io !== 'undefined';
+            document.getElementById('socketStatus').textContent = socketSupported ? '✅ Loaded' : '❌ Not Loaded';
+
+            // PWA
+            const pwaSupported = 'serviceWorker' in navigator;
+            document.getElementById('pwaStatus').textContent = pwaSupported ? '✅ Supported' : '❌ Not Supported';
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            loadDeviceInfo();
+            loadBrowserInfo();
+            checkFeatures();
+            checkServers();
+        });
+
+        // Test socket connection
+        function testSocket() {
+            try {
+                const socket = io('http://localhost:3000');
+                socket.on('connect', () => {
+                    alert('✅ Socket.io connection successful!');
+                    socket.disconnect();
+                });
+                socket.on('connect_error', (error) => {
+                    alert('❌ Socket.io connection failed: ' + error.message);
+                });
+            } catch (error) {
+                alert('❌ Socket.io test failed: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

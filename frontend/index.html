@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Random Video Chat</title>
+    <meta name="description" content="Connect with new people worldwide through Saathi TV's free random video chat. Meet friends, have conversations, and explore the world from your device.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/enhanced-navbar.css">
+    <link rel="stylesheet" href="css/ometv-style.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/video-chat-professional.css">
+    <link rel="stylesheet" href="css/responsive-enhanced.css">
+    <link rel="stylesheet" href="css/theme-system.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Meta tags for mobile -->
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <style>
+        
+        /* Navbar Login Button Styles */
+        .nav-login-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin: 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        .nav-login-btn:active {
+            transform: translateY(0px);
+        }
+        
+        .nav-login-btn i {
+            font-size: 12px;
+        }
+        
+        /* Responsive navbar login button */
+        @media (max-width: 768px) {
+            .nav-login-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                margin: 0 4px;
+            }
+            
+            .nav-login-btn i {
+                font-size: 10px;
+            }
+        }
+    </style>
+    
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Saathi TV">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Saathi TV - Random Video Chat">
+    <meta property="og:description" content="Connect with new people worldwide through free random video chat">
+    <meta property="og:image" content="assets/og-image.jpg">
+    <meta property="og:url" content="https://saathi-tv.com">
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left-section">
+                <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                    <div class="logo-circle-small">
+                        <span class="logo-text-small">Saathi<span class="tv-small">TV</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#rules" class="nav-link">Rules</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <div class="nav-right-section">
+                    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="navLoginBtn" class="nav-login-btn" onclick="redirectToSecureLogin()" style="transform: translateY(-2px);">
+                        <i class="fas fa-user"></i> Login
+                    </button>
+                    <div id="navUserSection" class="nav-user-section">
+                        <!-- Dynamic content based on login status -->
+                    </div>
+                </div>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Connect with New Friends on <span class="highlight">Saathi TV</span></h1>
+                <p class="hero-subtitle">Experience free random video chat and meet amazing people from around the world</p>
+                
+                <!-- User Count -->
+                <div class="user-count">
+                    <div class="online-indicator"></div>
+                    <span id="userCount">Loading...</span> users online
+                </div>
+
+                <!-- User Status -->
+                <div class="user-status" id="userStatus" style="display: none;" onclick="openUserProfileTab()">
+                    <div class="user-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <span class="user-name" id="userName">Guest User</span>
+                    <div class="user-dropdown-indicator">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- Chat Controls -->
+                <div class="chat-controls">
+                    <div class="control-group">
+                        <label for="countrySelect">Country:</label>
+                        <div class="custom-select-container">
+                            <select id="countrySelect" class="control-select">
+                                <option value="any">🌍 Any Country</option>
+                                <option value="IN">🇮🇳 India</option>
+                                <option value="US">🇺🇸 United States</option>
+                                <option value="GB">🇬🇧 United Kingdom</option>
+                                <option value="CA">🇨🇦 Canada</option>
+                                <option value="AU">🇦🇺 Australia</option>
+                                <option value="DE">🇩🇪 Germany</option>
+                                <option value="FR">🇫🇷 France</option>
+                                <option value="JP">🇯🇵 Japan</option>
+                                <option value="KR">🇰🇷 South Korea</option>
+                                <option value="BR">🇧🇷 Brazil</option>
+                                <option value="MX">🇲🇽 Mexico</option>
+                                <option value="RU">🇷🇺 Russia</option>
+                                <option value="CN">🇨🇳 China</option>
+                                <option value="IT">🇮🇹 Italy</option>
+                                <option value="ES">🇪🇸 Spain</option>
+                            </select>
+                            <div class="select-arrow">▼</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="genderSelect">I am:</label>
+                        <div class="custom-select-container">
+                            <select id="genderSelect" class="control-select">
+                                <option value="any">🌟 Anyone</option>
+                                <option value="male">👨 Male</option>
+                                <option value="female">👩 Female</option>
+                                <option value="couple">👫 Couple</option>
+                            </select>
+                            <div class="select-arrow">▼</div>
+                        </div>
+                    </div>
+                </div>
+
+                        <button onclick="handleStartWebChat()" class="premium-chat-btn" id="mainChatBtn">
+                            <div class="btn-content">
+                                <div class="btn-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="btn-text-content">
+                                    <span class="btn-main-text">Start Video Chat</span>
+                                    <span class="btn-sub-text">Connect instantly with people worldwide</span>
+                                </div>
+                                <div class="btn-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="btn-glow"></div>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Chat Section -->
+    <section id="videoChat" class="video-chat-section" style="display: none;">
+        <!-- Top Header with Logo -->
+        <div class="chat-header">
+            <div class="header-logo">
+                <img src="assets/saathi-tv-logo-new.svg" alt="Saathi TV" class="header-logo-img">
+                <span class="header-title">Saathi TV</span>
+            </div>
+            <div class="connection-info">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span class="status-text" id="statusText">Looking for someone...</span>
+            </div>
+        </div>
+
+        <!-- One-on-One Video Chat Container (Ome.tv Style) -->
+        <div class="ometv-container">
+            <!-- Left Side - Remote User (Stranger) -->
+            <div class="video-side left-side">
+                <video id="remoteVideo" autoplay playsinline class="main-video"></video>
+                <div class="video-overlay">
+                </div>
+            </div>
+
+            <!-- Right Side - Local User (You) -->
+            <div class="video-side right-side">
+                <video id="localVideo" autoplay muted playsinline class="main-video"></video>
+                <div class="video-overlay">
+                    <span class="video-label" id="userVideoLabel">You</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Control Panel -->
+        <div class="ometv-controls">
+            <!-- Left Controls - Hidden -->
+            <div class="control-group left-controls" style="display: none;">
+                <button id="stopBtn" class="ometv-btn stop-btn">
+                    Stop
+                </button>
+            </div>
+
+            <!-- Center Controls - Hidden -->
+            <div class="control-group center-controls" style="display: none;">
+                <div class="preference-selector">
+                    <button class="pref-btn" id="oldCountryBtn">
+                        <span class="flag">🇮🇳</span>
+                        <span class="label">Country</span>
+                    </button>
+                </div>
+                <div class="preference-selector">
+                    <button class="pref-btn" id="oldGenderBtn">
+                        <span class="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <span class="label">I am</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Video Controls -->
+            <div class="control-group video-controls">
+                <button id="countryBtn" class="video-control-btn ripple" onclick="toggleCountrySelector()" title="Select Country" style="transform: translateY(0px);">
+                    <span class="flag">🇮🇳</span>
+                </button>
+                <button id="genderBtn" class="video-control-btn ripple" onclick="toggleGenderSelector()" title="Select Gender" style="transform: translateY(0px);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button id="chatToggleBtn" class="video-control-btn ripple" onclick="toggleChat()" title="Toggle Chat" style="transform: translateY(0px);">
+                    <i class="fas fa-comment"></i>
+                </button>
+                <button id="fullscreenBtn" class="video-control-btn ripple" onclick="toggleFullscreen()" title="Toggle Fullscreen" style="transform: translateY(0px);">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button id="pauseBtn" class="video-control-btn ripple" onclick="togglePause()" title="Pause/Resume Video" style="transform: translateY(0px);">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button id="toggleAudio" class="video-control-btn ripple audio-btn active" onclick="toggleAudio()" title="Toggle Audio" style="transform: translateY(0px);">
+                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M12 2c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2s-2-.9-2-2V4c0-1.1.9-2 2-2z" fill="currentColor"></path>
+                        <path d="M19 10v2c0 3.87-3.13 7-7 7s-7-3.13-7-7v-2h2v2c0 2.76 2.24 5 5 5s5-2.24 5-5v-2h2z" fill="currentColor"></path>
+                    </svg>
+                </button>
+                <button id="nextBtn" class="video-control-btn ripple" onclick="nextUser()" title="Next User" style="transform: translateY(0px);">
+                    <i class="fas fa-forward"></i>
+                </button>
+                <button id="reportBtn" class="video-control-btn ripple" onclick="reportUser()" title="Report User" style="transform: translateY(0px);">
+                    <i class="fas fa-flag"></i>
+                </button>
+            </div>
+
+            <!-- Right Controls - Hidden -->
+            <div class="control-group right-controls" style="display: none;">
+                <div class="connection-status">
+                    <div class="status-badge" id="connectionBadge">
+                        <span class="status-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <span class="status-text">Connection established.</span>
+                        <div class="country-info">
+                            <span class="flag">🇮🇳</span>
+                            <span class="country-name">India.</span>
+                            <a href="#" class="report-link">Report abuse</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div id="chatPanel" class="chat-panel hidden">
+            <div class="chat-header">
+                <h3>Chat</h3>
+                <button class="chat-close-btn" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="system-message">Chat started. Say hello! 👋</div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200">
+                <button id="sendChatBtn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Saathi TV?</h2>
+            <div class="features-grid">
+                <div class="feature-card" onclick="window.location.href='pages/free-video-chat.html'" style="cursor: pointer;">
+                    <div class="feature-icon">🎥</div>
+                    <h3>Free Video Chat</h3>
+                    <p>Connect with people worldwide through high-quality video chat, completely free</p>
+                </div>
+                <div class="feature-card" onclick="window.location.href='pages/global-community.html'" style="cursor: pointer;">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Community</h3>
+                    <p>Meet people from different countries and cultures, expand your social circle</p>
+                </div>
+                <div class="feature-card" onclick="window.location.href='pages/mobile-friendly.html'" style="cursor: pointer;">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works perfectly on all devices - desktop, tablet, and mobile phones</p>
+                </div>
+                <div class="feature-card" onclick="window.location.href='pages/privacy-policy.html'" style="cursor: pointer;">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Safe & Anonymous</h3>
+                    <p>Your privacy is protected. Chat anonymously without revealing personal information</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Connection</h3>
+                    <p>Fast connection times and smooth video quality for the best chat experience</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Smart Matching</h3>
+                    <p>Filter by country and preferences to find the perfect chat partner</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Saathi TV</h2>
+                    <p>Saathi TV is your gateway to meeting new people from around the world. Our platform provides a safe, fun, and easy way to connect with strangers through random video chat.</p>
+                    <p>Whether you're looking to make new friends, practice a language, or simply have interesting conversations, Saathi TV brings the world to your screen.</p>
+                    <div class="stats">
+                        <div class="stat">
+                            <h3>1M+</h3>
+                            <p>Active Users</p>
+                        </div>
+                        <div class="stat">
+                            <h3>150+</h3>
+                            <p>Countries</p>
+                        </div>
+                        <div class="stat">
+                            <h3>24/7</h3>
+                            <p>Available</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="about-image-placeholder">
+                        <div class="about-logo">
+                            <div class="logo-circle-medium">
+                                <span class="logo-text-medium">Saathi<span class="tv-medium">TV</span></span>
+                            </div>
+                        </div>
+                        <p>Connecting people worldwide</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules Section -->
+    <section id="rules" class="rules">
+        <div class="container">
+            <h2 class="section-title">Community Rules</h2>
+            <div class="rules-grid">
+                <div class="rule-card">
+                    <h3>Be Respectful</h3>
+                    <p>Treat everyone with kindness and respect. Harassment or bullying is not tolerated.</p>
+                </div>
+                <div class="rule-card">
+                    <h3>Keep it Clean</h3>
+                    <p>No inappropriate content, nudity, or explicit material. Keep conversations family-friendly.</p>
+                </div>
+                <div class="rule-card">
+                    <h3>No Spam</h3>
+                    <p>Don't spam users with repetitive messages or promotional content.</p>
+                </div>
+                <div class="rule-card">
+                    <h3>Report Issues</h3>
+                    <p>If you encounter inappropriate behavior, use the report feature to help keep our community safe.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="hero-logo">
+                        <div class="logo-circle professional-home-logo">
+                            <img src="assets/saathi-tv-logo-new.svg" alt="Saathi TV" class="home-logo-svg">
+                        </div>
+                        <h1 class="hero-title">Saathi TV</h1>
+                        <p class="hero-subtitle">Connect with strangers worldwide through video chat</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://facebook.com" target="_blank" class="social-link">📘 Facebook</a>
+                        <a href="https://instagram.com" target="_blank" class="social-link">📷 Instagram</a>
+                        <a href="https://twitter.com" target="_blank" class="social-link">🐦 Twitter</a>
+                        <a href="https://youtube.com" target="_blank" class="social-link">📺 YouTube</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#rules">Rules</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="pages/privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="pages/terms-of-service.html">Terms of Service</a></li>
+                        <li><a href="pages/community-guidelines.html">Community Guidelines</a></li>
+                        <li><a href="pages/contact-us.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Mobile Apps</h4>
+                    <p>Get the mobile app for better experience</p>
+                    <div class="footer-download-buttons">
+                        <a href="https://apps.apple.com/app/saathi-tv-video-chat/id123456789" class="footer-download-btn app-store-btn" target="_blank" rel="noopener">
+                            <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on App Store" class="fade-in">
+                        </a>
+                        <a href="https://play.google.com/store/apps/details?id=com.saathitv.videochat" class="footer-download-btn play-store-btn" target="_blank" rel="noopener">
+                            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="fade-in">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Saathi TV Created By Blood Badshah. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/complete-error-fix.js"></script>
+    <script src="js/performance-fix.js"></script>
+    <script src="js/dom-safety-fix.js"></script>
+    <script src="js/localhost-server-fix.js"></script>
+    <script src="js/github-pages-fix.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        // Check if splash screen should be shown
+        if (!sessionStorage.getItem('splashShown') && !window.location.search.includes('nosplash')) {
+            sessionStorage.setItem('splashShown', 'true');
+            window.location.href = 'splash-enhanced.html';
+        }
+    </script>
+    <script src="js/login-system.js"></script>
+    <script src="js/webrtc-fix.js"></script>
+    <script src="js/function-fix-system.js"></script>
+    <!-- Firebase SDK v9 (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXrbJQJhjfwp4ugkp2dAckoXodtPqH73E",
+            authDomain: "saathi-5fa22.firebaseapp.com",
+            databaseURL: "https://saathi-5fa22-default-rtdb.firebaseio.com",
+            projectId: "saathi-5fa22",
+            storageBucket: "saathi-5fa22.firebasestorage.app",
+            messagingSenderId: "189814220535",
+            appId: "1:189814220535:web:c22305089ff101282b95f2"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        window.firebaseApp = firebase.app();
+        window.firebaseAuth = firebase.auth();
+        window.firebaseDb = firebase.firestore();
+        
+        console.log('🔥 Firebase initialized successfully!');
+        
+        // Simple Firebase Auth Manager
+        window.firebaseAuthManager = {
+            currentUser: null,
+            loginCallbacks: [],
+            logoutCallbacks: [],
+            
+            // Google Sign In
+            async signInWithGoogle() {
+                try {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    const result = await firebase.auth().signInWithPopup(provider);
+                    return { success: true, user: result.user };
+                } catch (error) {
+                    console.error('Google sign in error:', error);
+                    return { success: false, error: error.message };
+                }
+            },
+            
+            // Email Sign In
+            async signInWithEmail(email, password) {
+                try {
+                    const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+                    return { success: true, user: result.user };
+                } catch (error) {
+                    console.error('Email sign in error:', error);
+                    return { success: false, error: error.message };
+                }
+            },
+            
+            // Email Sign Up
+            async signUpWithEmail(email, password, displayName) {
+                try {
+                    const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                    await result.user.updateProfile({ displayName: displayName });
+                    return { success: true, user: result.user };
+                } catch (error) {
+                    console.error('Email sign up error:', error);
+                    return { success: false, error: error.message };
+                }
+            },
+            
+            // Sign Out
+            async signOut() {
+                try {
+                    await firebase.auth().signOut();
+                    return { success: true };
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    return { success: false, error: error.message };
+                }
+            },
+            
+            // Get current user
+            getCurrentUser() {
+                return firebase.auth().currentUser;
+            },
+            
+            // Check if user is logged in
+            isUserLoggedIn() {
+                return !!firebase.auth().currentUser;
+            },
+            
+            // Add login callback
+            onLogin(callback) {
+                this.loginCallbacks.push(callback);
+            },
+            
+            // Add logout callback
+            onLogout(callback) {
+                this.logoutCallbacks.push(callback);
+            }
+        };
+        
+        // Listen for auth state changes
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log('🔥 User signed in:', user.email);
+                window.firebaseAuthManager.currentUser = user;
+                
+                // Save to localStorage for compatibility
+                const isGoogleUser = user.providerData[0]?.providerId === 'google.com';
+                const userData = {
+                    id: user.uid,
+                    name: user.displayName || user.email?.split('@')[0] || 'User',
+                    email: user.email,
+                    avatar: user.photoURL || '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>',
+                    loginMethod: isGoogleUser ? 'google' : 'email',
+                    verified: user.emailVerified,
+                    lastLogin: new Date().toISOString(),
+                    securityLevel: isGoogleUser ? 'protected++' : 'protected+'
+                };
+                
+                if (isGoogleUser) {
+                    console.log('🛡️ Google user detected - Security level set to Protected++');
+                } else {
+                    console.log('🔒 Email user detected - Security level set to Protected+');
+                }
+                
+                localStorage.setItem('saathi_current_user', JSON.stringify(userData));
+                
+                // Call login callbacks
+                window.firebaseAuthManager.loginCallbacks.forEach(callback => callback(userData));
+                
+                // Update UI
+                if (typeof checkLoginStatus === 'function') {
+                    checkLoginStatus();
+                }
+            } else {
+                console.log('🔥 User signed out');
+                window.firebaseAuthManager.currentUser = null;
+                
+                // Clear localStorage
+                localStorage.removeItem('saathi_current_user');
+                
+                // Call logout callbacks
+                window.firebaseAuthManager.logoutCallbacks.forEach(callback => callback());
+                
+                // Update UI
+                if (typeof checkLoginStatus === 'function') {
+                    checkLoginStatus();
+                }
+            }
+        });
+    </script>
+    <script src="js/navbar-functionality.js"></script>
+    <!-- <script src="js/browser-checker.js"></script> --> <!-- Disabled - causes spam -->
+    <!-- <script src="js/error-checker.js"></script> --> <!-- Disabled - causes spam -->
+    <script src="js/online-message-system.js"></script>
+    <script src="js/url-encryption.js"></script>
+    <!-- <script src="js/real-time-features.js"></script> --> <!-- Disabled - causes infinite loops -->
+    <!-- <script src="js/enhanced-interactions.js"></script> --> <!-- Temporarily disabled due to syntax errors -->
+    <script src="js/audio-video-controls.js"></script>
+    <script src="js/chat-system-fix.js"></script>
+    <!-- <script src="js/function-analyzer.js"></script> --> <!-- Disabled - causes spam -->
+    <script src="js/security.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/webrtc.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/video-controls-global.js"></script>
+    <script src="js/login-test.js"></script>
+    
+    <script>
+        // Secure Login Integration Functions
+        function handleStartChat() {
+            if (!isUserLoggedIn()) {
+                redirectToSecureLogin();
+            } else {
+                startVideoChat();
+            }
+        }
+        
+        function handleStartWebChat() {
+            console.log('🔍 Start Video Chat button clicked!');
+            
+            if (!isUserLoggedIn()) {
+                console.log('❌ User not logged in, redirecting to login...');
+                alert('Please login first to start video chat!');
+                redirectToSecureLogin();
+                return;
+            }
+            
+            console.log('✅ User is logged in, starting video chat...');
+            
+            try {
+                startVideoChat();
+                
+                // Check if video chat started successfully after 3 seconds
+                setTimeout(() => {
+                    const videoSection = document.getElementById('videoChat');
+                    if (!videoSection || videoSection.style.display === 'none') {
+                        console.log('⚠️ Main video chat failed, showing backup button...');
+                        showBackupButton();
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Main video chat failed:', error);
+                showBackupButton();
+            }
+        }
+        
+        
+        function showBackupButton() {
+            const mainBtn = document.getElementById('mainChatBtn');
+            
+            if (mainBtn) {
+                console.log('⚠️ Main video chat failed, but backup button feature has been removed');
+                
+                // Just disable main button and show error message
+                mainBtn.style.opacity = '0.5';
+                mainBtn.style.pointerEvents = 'none';
+                mainBtn.style.filter = 'grayscale(50%)';
+                
+                // Show notification
+                alert('⚠️ Video chat system is currently unavailable.\n\nPlease try again later or contact support.');
+                
+                console.log('❌ Video chat system unavailable');
+            } else {
+                console.error('❌ Could not find main button');
+            }
+        }
+        
+        
+        function isUserLoggedIn() {
+            // Check Firebase authentication first
+            if (window.firebaseAuthManager && window.firebaseAuthManager.isUserLoggedIn()) {
+                return true;
+            }
+            
+            // Check localStorage for user data
+            const currentUser = localStorage.getItem('saathi_current_user');
+            if (currentUser) {
+                try {
+                    const userData = JSON.parse(currentUser);
+                    return !!userData.id;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    localStorage.removeItem('saathi_current_user');
+                }
+            }
+            
+            return false;
+            
+            // Check secure session
+            if (secureSession) {
+                try {
+                    const sessionData = JSON.parse(secureSession);
+                    const now = Date.now();
+                    const sessionAge = now - sessionData.timestamp;
+                    const timeout = 30 * 60 * 1000; // 30 minutes
+                    
+                    if (sessionAge < timeout) return true;
+                } catch (error) {
+                    console.error('Error parsing secure session:', error);
+                }
+            }
+            
+            // Check other session types
+            return !!(userSession || currentUser);
+        }
+        
+        function redirectToSecureLogin() {
+            const currentUrl = encodeURIComponent(window.location.href);
+            window.location.href = `login.html?return=${currentUrl}`;
+        }
+        
+        // Modern Notification System
+        function showNotification(message, type = 'info', duration = 3000) {
+            // Create notification container if it doesn't exist
+            let container = document.querySelector('.notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'notification-container';
+                document.body.appendChild(container);
+            }
+            
+            // Create notification card
+            const notification = document.createElement('div');
+            notification.className = `notification-card ${type}`;
+            notification.textContent = message;
+            
+            // Add to container
+            container.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Auto hide
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, duration);
+        }
+        
+        // Unified Dark/Light Mode Toggle Function
+        function toggleTheme() {
+            console.log('🌓 Toggling theme...');
+            
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle?.querySelector('i');
+            
+            // Get current theme
+            const currentTheme = body.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            // Apply new theme
+            body.setAttribute('data-theme', newTheme);
+            
+            // Update all theme-related elements
+            if (newTheme === 'dark') {
+                // Dark theme
+                if (icon) icon.className = 'fas fa-sun';
+                body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+                body.style.color = '#ffffff';
+                
+                // Update CSS variables for dark theme
+                document.documentElement.style.setProperty('--bg-primary', '#1a1a2e');
+                document.documentElement.style.setProperty('--bg-secondary', '#16213e');
+                document.documentElement.style.setProperty('--text-primary', '#ffffff');
+                document.documentElement.style.setProperty('--text-secondary', '#cccccc');
+                document.documentElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.2)');
+                
+            } else {
+                // Light theme
+                if (icon) icon.className = 'fas fa-moon';
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                body.style.color = '#333333';
+                
+                // Update CSS variables for light theme
+                document.documentElement.style.setProperty('--bg-primary', '#ffffff');
+                document.documentElement.style.setProperty('--bg-secondary', '#f8f9fa');
+                document.documentElement.style.setProperty('--text-primary', '#333333');
+                document.documentElement.style.setProperty('--text-secondary', '#666666');
+                document.documentElement.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.1)');
+            }
+            
+            // Save theme preference
+            localStorage.setItem('saathi_theme', newTheme);
+            
+            // Show notification
+            showThemeNotification(newTheme);
+            
+            // Trigger custom event for other components
+            window.dispatchEvent(new CustomEvent('themeChanged', { 
+                detail: { theme: newTheme } 
+            }));
+            
+            console.log(`✅ Theme changed to ${newTheme}`);
+        }
+        
+        // Show theme change notification
+        function showThemeNotification(theme) {
+            // Remove existing notification
+            const existing = document.querySelector('.theme-notification');
+            if (existing) existing.remove();
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = 'theme-notification show';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${theme === 'dark' ? 'moon' : 'sun'}"></i>
+                    <span>${theme === 'dark' ? 'Dark' : 'Light'} mode activated</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 2 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 2000);
+        }
+        
+        // Load saved theme on page load
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('saathi_theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            let theme = 'light';
+            if (savedTheme) {
+                theme = savedTheme;
+            } else if (systemPrefersDark) {
+                theme = 'dark';
+            }
+            
+            // Apply the theme using our unified system
+            const body = document.body;
+            body.setAttribute('data-theme', theme);
+            
+            if (theme === 'dark') {
+                body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+                body.style.color = '#ffffff';
+                
+                // Update CSS variables for dark theme
+                document.documentElement.style.setProperty('--bg-primary', '#1a1a2e');
+                document.documentElement.style.setProperty('--bg-secondary', '#16213e');
+                document.documentElement.style.setProperty('--text-primary', '#ffffff');
+                document.documentElement.style.setProperty('--text-secondary', '#cccccc');
+                document.documentElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.2)');
+                
+                // Update theme toggle icon
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) {
+                    const icon = themeToggle.querySelector('i');
+                    if (icon) icon.className = 'fas fa-sun';
+                }
+            } else {
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                body.style.color = '#333333';
+                
+                // Update CSS variables for light theme
+                document.documentElement.style.setProperty('--bg-primary', '#ffffff');
+                document.documentElement.style.setProperty('--bg-secondary', '#f8f9fa');
+                document.documentElement.style.setProperty('--text-primary', '#333333');
+                document.documentElement.style.setProperty('--text-secondary', '#666666');
+                document.documentElement.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.1)');
+                
+                // Update theme toggle icon
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) {
+                    const icon = themeToggle.querySelector('i');
+                    if (icon) icon.className = 'fas fa-moon';
+                }
+            }
+            
+            console.log(`🎨 Theme loaded: ${theme}`);
+        }
+        
+        function startVideoChat() {
+            console.log('🚀 Starting video chat...');
+            
+            // Show notification to user
+            alert('🎥 Starting Video Chat!\n\nConnecting you to the video chat system...');
+            
+            // Check if video chat section exists
+            const videoSection = document.getElementById('videoChat');
+            const heroSection = document.querySelector('.hero');
+            
+            console.log('🔍 Checking video chat elements:', {
+                videoSection: !!videoSection,
+                heroSection: !!heroSection,
+                saathiTV: !!window.saathiTV,
+                webRTCFix: !!window.webRTCFix
+            });
+            
+            if (videoSection && heroSection) {
+                console.log('✅ Switching to video chat view...');
+                heroSection.style.display = 'none';
+                videoSection.style.display = 'flex';
+                
+                // Update username in video overlay
+                if (window.updateUserVideoLabel) {
+                    setTimeout(window.updateUserVideoLabel, 100);
+                }
+                
+                // Initialize main SaathiTV chat if available
+                if (window.saathiTV && window.saathiTV.startChat) {
+                    console.log('🎯 Using main SaathiTV chat system...');
+                    setTimeout(() => {
+                        window.saathiTV.startChat();
+                    }, 500);
+                } else if (window.webRTCFix && window.webRTCFix.startChat) {
+                    console.log('🎯 Using WebRTC fix chat system...');
+                    setTimeout(() => {
+                        window.webRTCFix.startChat();
+                    }, 500);
+                } else {
+                    console.log('⚠️ No chat system found, initializing fallback...');
+                    // Fallback: try to initialize basic video chat
+                    initializeFallbackVideoChat();
+                }
+            } else {
+                console.log('❌ Video chat elements not found, creating basic interface...');
+                createBasicVideoInterface();
+            }
+        }
+        
+        function initializeFallbackVideoChat() {
+            console.log('🔄 Initializing fallback video chat...');
+            
+            // Try to find and initialize any available video chat system
+            setTimeout(() => {
+                if (window.saathiTV && window.saathiTV.startChat) {
+                    console.log('✅ SaathiTV system found, starting...');
+                    window.saathiTV.startChat();
+                } else {
+                    console.log('⚠️ No video chat system available');
+                    alert('Video chat system is still loading. Please try again in a moment.');
+                }
+            }, 2000);
+        }
+        
+        function createBasicVideoInterface() {
+            console.log('🔧 Creating basic video interface...');
+            alert('Video chat interface is being prepared. Please wait...');
+            
+            // Try to redirect to a working video chat page or show message
+            setTimeout(() => {
+                alert('Video chat system is currently being set up. Please try again later or contact support.');
+            }, 1000);
+        }
+        
+        
+        
+        // Setup login callbacks
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.loginSystem) {
+                window.loginSystem.onLogin((user) => {
+                    console.log('👤 User logged in:', user.name);
+                    
+                    // Check if we should start video chat
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (window.location.hash === '#videoChat' || urlParams.get('startChat') === 'true') {
+                        startVideoChat();
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        // Check user login status
+        function checkLoginStatus() {
+            let currentUser = null;
+            
+            // Check Firebase authentication first
+            if (window.firebaseAuthManager && window.firebaseAuthManager.getCurrentUser) {
+                const firebaseUser = window.firebaseAuthManager.getCurrentUser();
+                if (firebaseUser) {
+                    const isGoogleUser = firebaseUser.providerData[0]?.providerId === 'google.com';
+                    currentUser = {
+                        id: firebaseUser.uid,
+                        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+                        email: firebaseUser.email,
+                        avatar: firebaseUser.photoURL || '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>',
+                        loginMethod: isGoogleUser ? 'google' : 'email',
+                        verified: firebaseUser.emailVerified,
+                        securityLevel: isGoogleUser ? 'protected++' : 'protected+'
+                    };
+                }
+            }
+            
+            // Fallback to localStorage
+            if (!currentUser) {
+                try {
+                    currentUser = JSON.parse(localStorage.getItem('saathi_current_user'));
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            
+            const userStatus = document.getElementById('userStatus');
+            const userName = document.getElementById('userName');
+            const loginLink = document.querySelector('.login-link');
+            
+            if (currentUser) {
+                if (userStatus) userStatus.style.display = 'flex';
+                if (userName) userName.textContent = currentUser.name || currentUser.email || 'User';
+                if (loginLink) loginLink.style.display = 'none';
+                
+                console.log('✅ User is logged in:', currentUser.name || currentUser.email);
+            } else {
+                if (userStatus) userStatus.style.display = 'none';
+                if (loginLink) loginLink.style.display = 'block';
+                
+                console.log('❌ No user logged in');
+            }
+        }
+        
+        // Profile icon functions removed
+        
+        // Open profile tab with user details
+        function openProfileTab(user) {
+            // Close existing profile tab if open
+            closeProfileTab();
+            
+            // Create profile tab
+            const profileTab = document.createElement('div');
+            profileTab.id = 'profileTab';
+            profileTab.className = 'profile-tab';
+            profileTab.innerHTML = `
+                <div class="profile-tab-content">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <div class="profile-info">
+                            <h3>${user.name || 'User'}</h3>
+                            <p>${user.email || 'No email'}</p>
+                        </div>
+                        <button class="profile-close-btn" onclick="closeProfileTab()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <div class="profile-section">
+                            <h4>Account Information</h4>
+                            <div class="profile-item">
+                                <span class="profile-label">Name:</span>
+                                <span class="profile-value">${user.name || 'Not provided'}</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Email:</span>
+                                <span class="profile-value">${user.email || 'Not provided'}</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Login Method:</span>
+                                <span class="profile-value">${user.loginMethod || 'Unknown'}</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Account Created:</span>
+                                <span class="profile-value">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Last Login:</span>
+                                <span class="profile-value">${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Unknown'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-section">
+                            <h4>Security</h4>
+                            <div class="profile-item">
+                                <span class="profile-label">Security Level:</span>
+                                <span class="profile-value security-${user.securityLevel || 'low'}">${user.securityLevel === 'protected++' ? 'Protected++' : user.securityLevel === 'protected+' ? 'Protected+' : (user.securityLevel || 'Low')}</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Verified:</span>
+                                <span class="profile-value">${user.verified ? '✅ Yes' : '❌ No'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button class="profile-action-btn edit-btn" onclick="editProfile()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Edit Profile
+                            </button>
+                            <button class="profile-action-btn logout-btn" onclick="logout()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(profileTab);
+            
+            // Show with animation
+            setTimeout(() => {
+                profileTab.classList.add('show');
+            }, 10);
+        }
+        
+        // Close profile tab
+        function closeProfileTab() {
+            const profileTab = document.getElementById('profileTab');
+            if (profileTab) {
+                profileTab.classList.remove('show');
+                setTimeout(() => {
+                    profileTab.remove();
+                }, 300);
+            }
+        }
+        
+        // Edit profile function (placeholder)
+        function editProfile() {
+            showNotification('Profile editing feature coming soon!', 'info');
+        }
+        
+        // Open user profile tab from user status section
+        function openUserProfileTab() {
+            const currentUser = JSON.parse(localStorage.getItem('saathi_current_user'));
+            if (currentUser) {
+                openProfileTab(currentUser);
+            } else {
+                // Create a guest user profile
+                const guestUser = {
+                    id: 'guest_user',
+                    name: 'Guest User',
+                    email: 'guest@saathi.tv',
+                    loginMethod: 'guest',
+                    verified: false,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString(),
+                    securityLevel: 'low'
+                };
+                openProfileTab(guestUser);
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('saathi_current_user');
+            localStorage.removeItem('saathi_remember_me');
+            localStorage.removeItem('saathiTV_secure_session');
+            sessionStorage.removeItem('saathiTV_current_session');
+            closeProfileTab();
+            checkLoginStatus();
+            showNotification('Logged out successfully!', 'success');
+        }
+        
+        // Test function to simulate login (for demo purposes)
+        function simulateLogin() {
+            const testUser = {
+                id: 'test_user_123',
+                name: 'Test User',
+                email: 'test@example.com',
+                loginMethod: 'email',
+                verified: true,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                securityLevel: 'medium'
+            };
+            
+            localStorage.setItem('saathi_current_user', JSON.stringify(testUser));
+            checkLoginStatus();
+            showNotification('Test login successful!', 'success');
+        }
+        
+        // Login button is now permanently in navbar - no removal needed
+        
+        // Remove profile icon function
+        function removeProfileIcon() {
+            const profileIcon = document.getElementById('profileIcon');
+            if (profileIcon) {
+                profileIcon.remove();
+            }
+        }
+        
+        // Initialize Firebase login integration
+        function initializeFirebaseIntegration() {
+            console.log('🔥 Initializing Firebase integration...');
+            
+            // Wait for Firebase to be ready
+            const checkFirebase = () => {
+                console.log('🔍 Checking Firebase availability:', {
+                    firebaseApp: !!window.firebaseApp,
+                    firebaseAuth: !!window.firebaseAuth,
+                    firebaseDb: !!window.firebaseDb,
+                    firebaseAuthManager: !!window.firebaseAuthManager
+                });
+                
+                if (window.firebaseAuthManager) {
+                    console.log('✅ Firebase is ready!');
+                    
+                    // Listen for Firebase auth changes
+                    window.firebaseAuthManager.onLogin((user) => {
+                        console.log('🔥 Firebase user logged in:', user);
+                        checkLoginStatus();
+                    });
+                    
+                    window.firebaseAuthManager.onLogout(() => {
+                        console.log('🔥 Firebase user logged out');
+                        checkLoginStatus();
+                    });
+                    
+                    // Check initial login status
+                    checkLoginStatus();
+                } else {
+                    console.log('⏳ Firebase not ready yet, retrying...');
+                    setTimeout(checkFirebase, 500);
+                }
+            };
+            checkFirebase();
+        }
+        
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Firebase integration
+            initializeFirebaseIntegration();
+            
+            // Check current login status
+            checkLoginStatus();
+            
+            // Add backup event listener for video chat button
+            const videoChatBtn = document.querySelector('.premium-chat-btn');
+            if (videoChatBtn) {
+                console.log('✅ Video chat button found, adding backup event listener');
+                videoChatBtn.addEventListener('click', function(e) {
+                    console.log('🔍 Video chat button clicked via event listener!');
+                    if (!videoChatBtn.onclick) {
+                        console.log('⚠️ No onclick handler found, calling handleStartWebChat directly');
+                        handleStartWebChat();
+                    }
+                });
+            } else {
+                console.log('❌ Video chat button not found');
+            }
+            
+            // Navbar chat button removed - using only main hero button
+            
+            // Setup navbar login button
+            const navLoginBtn = document.getElementById('navLoginBtn');
+            if (navLoginBtn) {
+                console.log('✅ Navbar login button found and ready');
+                navLoginBtn.addEventListener('click', function(e) {
+                    console.log('🔍 Navbar login button clicked!');
+                });
+            } else {
+                console.log('❌ Navbar login button not found');
+            }
+            
+            checkLoginStatus();
+            loadSavedTheme();
+            
+            // Initialize real-time features integration
+            if (window.realTimeManager) {
+                // Connect real-time manager with main app
+                const originalStartChat = window.saathiTV?.startChat;
+                if (originalStartChat) {
+                    window.saathiTV.startChat = function() {
+                        window.realTimeManager.startChat();
+                        return originalStartChat.call(this);
+                    };
+                }
+                
+                const originalStopChat = window.saathiTV?.stopChat;
+                if (originalStopChat) {
+                    window.saathiTV.stopChat = function() {
+                        window.realTimeManager.stopChat();
+                        return originalStopChat.call(this);
+                    };
+                }
+            }
+        });
+        
+        // Mirror toggle functionality
+        let isMirrored = true; // Default is mirrored
+        
+        function toggleMirror() {
+            const localVideo = document.getElementById('localVideo');
+            const toggleBtn = document.getElementById('mirrorToggle');
+            
+            if (isMirrored) {
+                // Remove mirror effect
+                localVideo.style.transform = 'scaleX(1)';
+                toggleBtn.innerHTML = '<i class="fas fa-arrows-alt-h" style="opacity: 0.5;"></i>';
+                toggleBtn.title = 'Enable Mirror';
+                isMirrored = false;
+                console.log('🔄 Mirror effect disabled');
+            } else {
+                // Add mirror effect
+                localVideo.style.transform = 'scaleX(-1)';
+                toggleBtn.innerHTML = '<i class="fas fa-arrows-alt-h"></i>';
+                toggleBtn.title = 'Disable Mirror';
+                isMirrored = true;
+                console.log('🪞 Mirror effect enabled');
+            }
+        }
+
+        // Video Control Functions
+        let isChatOpen = false;
+        let isPaused = false;
+        let isFullscreen = false;
+
+        function toggleChat() {
+            const chatPanel = document.getElementById('chatPanel');
+            const chatBtn = document.getElementById('chatToggleBtn');
+            
+            isChatOpen = !isChatOpen;
+            
+            if (isChatOpen) {
+                chatPanel.classList.remove('hidden');
+                chatBtn.classList.add('active');
+                console.log('💬 Chat panel opened');
+            } else {
+                chatPanel.classList.add('hidden');
+                chatBtn.classList.remove('active');
+                console.log('💬 Chat panel closed');
+            }
+        }
+
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const chatMessages = document.getElementById('chatMessages');
+            const message = chatInput.value.trim();
+            
+            if (message) {
+                // Add user message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message own';
+                messageDiv.textContent = message;
+                chatMessages.appendChild(messageDiv);
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                console.log('📤 Message sent:', message);
+                
+                // Simulate received message (for demo)
+                setTimeout(() => {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'message other';
+                    replyDiv.textContent = 'Thanks for your message! 😊';
+                    chatMessages.appendChild(replyDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        function takeScreenshot() {
+            const localVideo = document.getElementById('localVideo');
+            const remoteVideo = document.getElementById('remoteVideo');
+            
+            // Create canvas to capture screenshot
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = 1280;
+            canvas.height = 720;
+            
+            try {
+                // Draw local video (if available)
+                if (localVideo && localVideo.videoWidth > 0) {
+                    ctx.drawImage(localVideo, 0, 0, 640, 720);
+                }
+                
+                // Draw remote video (if available)
+                if (remoteVideo && remoteVideo.videoWidth > 0) {
+                    ctx.drawImage(remoteVideo, 640, 0, 640, 720);
+                }
+                
+                // Convert to blob and download
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `saathi-tv-screenshot-${Date.now()}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    console.log('📸 Screenshot saved!');
+                    
+                    // Show notification
+                    if (typeof showNotification === 'function') {
+                        showNotification('Screenshot saved! 📸', 'success', 3000);
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('❌ Screenshot failed:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('Screenshot failed! Try again.', 'error', 3000);
+                }
+            }
+        }
+
+        function toggleFullscreen() {
+            const videoContainer = document.querySelector('.ometv-container');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            if (!isFullscreen) {
+                // Enter fullscreen
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                } else if (videoContainer.webkitRequestFullscreen) {
+                    videoContainer.webkitRequestFullscreen();
+                } else if (videoContainer.mozRequestFullScreen) {
+                    videoContainer.mozRequestFullScreen();
+                } else if (videoContainer.msRequestFullscreen) {
+                    videoContainer.msRequestFullscreen();
+                }
+                
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                fullscreenBtn.classList.add('active');
+                isFullscreen = true;
+                console.log('🔍 Entered fullscreen mode');
+                
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                fullscreenBtn.classList.remove('active');
+                isFullscreen = false;
+                console.log('🔍 Exited fullscreen mode');
+            }
+        }
+
+        function togglePause() {
+            const localVideo = document.getElementById('localVideo');
+            const remoteVideo = document.getElementById('remoteVideo');
+            const pauseBtn = document.getElementById('pauseBtn');
+            
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                // Pause videos
+                if (localVideo) localVideo.pause();
+                if (remoteVideo) remoteVideo.pause();
+                
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                pauseBtn.classList.add('active');
+                console.log('⏸️ Videos paused');
+                
+            } else {
+                // Resume videos
+                if (localVideo) localVideo.play();
+                if (remoteVideo) remoteVideo.play();
+                
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                pauseBtn.classList.remove('active');
+                console.log('▶️ Videos resumed');
+            }
+        }
+
+        // Handle Enter key in chat input
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+            
+            // Handle fullscreen change events
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        });
+
+        function handleFullscreenChange() {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const isCurrentlyFullscreen = !!(document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.mozFullScreenElement || 
+                document.msFullscreenElement);
+            
+            if (isCurrentlyFullscreen !== isFullscreen) {
+                isFullscreen = isCurrentlyFullscreen;
+                if (fullscreenBtn) {
+                    if (isFullscreen) {
+                        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                        fullscreenBtn.classList.add('active');
+                    } else {
+                        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                        fullscreenBtn.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        // Override console.log for live reload notifications
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('Live reload enabled')) {
+                showNotification('Live reload enabled', 'info', 2000);
+            }
+            originalConsoleLog.apply(console, args);
+        };
+    </script>
+    
+    <!-- Notification Container -->
+    <div class="notification-container"></div>
+</body>
+</html>

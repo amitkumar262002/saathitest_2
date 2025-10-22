@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Saathi TV</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="goHome()">
+                <div class="logo-circle-small">
+                    <span class="logo-text-small">Saathi<span class="tv-small">TV</span></span>
+                </div>
+            </div>
+            <div class="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="javascript:history.back()" class="nav-link">Back</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="feature-icon-large">🆘</div>
+                <h1>Support Center</h1>
+                <p class="hero-subtitle">Find answers to common questions and get help</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="container">
+                <div class="support-search">
+                    <h2>Search for Help</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search for help topics..." onkeyup="searchSupport()">
+                        <button onclick="searchSupport()">🔍</button>
+                    </div>
+                </div>
+
+                <div class="support-categories">
+                    <h2>Help Categories</h2>
+                    <div class="categories-grid">
+                        <div class="category-card" onclick="showCategory('getting-started')">
+                            <div class="category-icon">🚀</div>
+                            <h3>Getting Started</h3>
+                            <p>Learn how to use Saathi TV</p>
+                        </div>
+                        <div class="category-card" onclick="showCategory('technical')">
+                            <div class="category-icon">🔧</div>
+                            <h3>Technical Issues</h3>
+                            <p>Camera, microphone, and connection problems</p>
+                        </div>
+                        <div class="category-card" onclick="showCategory('safety')">
+                            <div class="category-icon">🛡️</div>
+                            <h3>Safety & Security</h3>
+                            <p>Reporting and blocking users</p>
+                        </div>
+                        <div class="category-card" onclick="showCategory('account')">
+                            <div class="category-icon">👤</div>
+                            <h3>Account Issues</h3>
+                            <p>Blocked accounts and appeals</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-section">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-container">
+                        <div class="faq-category" id="getting-started">
+                            <h3>🚀 Getting Started</h3>
+                            <div class="faq-items">
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>How do I start a video chat?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>1. Click "Start Chat" on the homepage<br>
+                                        2. Allow camera and microphone permissions<br>
+                                        3. Set your preferences (country, gender)<br>
+                                        4. Wait to be matched with someone</p>
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>Do I need to create an account?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>No! Saathi TV is completely anonymous. No registration or personal information required.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-category" id="technical">
+                            <h3>🔧 Technical Issues</h3>
+                            <div class="faq-items">
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>Camera not working?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>1. Check browser permissions (click camera icon in address bar)<br>
+                                        2. Close other apps using camera<br>
+                                        3. Refresh the page<br>
+                                        4. Try a different browser<br>
+                                        5. Restart your device</p>
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>Poor video quality?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>1. Check your internet connection<br>
+                                        2. Close other bandwidth-heavy applications<br>
+                                        3. Move closer to your router<br>
+                                        4. Try switching to a wired connection</p>
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>No sound or microphone issues?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>1. Check microphone permissions<br>
+                                        2. Ensure microphone is not muted<br>
+                                        3. Check system volume settings<br>
+                                        4. Test with other applications<br>
+                                        5. Try using headphones</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-category" id="safety">
+                            <h3>🛡️ Safety & Security</h3>
+                            <div class="faq-items">
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>How do I report inappropriate behavior?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>1. Click the 🚨 report button during video chat<br>
+                                        2. Select the reason for reporting<br>
+                                        3. Add additional details if needed<br>
+                                        4. Submit the report<br>
+                                        Our AI system also automatically detects and blocks inappropriate content.</p>
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>Is my privacy protected?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>Yes! We never record conversations, don't require personal information, and use end-to-end encryption for all video calls.</p>
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>What happens to reported users?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>Reported users are immediately reviewed by our AI system and human moderators. Violations result in temporary or permanent blocks.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-category" id="account">
+                            <h3>👤 Account Issues</h3>
+                            <div class="faq-items">
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>Why was I blocked?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>Blocks occur due to:<br>
+                                        • Inappropriate content or behavior<br>
+                                        • Multiple user reports<br>
+                                        • AI detection of violations<br>
+                                        • Spam or commercial activity</p>
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="toggleFaq(this)">
+                                        <span>How can I appeal a block?</span>
+                                        <span class="faq-toggle">+</span>
+                                    </div>
+                                    <div class="faq-answer">
+                                        <p>Email support@saathi-tv.com with:<br>
+                                        • Your device information<br>
+                                        • Time and date of the block<br>
+                                        • Explanation of the situation<br>
+                                        Appeals are reviewed within 24-48 hours.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="troubleshooting">
+                    <h2>Quick Troubleshooting</h2>
+                    <div class="troubleshoot-steps">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <h4>Refresh the Page</h4>
+                            <p>Many issues are resolved by simply refreshing your browser</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <h4>Check Permissions</h4>
+                            <p>Ensure camera and microphone permissions are granted</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <h4>Clear Cache</h4>
+                            <p>Clear your browser cache and cookies</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">4</div>
+                            <h4>Try Different Browser</h4>
+                            <p>Test with Chrome, Firefox, Safari, or Edge</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-support">
+                    <h2>Still Need Help?</h2>
+                    <p>Can't find what you're looking for? Our support team is here to help!</p>
+                    <div class="support-options">
+                        <a href="contact.html" class="support-btn">📧 Contact Support</a>
+                        <a href="mailto:support@saathi-tv.com" class="support-btn">✉️ Email Us</a>
+                        <a href="tel:+1-800-SAATHI" class="support-btn">📞 Call Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/pages.js"></script>
+    <script>
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const answer = faqItem.querySelector('.faq-answer');
+            const toggle = element.querySelector('.faq-toggle');
+            
+            if (answer.style.display === 'block') {
+                answer.style.display = 'none';
+                toggle.textContent = '+';
+                faqItem.classList.remove('active');
+            } else {
+                // Close all other open FAQs
+                document.querySelectorAll('.faq-answer').forEach(ans => {
+                    ans.style.display = 'none';
+                });
+                document.querySelectorAll('.faq-toggle').forEach(tog => {
+                    tog.textContent = '+';
+                });
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Open clicked FAQ
+                answer.style.display = 'block';
+                toggle.textContent = '−';
+                faqItem.classList.add('active');
+            }
+        }
+
+        function showCategory(categoryId) {
+            const category = document.getElementById(categoryId);
+            if (category) {
+                category.scrollIntoView({ behavior: 'smooth' });
+                category.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                setTimeout(() => {
+                    category.style.backgroundColor = '';
+                }, 2000);
+            }
+        }
+
+        function searchSupport() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer p').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    if (searchTerm.length > 2) {
+                        item.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                    }
+                } else {
+                    item.style.display = searchTerm.length > 2 ? 'none' : 'block';
+                    item.style.backgroundColor = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

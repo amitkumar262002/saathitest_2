@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Saathi TV</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="goHome()">
+                <div class="logo-circle-small">
+                    <span class="logo-text-small">Saathi<span class="tv-small">TV</span></span>
+                </div>
+            </div>
+            <div class="nav-menu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="javascript:history.back()" class="nav-link">Back</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="feature-icon-large">📞</div>
+                <h1>Contact Us</h1>
+                <p class="hero-subtitle">We're here to help! Get in touch with our support team</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="container">
+                <div class="contact-grid">
+                    <div class="contact-methods">
+                        <h2>Get in Touch</h2>
+                        
+                        <div class="contact-method">
+                            <div class="method-icon">📧</div>
+                            <div class="method-info">
+                                <h3>Email Support</h3>
+                                <p>support@saathi-tv.com</p>
+                                <small>Response within 24 hours</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="method-icon">🚨</div>
+                            <div class="method-info">
+                                <h3>Report Abuse</h3>
+                                <p>abuse@saathi-tv.com</p>
+                                <small>Urgent reports handled immediately</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="method-icon">💼</div>
+                            <div class="method-info">
+                                <h3>Business Inquiries</h3>
+                                <p>business@saathi-tv.com</p>
+                                <small>Partnerships and collaborations</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="method-icon">🔒</div>
+                            <div class="method-info">
+                                <h3>Privacy & Legal</h3>
+                                <p>legal@saathi-tv.com</p>
+                                <small>Privacy concerns and legal matters</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="method-icon">📱</div>
+                            <div class="method-info">
+                                <h3>24/7 Hotline</h3>
+                                <p>+1-800-SAATHI</p>
+                                <small>Emergency support available</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-section">
+                        <h2>Send us a Message</h2>
+                        <form class="contact-form" onsubmit="submitContactForm(event)">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <select id="subject" name="subject" required>
+                                    <option value="">Select a topic</option>
+                                    <option value="technical">Technical Issue</option>
+                                    <option value="abuse">Report Abuse</option>
+                                    <option value="feedback">Feedback</option>
+                                    <option value="business">Business Inquiry</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" rows="6" required placeholder="Please describe your issue or inquiry in detail..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="privacy" name="privacy" required>
+                                    I agree to the <a href="privacy-policy.html" target="_blank">Privacy Policy</a>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="faq-section">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-grid">
+                        <div class="faq-item">
+                            <h4>How do I report inappropriate behavior?</h4>
+                            <p>Click the 🚨 report button during video chat or email abuse@saathi-tv.com with details.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>Why can't I access my camera?</h4>
+                            <p>Check browser permissions, ensure no other apps are using your camera, and try refreshing the page.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>Is my data safe?</h4>
+                            <p>Yes, we don't record conversations and use end-to-end encryption for all video calls.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h4>How do I unblock my account?</h4>
+                            <p>Contact support@saathi-tv.com with your device information and reason for appeal.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="office-info">
+                    <h2>Our Office</h2>
+                    <div class="office-details">
+                        <div class="office-address">
+                            <h3>📍 Headquarters</h3>
+                            <p>Saathi TV Technologies<br>
+                            123 Tech Park Avenue<br>
+                            Silicon Valley, CA 94025<br>
+                            United States</p>
+                        </div>
+                        <div class="office-hours">
+                            <h3>🕒 Business Hours</h3>
+                            <p>Monday - Friday: 9:00 AM - 6:00 PM PST<br>
+                            Saturday: 10:00 AM - 4:00 PM PST<br>
+                            Sunday: Closed<br>
+                            <strong>Emergency Support: 24/7</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/pages.js"></script>
+    <script>
+        function submitContactForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Simulate form submission
+            console.log('Contact form submitted:', data);
+            
+            // Show success message
+            showNotification('Message sent successfully! We\'ll get back to you within 24 hours.', 'success');
+            
+            // Reset form
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>
