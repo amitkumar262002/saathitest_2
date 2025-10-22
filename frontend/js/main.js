@@ -79,9 +79,7 @@ class SaathiTV {
     connectToServer() {
         try {
             // Connect to backend server
-            const serverUrl = window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : window.location.origin;
+            const serverUrl = 'http://localhost:3000'; // Force localhost for local testing
             
             this.socket = io(serverUrl);
             

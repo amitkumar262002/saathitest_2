@@ -508,7 +508,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/complete-error-fix.js"></script>
+    <!-- <script src="js/complete-error-fix.js"></script> --> <!-- Disabled - causing connection issues -->
     <script src="js/performance-fix.js"></script>
     <script src="js/dom-safety-fix.js"></script>
     <script src="js/localhost-server-fix.js"></script>
@@ -524,6 +524,7 @@
     <script src="js/omegle-style-chat.js"></script>
     <!-- <script src="js/real-webrtc-connection.js"></script> --> <!-- Disabled - conflicts with main WebRTC system -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="js/connection-fix.js"></script>
     <script>
         // Check if splash screen should be shown
         if (!sessionStorage.getItem('splashShown') && !window.location.search.includes('nosplash')) {
@@ -694,6 +695,7 @@
     <script src="js/chat-system-fix.js"></script>
     <!-- <script src="js/function-analyzer.js"></script> --> <!-- Disabled - causes spam -->
     <script src="js/connection-test.js"></script>
+    <script src="js/debug-connection.js"></script>
     <script src="js/user-stats-display.js"></script>
     <script src="js/security.js"></script>
     <script src="js/main.js"></script>
