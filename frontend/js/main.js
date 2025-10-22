@@ -90,10 +90,7 @@ class SaathiTV {
                 this.isConnected = true;
                 this.updateConnectionStatus('Connected', 'connected');
                 
-                // Connect WebRTC manager to socket after connection is established
-                if (window.webRTCManager) {
-                    window.webRTCManager.setSocket(this.socket);
-                }
+                // WebRTC connection handled by simple-webrtc-fix.js automatically
                 
                 // Connect chat manager to socket
                 if (window.chatManager) {
@@ -218,9 +215,9 @@ class SaathiTV {
             const localVideo = document.getElementById('localVideo');
             localVideo.srcObject = stream;
 
-            // Initialize WebRTC
-            if (window.webRTCManager) {
-                window.webRTCManager.setLocalStream(stream);
+            // Initialize WebRTC (handled by simple-webrtc-fix.js)
+            if (window.simpleWebRTCFix) {
+                window.simpleWebRTCFix.localStream = stream;
             }
 
             // Initialize audio/video controls
