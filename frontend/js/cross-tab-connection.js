@@ -456,24 +456,46 @@ class CrossTabConnection {
 
 // Initialize Cross-Tab Connection
 document.addEventListener('DOMContentLoaded', () => {
-    window.crossTabConnection = new CrossTabConnection();
-    
-    // Integrate with auto-join manager
-    if (window.autoJoinManager) {
-        // Override the auto-join search with cross-tab connection
-        const originalStartAutoJoin = window.autoJoinManager.startAutoJoin;
-        window.autoJoinManager.startAutoJoin = function(country, gender) {
-            console.log('🔄 Using cross-tab connection instead of mock auto-join');
-            window.crossTabConnection.startSearching();
-        };
+    // Wait a bit for other scripts to load
+    setTimeout(() => {
+        console.log('🔗 Initializing Cross-Tab Connection...');
+        window.crossTabConnection = new CrossTabConnection();
         
-        // Override next user function
-        const originalFindNextUser = window.autoJoinManager.findNextUser;
-        window.autoJoinManager.findNextUser = function() {
-            console.log('⏭️ Using cross-tab next user');
-            window.crossTabConnection.findNextPartner();
-        };
-    }
+        // Integrate with auto-join manager
+        setTimeout(() => {
+            if (window.autoJoinManager) {
+                console.log('🔄 Integrating with Auto-Join Manager...');
+                
+                // Override the auto-join search with cross-tab connection
+                const originalStartAutoJoin = window.autoJoinManager.startAutoJoin;
+                window.autoJoinManager.startAutoJoin = function(country, gender) {
+                    console.log('🔄 Using cross-tab connection instead of mock auto-join');
+                    if (window.crossTabConnection) {
+                        window.crossTabConnection.startSearching();
+                    } else {
+                        console.warn('⚠️ Cross-tab connection not available, using original');
+                        originalStartAutoJoin.call(this, country, gender);
+                    }
+                };
+                
+                // Override next user function
+                const originalFindNextUser = window.autoJoinManager.findNextUser;
+                window.autoJoinManager.findNextUser = function() {
+                    console.log('⏭️ Using cross-tab next user');
+                    if (window.crossTabConnection) {
+                        window.crossTabConnection.findNextPartner();
+                    } else {
+                        console.warn('⚠️ Cross-tab connection not available, using original');
+                        originalFindNextUser.call(this);
+                    }
+                };
+                
+                console.log('✅ Cross-tab integration complete');
+            } else {
+                console.warn('⚠️ Auto-Join Manager not found for integration');
+            }
+        }, 500);
+    }, 1000);
 });
 
 // Export for global access
