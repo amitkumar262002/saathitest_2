@@ -61,6 +61,11 @@ class WebRTCManager {
         this.socket.on('room-full', () => {
             this.handleRoomFull();
         });
+
+        this.socket.on('roomJoined', (roomId) => {
+            console.log('🏠 Joined room:', roomId);
+            this.roomId = roomId;
+        });
     }
 
     async createPeerConnection() {
@@ -70,40 +75,57 @@ class WebRTCManager {
             // Handle ICE candidates
             this.peerConnection.onicecandidate = (event) => {
                 if (event.candidate && this.socket) {
+                    console.log('🧊 Sending ICE candidate:', event.candidate);
                     this.socket.emit('ice-candidate', {
                         candidate: event.candidate,
                         roomId: this.roomId
                     });
+                } else if (!event.candidate) {
+                    console.log('🏁 ICE gathering complete');
                 }
             };
 
             // Handle remote stream
             this.peerConnection.ontrack = (event) => {
-                console.log('Received remote stream');
+                console.log('🎥 Received remote stream:', event.streams[0]);
                 this.remoteStream = event.streams[0];
                 const remoteVideo = document.getElementById('remoteVideo');
                 if (remoteVideo) {
                     remoteVideo.srcObject = this.remoteStream;
+                    console.log('✅ Remote video stream set successfully');
+                    
+                    // Update connection status when remote video is playing
+                    remoteVideo.onloadedmetadata = () => {
+                        console.log('🎬 Remote video metadata loaded');
+                        this.updateConnectionStatus('Connected');
+                    };
+                } else {
+                    console.error('❌ Remote video element not found');
                 }
             };
 
             // Handle connection state changes
             this.peerConnection.onconnectionstatechange = () => {
-                console.log('Connection state:', this.peerConnection.connectionState);
+                console.log('🔗 Connection state changed:', this.peerConnection.connectionState);
                 this.updateConnectionStatus(this.peerConnection.connectionState);
             };
 
             // Handle ICE connection state changes
             this.peerConnection.oniceconnectionstatechange = () => {
-                console.log('ICE connection state:', this.peerConnection.iceConnectionState);
+                console.log('🧊 ICE connection state changed:', this.peerConnection.iceConnectionState);
                 this.handleIceConnectionStateChange();
             };
 
             // Add local stream to peer connection
             if (this.localStream) {
+                console.log('📹 Adding local stream tracks to peer connection');
                 this.localStream.getTracks().forEach(track => {
+                    console.log(`➕ Adding ${track.kind} track:`, track);
                     this.peerConnection.addTrack(track, this.localStream);
                 });
+                console.log('✅ All local tracks added to peer connection');
+            } else {
+                console.warn('⚠️ No local stream available to add to peer connection');
             }
 
             return this.peerConnection;
@@ -114,65 +136,96 @@ class WebRTCManager {
     }
 
     async handleUserJoined(data) {
-        console.log('User joined room, creating offer...');
+        console.log('🤝 User joined room, creating offer...', data);
         this.isInitiator = true;
         this.roomId = data.roomId;
         
+        // Update status
+        this.updateConnectionStatus('Connecting to peer...');
+        
         try {
+            // Ensure we have local stream before creating peer connection
+            if (!this.localStream) {
+                console.error('❌ No local stream available for peer connection');
+                return;
+            }
+            
             await this.createPeerConnection();
+            console.log('✅ Peer connection created, creating offer...');
+            
             const offer = await this.peerConnection.createOffer({
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true
             });
             
             await this.peerConnection.setLocalDescription(offer);
+            console.log('📤 Sending offer to peer...');
             
             this.socket.emit('offer', {
                 offer: offer,
                 roomId: this.roomId
             });
         } catch (error) {
-            console.error('Error creating offer:', error);
+            console.error('❌ Error creating offer:', error);
+            this.updateConnectionStatus('Connection failed');
         }
     }
 
     async handleOffer(data) {
-        console.log('Received offer, creating answer...');
+        console.log('📥 Received offer, creating answer...', data);
         this.roomId = data.roomId;
         
+        // Update status
+        this.updateConnectionStatus('Connecting to peer...');
+        
         try {
+            // Ensure we have local stream
+            if (!this.localStream) {
+                console.error('❌ No local stream available for peer connection');
+                return;
+            }
+            
             await this.createPeerConnection();
+            console.log('✅ Peer connection created, setting remote description...');
+            
             await this.peerConnection.setRemoteDescription(data.offer);
+            console.log('✅ Remote description set, creating answer...');
             
             const answer = await this.peerConnection.createAnswer();
             await this.peerConnection.setLocalDescription(answer);
+            console.log('📤 Sending answer to peer...');
             
             this.socket.emit('answer', {
                 answer: answer,
                 roomId: this.roomId
             });
         } catch (error) {
-            console.error('Error handling offer:', error);
+            console.error('❌ Error handling offer:', error);
+            this.updateConnectionStatus('Connection failed');
         }
     }
 
     async handleAnswer(data) {
-        console.log('Received answer');
+        console.log('📥 Received answer, setting remote description...', data);
         try {
             await this.peerConnection.setRemoteDescription(data.answer);
+            console.log('✅ Remote description set successfully');
         } catch (error) {
-            console.error('Error handling answer:', error);
+            console.error('❌ Error handling answer:', error);
         }
     }
 
     async handleIceCandidate(data) {
-        console.log('Received ICE candidate');
+        console.log('🧊 Received ICE candidate:', data.candidate);
         try {
             if (this.peerConnection && data.candidate) {
                 await this.peerConnection.addIceCandidate(data.candidate);
+                console.log('✅ ICE candidate added successfully');
+            } else {
+                console.warn('⚠️ No peer connection or candidate data');
             }
         } catch (error) {
-            console.error('Error handling ICE candidate:', error);
+            console.error('❌ Error handling ICE candidate:', error);
         }
     }
 
