@@ -70,11 +70,27 @@ class AutoJoinManager {
         console.log('🚀 Starting enhanced chat with auto-join');
         
         try {
+            // Show loading state first
+            this.updateStatus('Initializing...', 'connecting');
+            
             // Get user preferences
             const country = document.getElementById('countrySelect')?.value || 'India';
             const gender = document.getElementById('genderSelect')?.value || 'any';
             
+            console.log('📋 User preferences:', { country, gender });
+            
+            // Show video chat interface first
+            this.showVideoChat();
+            
+            // Force mobile controls positioning
+            setTimeout(() => {
+                if (window.fixMobileControls) {
+                    window.fixMobileControls();
+                }
+            }, 500);
+            
             // Request camera and microphone permissions
+            console.log('📹 Requesting camera/microphone permissions...');
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     width: { ideal: 1280 },
@@ -88,25 +104,28 @@ class AutoJoinManager {
                 }
             });
 
+            console.log('✅ Camera/microphone access granted');
+
             // Set local video stream
             const localVideo = document.getElementById('localVideo');
             if (localVideo) {
                 localVideo.srcObject = stream;
+                console.log('📹 Local video stream set');
             }
 
             // Initialize WebRTC with stream
             if (window.webRTCManager) {
                 window.webRTCManager.setLocalStream(stream);
+                console.log('🔗 WebRTC manager initialized');
             }
 
-            // Show video chat interface
-            this.showVideoChat();
-
-            // Start auto-join process
+            // Start auto-join process immediately
+            console.log('🔍 Starting auto-join process...');
             this.startAutoJoin(country, gender);
 
         } catch (error) {
             console.error('❌ Error starting enhanced chat:', error);
+            this.updateStatus('Camera access denied', 'disconnected');
             alert('Unable to access camera/microphone. Please check permissions and try again.');
         }
     }
@@ -117,10 +136,10 @@ class AutoJoinManager {
         this.isSearching = true;
         this.updateStatus('Looking for someone...', 'connecting');
         
-        // Simulate finding users
+        // Simulate finding users - FASTER connection
         setTimeout(() => {
             this.simulateUserFound(country, gender);
-        }, Math.random() * 3000 + 1000); // 1-4 seconds
+        }, Math.random() * 1000 + 500); // 0.5-1.5 seconds
     }
     
     simulateUserFound(country, gender) {

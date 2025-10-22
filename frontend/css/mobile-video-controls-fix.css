@@ -1,23 +1,31 @@
 /* Mobile Video Controls Fix - Keep buttons floating above bottom */
 
-/* Enhanced Video Controls for Mobile */
-.video-controls {
+/* Enhanced Video Controls for Mobile - STRONGEST OVERRIDE */
+.video-controls,
+.control-group.video-controls,
+div.control-group.video-controls,
+.video-controls.mobile-enhanced {
     position: fixed !important;
-    bottom: 80px !important; /* Keep above mobile browser UI */
+    bottom: 100px !important; /* Keep well above mobile browser UI */
     left: 50% !important;
     transform: translateX(-50%) !important;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
     display: flex !important;
     gap: 12px !important;
-    background: rgba(0, 0, 0, 0.85) !important;
-    padding: 12px 20px !important;
+    background: rgba(0, 0, 0, 0.9) !important;
+    padding: 15px 25px !important;
     border-radius: 50px !important;
-    backdrop-filter: blur(15px) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
     max-width: 90vw !important;
     overflow-x: auto !important;
     scrollbar-width: none !important; /* Firefox */
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    top: auto !important;
+    right: auto !important;
 }
 
 /* Hide scrollbar for Webkit browsers */
