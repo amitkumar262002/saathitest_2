@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .success { background: rgba(76, 175, 80, 0.3); border-left: 4px solid #4CAF50; }
+        .error { background: rgba(244, 67, 54, 0.3); border-left: 4px solid #f44336; }
+        .info { background: rgba(33, 150, 243, 0.3); border-left: 4px solid #2196F3; }
+        button {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Saathi TV - Connection Test</h1>
+        <p>Testing backend server connection and Socket.io functionality</p>
+        
+        <div id="status"></div>
+        
+        <button onclick="testConnection()">Test Connection</button>
+        <button onclick="testSocketIO()">Test Socket.IO</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="onlineUsers">-</div>
+                <div>Online Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeRooms">-</div>
+                <div>Active Rooms</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="waitingUsers">-</div>
+                <div>Waiting Users</div>
+            </div>
+        </div>
+        
+        <div id="logs" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        let socket = null;
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('logs');
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const statusElement = document.createElement('div');
+            statusElement.className = `status ${type}`;
+            statusElement.textContent = message;
+            statusDiv.appendChild(statusElement);
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (statusElement.parentElement) {
+                    statusElement.remove();
+                }
+            }, 10000);
+        }
+        
+        async function testConnection() {
+            log('🔍 Testing HTTP connection to backend...');
+            showStatus('Testing HTTP connection...', 'info');
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                log('✅ HTTP connection successful!');
+                log(`Server status: ${data.status}`);
+                log(`Server uptime: ${data.uptime} seconds`);
+                
+                showStatus('✅ HTTP connection successful!', 'success');
+                
+                // Test user count endpoint
+                const userResponse = await fetch('/api/users/count');
+                const userData = await userResponse.json();
+                log(`Current user count: ${userData.count}`);
+                
+            } catch (error) {
+                log('❌ HTTP connection failed: ' + error.message);
+                showStatus('❌ HTTP connection failed: ' + error.message, 'error');
+            }
+        }
+        
+        function testSocketIO() {
+            log('🔌 Testing Socket.IO connection...');
+            showStatus('Testing Socket.IO connection...', 'info');
+            
+            if (socket) {
+                socket.disconnect();
+            }
+            
+            socket = io();
+            
+            socket.on('connect', () => {
+                log('✅ Socket.IO connected! ID: ' + socket.id);
+                showStatus('✅ Socket.IO connected!', 'success');
+            });
+            
+            socket.on('disconnect', () => {
+                log('🔌 Socket.IO disconnected');
+                showStatus('Socket.IO disconnected', 'info');
+            });
+            
+            socket.on('connect_error', (error) => {
+                log('❌ Socket.IO connection error: ' + error.message);
+                showStatus('❌ Socket.IO connection error: ' + error.message, 'error');
+            });
+            
+            socket.on('userStats', (stats) => {
+                log('📊 Received user stats: ' + JSON.stringify(stats));
+                updateStats(stats);
+            });
+            
+            socket.on('userCount', (count) => {
+                log('👥 User count update: ' + count);
+                document.getElementById('onlineUsers').textContent = count;
+            });
+        }
+        
+        function updateStats(stats) {
+            document.getElementById('onlineUsers').textContent = stats.onlineUsers || 0;
+            document.getElementById('activeRooms').textContent = stats.totalRooms || 0;
+            document.getElementById('waitingUsers').textContent = stats.waitingUsers || 0;
+        }
+        
+        function clearResults() {
+            document.getElementById('status').innerHTML = '';
+            document.getElementById('logs').textContent = '';
+            log('🧹 Results cleared');
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Connection test page loaded');
+            setTimeout(() => {
+                testConnection();
+                setTimeout(() => {
+                    testSocketIO();
+                }, 2000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
