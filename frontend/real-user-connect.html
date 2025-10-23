@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Real User Connection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .user-info {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-id {
+            background: rgba(76, 175, 80, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .online-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-bar {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status-bar.waiting { background: rgba(255, 152, 0, 0.3); }
+        .status-bar.connected { background: rgba(76, 175, 80, 0.3); }
+        .status-bar.error { background: rgba(244, 67, 54, 0.3); }
+
+        .video-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .video-box {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .video-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .user-badge {
+            background: rgba(33, 150, 243, 0.3);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #333;
+            color: #666;
+            font-size: 24px;
+            gap: 10px;
+        }
+
+        .controls {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .queue-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .connection-log {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎥 Saathi TV - Real User Connection</h1>
+        <p>Connect with actual users who are online right now</p>
+    </div>
+
+    <div class="user-info">
+        <div class="user-details">
+            <div class="user-id" id="myUserId">User: Loading...</div>
+            <div>🌐 Status: <span id="connectionStatus">Connecting...</span></div>
+        </div>
+        <div class="online-stats">
+            <div class="stat">👥 Online: <span id="onlineUsers">0</span></div>
+            <div class="stat">⏳ Waiting: <span id="waitingUsers">0</span></div>
+            <div class="stat">🔗 Connected: <span id="connectedPairs">0</span></div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">Click "Find Someone" to start connecting with real users</div>
+
+    <div class="video-container">
+        <div class="video-box">
+            <div class="video-header">
+                <div class="video-title">📹 Your Video</div>
+                <div class="user-badge" id="myBadge">You</div>
+            </div>
+            <div class="video-wrapper">
+                <video id="localVideo" autoplay muted playsinline style="display: none;"></video>
+                <div class="placeholder" id="localPlaceholder">
+                    <div>📷</div>
+                    <div style="font-size: 14px;">Your camera will appear here</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-box">
+            <div class="video-header">
+                <div class="video-title">👤 Connected User</div>
+                <div class="user-badge" id="peerBadge">Waiting...</div>
+            </div>
+            <div class="video-wrapper">
+                <video id="remoteVideo" autoplay playsinline style="display: none;"></video>
+                <div class="placeholder" id="remotePlaceholder">
+                    <div>⏳</div>
+                    <div style="font-size: 14px;">Waiting for connection...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-primary" id="findBtn" onclick="findSomeone()">🔍 Find Someone</button>
+        <button class="btn btn-secondary" id="nextBtn" onclick="nextUser()" disabled>⏭️ Next User</button>
+        <button class="btn btn-secondary" id="videoToggle" onclick="toggleVideo()" disabled>📹 Video ON</button>
+        <button class="btn btn-secondary" id="audioToggle" onclick="toggleAudio()" disabled>🎤 Audio ON</button>
+        <button class="btn btn-danger" id="stopBtn" onclick="stopConnection()" disabled>🛑 Stop</button>
+    </div>
+
+    <div class="queue-info" id="queueInfo">
+        <strong>🔍 Finding Users...</strong><br>
+        <div id="queueDetails">Ready to connect</div>
+    </div>
+
+    <div class="connection-log" id="connectionLog">
+        <strong>Connection Log:</strong><br>
+        <div id="logContent">Initializing...</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        class RealUserConnector {
+            constructor() {
+                this.socket = null;
+                this.peerConnection = null;
+                this.localStream = null;
+                this.remoteStream = null;
+                this.myUserId = null;
+                this.connectedPeerId = null;
+                this.isSearching = false;
+                this.connectionState = 'disconnected';
+                
+                // WebRTC configuration
+                this.rtcConfig = {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.log('🚀 Real User Connector initializing...');
+                this.connectToServer();
+            }
+            
+            connectToServer() {
+                // Connect to ultra-simple server
+                this.socket = io('http://localhost:3002');
+                
+                this.socket.on('connect', () => {
+                    this.myUserId = this.socket.id;
+                    this.log(`✅ Connected as user: ${this.myUserId.substring(0, 8)}...`);
+                    
+                    document.getElementById('myUserId').textContent = `User: ${this.myUserId.substring(0, 8)}...`;
+                    document.getElementById('myBadge').textContent = `You (${this.myUserId.substring(0, 6)})`;
+                    document.getElementById('connectionStatus').textContent = 'Online';
+                    
+                    this.updateStatusBar('✅ Connected! Ready to find other users', 'connected');
+                });
+                
+                this.socket.on('disconnect', () => {
+                    this.log('❌ Disconnected from server');
+                    document.getElementById('connectionStatus').textContent = 'Offline';
+                    this.updateStatusBar('❌ Disconnected from server', 'error');
+                });
+                
+                // Real-time stats updates
+                this.socket.on('stats', (stats) => {
+                    this.updateStats(stats);
+                    this.log(`📊 Stats: ${stats.totalUsers} online, ${stats.waitingUsers} waiting, ${stats.connectedPairs} pairs`);
+                });
+                
+                // Peer matching events
+                this.socket.on('peer-found', (peerId) => {
+                    this.log(`🎉 Found real user: ${peerId.substring(0, 8)}...`);
+                    this.connectedPeerId = peerId;
+                    this.updateStatusBar(`🔗 Connecting to user ${peerId.substring(0, 8)}...`, 'waiting');
+                    document.getElementById('peerBadge').textContent = `User ${peerId.substring(0, 6)}`;
+                    this.createPeerConnection(true); // I'm the caller
+                });
+                
+                this.socket.on('peer-calling', (peerId) => {
+                    this.log(`📞 User ${peerId.substring(0, 8)}... is calling you`);
+                    this.connectedPeerId = peerId;
+                    this.updateStatusBar(`📞 Incoming call from user ${peerId.substring(0, 8)}...`, 'waiting');
+                    document.getElementById('peerBadge').textContent = `User ${peerId.substring(0, 6)}`;
+                    this.createPeerConnection(false); // I'm the receiver
+                });
+                
+                // WebRTC signaling
+                this.socket.on('webrtc-offer', async (data) => {
+                    this.log(`📥 Received offer from ${data.from.substring(0, 8)}...`);
+                    await this.handleOffer(data.offer);
+                });
+                
+                this.socket.on('webrtc-answer', async (data) => {
+                    this.log(`📥 Received answer from ${data.from.substring(0, 8)}...`);
+                    await this.handleAnswer(data.answer);
+                });
+                
+                this.socket.on('webrtc-ice', async (data) => {
+                    this.log(`🧊 Received ICE from ${data.from.substring(0, 8)}...`);
+                    await this.handleIceCandidate(data.candidate);
+                });
+                
+                this.socket.on('peer-disconnected', () => {
+                    this.log('👋 User disconnected');
+                    this.handlePeerDisconnect();
+                });
+            }
+            
+            async findSomeone() {
+                if (this.isSearching) return;
+                
+                try {
+                    this.log('🔍 Looking for real users online...');
+                    this.isSearching = true;
+                    
+                    // Get camera access first
+                    this.localStream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: 640, height: 480 },
+                        audio: true
+                    });
+                    
+                    // Show local video
+                    const localVideo = document.getElementById('localVideo');
+                    const localPlaceholder = document.getElementById('localPlaceholder');
+                    
+                    localVideo.srcObject = this.localStream;
+                    localVideo.style.display = 'block';
+                    localPlaceholder.style.display = 'none';
+                    
+                    this.log('📹 Camera ready, searching for users...');
+                    this.updateStatusBar('🔍 Searching for real users online...', 'waiting');
+                    
+                    // Request to find a real peer
+                    this.socket.emit('find-peer');
+                    
+                    // Update UI
+                    document.getElementById('findBtn').disabled = true;
+                    document.getElementById('nextBtn').disabled = false;
+                    document.getElementById('videoToggle').disabled = false;
+                    document.getElementById('audioToggle').disabled = false;
+                    document.getElementById('stopBtn').disabled = false;
+                    
+                    this.updateQueueInfo('Looking for available users...');
+                    
+                } catch (error) {
+                    this.log(`❌ Error: ${error.message}`);
+                    this.updateStatusBar('❌ Camera access denied', 'error');
+                    this.isSearching = false;
+                    alert('Please allow camera and microphone access to connect with other users.');
+                }
+            }
+            
+            async createPeerConnection(isCaller) {
+                try {
+                    this.log(`🔗 Creating connection (caller: ${isCaller})`);
+                    
+                    this.peerConnection = new RTCPeerConnection(this.rtcConfig);
+                    
+                    // Add local stream
+                    if (this.localStream) {
+                        this.localStream.getTracks().forEach(track => {
+                            this.peerConnection.addTrack(track, this.localStream);
+                        });
+                    }
+                    
+                    // Handle remote stream
+                    this.peerConnection.ontrack = (event) => {
+                        this.log('🎥 Receiving video from real user!');
+                        this.remoteStream = event.streams[0];
+                        
+                        const remoteVideo = document.getElementById('remoteVideo');
+                        const remotePlaceholder = document.getElementById('remotePlaceholder');
+                        
+                        remoteVideo.srcObject = this.remoteStream;
+                        remoteVideo.style.display = 'block';
+                        remotePlaceholder.style.display = 'none';
+                        
+                        this.updateStatusBar('🎉 Connected with real user! Video chat active', 'connected');
+                        this.connectionState = 'connected';
+                        this.updateQueueInfo('Connected successfully!');
+                    };
+                    
+                    // Handle ICE candidates
+                    this.peerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            this.socket.emit('webrtc-ice', {
+                                to: this.connectedPeerId,
+                                candidate: event.candidate
+                            });
+                        }
+                    };
+                    
+                    // Handle connection state
+                    this.peerConnection.onconnectionstatechange = () => {
+                        const state = this.peerConnection.connectionState;
+                        this.log(`🔗 Connection state: ${state}`);
+                        
+                        if (state === 'failed' || state === 'disconnected') {
+                            this.log('❌ Connection lost with user');
+                            this.updateStatusBar('❌ Connection lost - finding new user...', 'error');
+                            setTimeout(() => this.nextUser(), 2000);
+                        }
+                    };
+                    
+                    // If I'm the caller, create offer
+                    if (isCaller) {
+                        const offer = await this.peerConnection.createOffer();
+                        await this.peerConnection.setLocalDescription(offer);
+                        
+                        this.socket.emit('webrtc-offer', {
+                            to: this.connectedPeerId,
+                            offer: offer
+                        });
+                        
+                        this.log('📤 Sent connection offer to user');
+                    }
+                    
+                } catch (error) {
+                    this.log(`❌ Connection error: ${error.message}`);
+                    this.updateStatusBar('❌ Connection failed', 'error');
+                }
+            }
+            
+            async handleOffer(offer) {
+                try {
+                    await this.peerConnection.setRemoteDescription(offer);
+                    
+                    const answer = await this.peerConnection.createAnswer();
+                    await this.peerConnection.setLocalDescription(answer);
+                    
+                    this.socket.emit('webrtc-answer', {
+                        to: this.connectedPeerId,
+                        answer: answer
+                    });
+                    
+                    this.log('📤 Sent connection answer to user');
+                    
+                } catch (error) {
+                    this.log(`❌ Offer handling error: ${error.message}`);
+                }
+            }
+            
+            async handleAnswer(answer) {
+                try {
+                    await this.peerConnection.setRemoteDescription(answer);
+                    this.log('✅ Connection established with user');
+                    
+                } catch (error) {
+                    this.log(`❌ Answer handling error: ${error.message}`);
+                }
+            }
+            
+            async handleIceCandidate(candidate) {
+                try {
+                    if (this.peerConnection) {
+                        await this.peerConnection.addIceCandidate(candidate);
+                    }
+                } catch (error) {
+                    this.log(`❌ ICE candidate error: ${error.message}`);
+                }
+            }
+            
+            handlePeerDisconnect() {
+                this.updateStatusBar('👋 User disconnected - looking for new user...', 'waiting');
+                
+                // Clear remote video
+                const remoteVideo = document.getElementById('remoteVideo');
+                const remotePlaceholder = document.getElementById('remotePlaceholder');
+                
+                remoteVideo.style.display = 'none';
+                remotePlaceholder.style.display = 'flex';
+                remotePlaceholder.innerHTML = '<div>⏳</div><div style="font-size: 14px;">Looking for next user...</div>';
+                
+                document.getElementById('peerBadge').textContent = 'Searching...';
+                
+                // Close peer connection
+                if (this.peerConnection) {
+                    this.peerConnection.close();
+                    this.peerConnection = null;
+                }
+                
+                this.connectionState = 'searching';
+                this.connectedPeerId = null;
+                
+                // Auto-find new user
+                setTimeout(() => {
+                    if (this.isSearching) {
+                        this.socket.emit('find-peer');
+                        this.updateQueueInfo('Looking for next available user...');
+                    }
+                }, 1000);
+            }
+            
+            nextUser() {
+                this.log('⏭️ Looking for next user...');
+                
+                if (this.connectedPeerId) {
+                    this.socket.emit('disconnect-peer', this.connectedPeerId);
+                }
+                
+                this.handlePeerDisconnect();
+            }
+            
+            toggleVideo() {
+                if (this.localStream) {
+                    const videoTrack = this.localStream.getVideoTracks()[0];
+                    if (videoTrack) {
+                        videoTrack.enabled = !videoTrack.enabled;
+                        const btn = document.getElementById('videoToggle');
+                        btn.textContent = videoTrack.enabled ? '📹 Video ON' : '📹 Video OFF';
+                        btn.className = videoTrack.enabled ? 'btn btn-secondary' : 'btn btn-danger';
+                        this.log(`📹 Video: ${videoTrack.enabled ? 'ON' : 'OFF'}`);
+                    }
+                }
+            }
+            
+            toggleAudio() {
+                if (this.localStream) {
+                    const audioTrack = this.localStream.getAudioTracks()[0];
+                    if (audioTrack) {
+                        audioTrack.enabled = !audioTrack.enabled;
+                        const btn = document.getElementById('audioToggle');
+                        btn.textContent = audioTrack.enabled ? '🎤 Audio ON' : '🎤 Audio OFF';
+                        btn.className = audioTrack.enabled ? 'btn btn-secondary' : 'btn btn-danger';
+                        this.log(`🎤 Audio: ${audioTrack.enabled ? 'ON' : 'OFF'}`);
+                    }
+                }
+            }
+            
+            stopConnection() {
+                this.log('🛑 Stopping connection...');
+                this.isSearching = false;
+                
+                // Stop local stream
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                    this.localStream = null;
+                }
+                
+                // Close peer connection
+                if (this.peerConnection) {
+                    this.peerConnection.close();
+                    this.peerConnection = null;
+                }
+                
+                // Clear videos
+                const localVideo = document.getElementById('localVideo');
+                const remoteVideo = document.getElementById('remoteVideo');
+                const localPlaceholder = document.getElementById('localPlaceholder');
+                const remotePlaceholder = document.getElementById('remotePlaceholder');
+                
+                localVideo.style.display = 'none';
+                remoteVideo.style.display = 'none';
+                localPlaceholder.style.display = 'flex';
+                remotePlaceholder.style.display = 'flex';
+                
+                localPlaceholder.innerHTML = '<div>📷</div><div style="font-size: 14px;">Your camera will appear here</div>';
+                remotePlaceholder.innerHTML = '<div>⏳</div><div style="font-size: 14px;">Waiting for connection...</div>';
+                
+                // Reset UI
+                document.getElementById('peerBadge').textContent = 'Waiting...';
+                this.updateStatusBar('⏹️ Connection stopped', 'error');
+                
+                document.getElementById('findBtn').disabled = false;
+                document.getElementById('nextBtn').disabled = true;
+                document.getElementById('videoToggle').disabled = true;
+                document.getElementById('audioToggle').disabled = true;
+                document.getElementById('stopBtn').disabled = true;
+                
+                // Stop finding
+                this.socket.emit('stop-finding');
+                this.updateQueueInfo('Ready to connect');
+                
+                this.connectionState = 'disconnected';
+                this.connectedPeerId = null;
+            }
+            
+            // UI update methods
+            updateStatusBar(message, type) {
+                const statusBar = document.getElementById('statusBar');
+                statusBar.textContent = message;
+                statusBar.className = `status-bar ${type}`;
+            }
+            
+            updateStats(stats) {
+                document.getElementById('onlineUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('waitingUsers').textContent = stats.waitingUsers || 0;
+                document.getElementById('connectedPairs').textContent = stats.connectedPairs || 0;
+            }
+            
+            updateQueueInfo(message) {
+                document.getElementById('queueDetails').textContent = message;
+            }
+            
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage);
+                
+                const logContent = document.getElementById('logContent');
+                logContent.innerHTML += '<br>' + logMessage;
+                logContent.scrollTop = logContent.scrollHeight;
+                
+                // Keep only last 8 lines
+                const lines = logContent.innerHTML.split('<br>');
+                if (lines.length > 8) {
+                    logContent.innerHTML = lines.slice(-8).join('<br>');
+                }
+            }
+        }
+        
+        // Global instance and functions
+        let userConnector = null;
+        
+        function findSomeone() {
+            if (userConnector) userConnector.findSomeone();
+        }
+        
+        function nextUser() {
+            if (userConnector) userConnector.nextUser();
+        }
+        
+        function toggleVideo() {
+            if (userConnector) userConnector.toggleVideo();
+        }
+        
+        function toggleAudio() {
+            if (userConnector) userConnector.toggleAudio();
+        }
+        
+        function stopConnection() {
+            if (userConnector) userConnector.stopConnection();
+        }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🎉 Real User Connector loaded');
+            userConnector = new RealUserConnector();
+        });
+    </script>
+</body>
+</html>

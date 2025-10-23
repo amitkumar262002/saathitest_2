@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Ultra Simple Video Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status.connected { background: rgba(76, 175, 80, 0.3); }
+        .status.connecting { background: rgba(255, 152, 0, 0.3); }
+        .status.error { background: rgba(244, 67, 54, 0.3); }
+
+        .video-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .video-box {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .video-wrapper {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #333;
+            color: #666;
+            font-size: 48px;
+        }
+
+        .controls {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .debug {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎥 Saathi TV - Ultra Simple Video Chat</h1>
+        <p>Direct peer-to-peer connection with minimal complexity</p>
+    </div>
+
+    <div class="status" id="status">Click "Start Chat" to begin</div>
+
+    <div class="video-container">
+        <div class="video-box">
+            <div class="video-title">📹 Your Video</div>
+            <div class="video-wrapper">
+                <video id="localVideo" autoplay muted playsinline style="display: none;"></video>
+                <div class="placeholder" id="localPlaceholder">📷</div>
+            </div>
+        </div>
+
+        <div class="video-box">
+            <div class="video-title">👤 Peer Video</div>
+            <div class="video-wrapper">
+                <video id="remoteVideo" autoplay playsinline style="display: none;"></video>
+                <div class="placeholder" id="remotePlaceholder">⏳</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-primary" id="startBtn" onclick="startChat()">🎬 Start Chat</button>
+        <button class="btn btn-secondary" id="nextBtn" onclick="nextPeer()" disabled>⏭️ Next</button>
+        <button class="btn btn-danger" id="stopBtn" onclick="stopChat()" disabled>🛑 Stop</button>
+    </div>
+
+    <div class="debug" id="debug">
+        <strong>Debug Log:</strong><br>
+        <div id="debugLog">Ready to start...</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        class UltraSimpleVideoChat {
+            constructor() {
+                this.socket = null;
+                this.peer = null;
+                this.localStream = null;
+                this.remoteStream = null;
+                this.isConnected = false;
+                this.peerId = null;
+                
+                // Simplified RTCPeerConnection config
+                this.config = {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' }
+                    ]
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.log('🚀 Ultra Simple Video Chat initializing...');
+                this.connectSocket();
+            }
+            
+            connectSocket() {
+                this.socket = io('http://localhost:3001');
+                
+                this.socket.on('connect', () => {
+                    this.log('✅ Socket connected: ' + this.socket.id);
+                    this.updateStatus('Connected to server', 'connected');
+                });
+                
+                this.socket.on('disconnect', () => {
+                    this.log('❌ Socket disconnected');
+                    this.updateStatus('Disconnected from server', 'error');
+                });
+                
+                // Simple peer matching
+                this.socket.on('peer-found', (peerId) => {
+                    this.log('👤 Peer found: ' + peerId);
+                    this.peerId = peerId;
+                    this.createConnection(true); // I'm the caller
+                });
+                
+                this.socket.on('peer-calling', (peerId) => {
+                    this.log('📞 Peer calling: ' + peerId);
+                    this.peerId = peerId;
+                    this.createConnection(false); // I'm the receiver
+                });
+                
+                // WebRTC signaling
+                this.socket.on('webrtc-offer', async (data) => {
+                    this.log('📥 Received offer');
+                    await this.handleOffer(data.offer);
+                });
+                
+                this.socket.on('webrtc-answer', async (data) => {
+                    this.log('📥 Received answer');
+                    await this.handleAnswer(data.answer);
+                });
+                
+                this.socket.on('webrtc-ice', async (data) => {
+                    this.log('🧊 Received ICE candidate');
+                    await this.handleIceCandidate(data.candidate);
+                });
+                
+                this.socket.on('peer-disconnected', () => {
+                    this.log('👋 Peer disconnected');
+                    this.handlePeerDisconnect();
+                });
+            }
+            
+            async startChat() {
+                try {
+                    this.log('🎬 Starting chat...');
+                    this.updateStatus('Getting camera access...', 'connecting');
+                    
+                    // Get user media
+                    this.localStream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: 640, height: 480 },
+                        audio: true
+                    });
+                    
+                    // Show local video
+                    const localVideo = document.getElementById('localVideo');
+                    const localPlaceholder = document.getElementById('localPlaceholder');
+                    
+                    localVideo.srcObject = this.localStream;
+                    localVideo.style.display = 'block';
+                    localPlaceholder.style.display = 'none';
+                    
+                    this.log('📹 Local video ready');
+                    this.updateStatus('Looking for someone to chat with...', 'connecting');
+                    
+                    // Request peer matching
+                    this.socket.emit('find-peer');
+                    
+                    // Update buttons
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('nextBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = false;
+                    
+                } catch (error) {
+                    this.log('❌ Error: ' + error.message);
+                    this.updateStatus('Camera access denied', 'error');
+                    alert('Please allow camera and microphone access to use video chat.');
+                }
+            }
+            
+            async createConnection(isCaller) {
+                try {
+                    this.log('🔗 Creating peer connection (caller: ' + isCaller + ')');
+                    
+                    this.peer = new RTCPeerConnection(this.config);
+                    
+                    // Add local stream
+                    if (this.localStream) {
+                        this.localStream.getTracks().forEach(track => {
+                            this.peer.addTrack(track, this.localStream);
+                        });
+                    }
+                    
+                    // Handle remote stream
+                    this.peer.ontrack = (event) => {
+                        this.log('🎥 Remote stream received');
+                        this.remoteStream = event.streams[0];
+                        
+                        const remoteVideo = document.getElementById('remoteVideo');
+                        const remotePlaceholder = document.getElementById('remotePlaceholder');
+                        
+                        remoteVideo.srcObject = this.remoteStream;
+                        remoteVideo.style.display = 'block';
+                        remotePlaceholder.style.display = 'none';
+                        
+                        this.updateStatus('🎉 Video chat connected!', 'connected');
+                        this.isConnected = true;
+                    };
+                    
+                    // Handle ICE candidates
+                    this.peer.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            this.socket.emit('webrtc-ice', {
+                                to: this.peerId,
+                                candidate: event.candidate
+                            });
+                        }
+                    };
+                    
+                    // Handle connection state
+                    this.peer.onconnectionstatechange = () => {
+                        this.log('🔗 Connection state: ' + this.peer.connectionState);
+                        
+                        if (this.peer.connectionState === 'failed') {
+                            this.log('❌ Connection failed');
+                            this.updateStatus('Connection failed - trying next peer', 'error');
+                            setTimeout(() => this.nextPeer(), 2000);
+                        }
+                    };
+                    
+                    // If I'm the caller, create offer
+                    if (isCaller) {
+                        const offer = await this.peer.createOffer();
+                        await this.peer.setLocalDescription(offer);
+                        
+                        this.socket.emit('webrtc-offer', {
+                            to: this.peerId,
+                            offer: offer
+                        });
+                        
+                        this.log('📤 Offer sent');
+                    }
+                    
+                } catch (error) {
+                    this.log('❌ Connection error: ' + error.message);
+                    this.updateStatus('Connection failed', 'error');
+                }
+            }
+            
+            async handleOffer(offer) {
+                try {
+                    await this.peer.setRemoteDescription(offer);
+                    
+                    const answer = await this.peer.createAnswer();
+                    await this.peer.setLocalDescription(answer);
+                    
+                    this.socket.emit('webrtc-answer', {
+                        to: this.peerId,
+                        answer: answer
+                    });
+                    
+                    this.log('📤 Answer sent');
+                    
+                } catch (error) {
+                    this.log('❌ Offer handling error: ' + error.message);
+                }
+            }
+            
+            async handleAnswer(answer) {
+                try {
+                    await this.peer.setRemoteDescription(answer);
+                    this.log('✅ Answer processed');
+                    
+                } catch (error) {
+                    this.log('❌ Answer handling error: ' + error.message);
+                }
+            }
+            
+            async handleIceCandidate(candidate) {
+                try {
+                    if (this.peer) {
+                        await this.peer.addIceCandidate(candidate);
+                        this.log('✅ ICE candidate added');
+                    }
+                } catch (error) {
+                    this.log('❌ ICE candidate error: ' + error.message);
+                }
+            }
+            
+            handlePeerDisconnect() {
+                this.updateStatus('Peer disconnected - looking for new peer...', 'connecting');
+                
+                // Clear remote video
+                const remoteVideo = document.getElementById('remoteVideo');
+                const remotePlaceholder = document.getElementById('remotePlaceholder');
+                
+                remoteVideo.style.display = 'none';
+                remotePlaceholder.style.display = 'flex';
+                remotePlaceholder.textContent = '⏳';
+                
+                // Close peer connection
+                if (this.peer) {
+                    this.peer.close();
+                    this.peer = null;
+                }
+                
+                this.isConnected = false;
+                this.peerId = null;
+                
+                // Auto-find new peer
+                setTimeout(() => {
+                    this.socket.emit('find-peer');
+                }, 1000);
+            }
+            
+            nextPeer() {
+                this.log('⏭️ Looking for next peer...');
+                
+                if (this.peerId) {
+                    this.socket.emit('disconnect-peer', this.peerId);
+                }
+                
+                this.handlePeerDisconnect();
+            }
+            
+            stopChat() {
+                this.log('🛑 Stopping chat...');
+                
+                // Stop local stream
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                    this.localStream = null;
+                }
+                
+                // Close peer connection
+                if (this.peer) {
+                    this.peer.close();
+                    this.peer = null;
+                }
+                
+                // Clear videos
+                const localVideo = document.getElementById('localVideo');
+                const remoteVideo = document.getElementById('remoteVideo');
+                const localPlaceholder = document.getElementById('localPlaceholder');
+                const remotePlaceholder = document.getElementById('remotePlaceholder');
+                
+                localVideo.style.display = 'none';
+                remoteVideo.style.display = 'none';
+                localPlaceholder.style.display = 'flex';
+                remotePlaceholder.style.display = 'flex';
+                localPlaceholder.textContent = '📷';
+                remotePlaceholder.textContent = '⏳';
+                
+                // Reset state
+                this.isConnected = false;
+                this.peerId = null;
+                
+                // Update UI
+                this.updateStatus('Chat stopped', 'error');
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('nextBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = true;
+                
+                // Disconnect from peer finding
+                this.socket.emit('stop-finding');
+            }
+            
+            updateStatus(message, type) {
+                const status = document.getElementById('status');
+                status.textContent = message;
+                status.className = 'status ' + type;
+            }
+            
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage);
+                
+                const debugLog = document.getElementById('debugLog');
+                debugLog.innerHTML += '<br>' + logMessage;
+                debugLog.scrollTop = debugLog.scrollHeight;
+                
+                // Keep only last 10 lines
+                const lines = debugLog.innerHTML.split('<br>');
+                if (lines.length > 10) {
+                    debugLog.innerHTML = lines.slice(-10).join('<br>');
+                }
+            }
+        }
+        
+        // Global instance
+        let videoChat = null;
+        
+        // Global functions
+        function startChat() {
+            if (!videoChat) {
+                videoChat = new UltraSimpleVideoChat();
+            }
+            videoChat.startChat();
+        }
+        
+        function nextPeer() {
+            if (videoChat) videoChat.nextPeer();
+        }
+        
+        function stopChat() {
+            if (videoChat) videoChat.stopChat();
+        }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🎉 Ultra Simple Video Chat loaded');
+            videoChat = new UltraSimpleVideoChat();
+        });
+    </script>
+</body>
+</html>
