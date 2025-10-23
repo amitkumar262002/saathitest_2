@@ -282,7 +282,24 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ Resolved conflicts between multiple WebRTC implementations
 - ✅ Enhanced connection stability and error handling
 
+### Server Connection Fixes
+- ✅ Resolved "Backend server not running" error messages
+- ✅ Fixed CORS configuration for proper frontend-backend communication
+- ✅ Enhanced connection testing with better error handling
+- ✅ Unified server setup (Node.js serves both frontend and backend)
+
 ### Debug Tools
 - 🔧 **login-debug.html** - Test Firebase authentication
+- 🔧 **connection-test.html** - Test server connectivity and Socket.IO
 - 🔧 **simple-test.html** - Test WebRTC connections
 - 🔧 **firebase-test.html** - Firebase integration testing
+
+### Quick Server Setup
+```bash
+# Start the backend server (serves both frontend and backend)
+cd backend
+node server.js
+
+# Server will run on http://localhost:3001 (or 3000 if available)
+# Frontend accessible at the same URL
+```
