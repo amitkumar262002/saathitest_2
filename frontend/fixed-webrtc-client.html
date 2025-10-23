@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - FIXED WebRTC Client</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .status-bar {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background: #4CAF50;
+        }
+
+        .status-indicator.connecting {
+            background: #FF9800;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .video-container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .video-section {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-wrapper {
+            position: relative;
+            flex: 1;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            min-height: 300px;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .controls {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .control-btn.danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        .control-btn.success {
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
+        }
+
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .debug-panel h4 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .debug-log {
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎥 Saathi TV - FIXED WebRTC Client</h1>
+        <p>Corrected peer-to-peer video chat with proper signaling</p>
+    </div>
+
+    <div class="status-bar">
+        <div class="status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Initializing...</span>
+        </div>
+        <div class="stats">
+            <div class="stat-item">
+                👥 Online: <span id="onlineCount">0</span>
+            </div>
+            <div class="stat-item">
+                🏠 In Rooms: <span id="roomCount">0</span>
+            </div>
+            <div class="stat-item">
+                ⏳ Waiting: <span id="waitingCount">0</span>
+            </div>
+            <div class="stat-item">
+                🔗 Room: <span id="currentRoom">None</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <div class="video-section">
+            <h3>Your Video</h3>
+            <div class="video-wrapper">
+                <video id="localVideo" autoplay muted playsinline></video>
+                <div class="video-label">You</div>
+            </div>
+        </div>
+
+        <div class="video-section">
+            <h3>Peer Video</h3>
+            <div class="video-wrapper">
+                <video id="remoteVideo" autoplay playsinline></video>
+                <div class="video-label">Peer</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" id="startBtn" onclick="startChat()">
+            🎬 Start Video Chat
+        </button>
+        <button class="control-btn" id="videoBtn" onclick="toggleVideo()" disabled>
+            📹 Video ON
+        </button>
+        <button class="control-btn" id="audioBtn" onclick="toggleAudio()" disabled>
+            🎤 Audio ON
+        </button>
+        <button class="control-btn" id="nextBtn" onclick="findNext()" disabled>
+            ⏭️ Next User
+        </button>
+        <button class="control-btn danger" id="stopBtn" onclick="stopChat()" disabled>
+            🛑 Stop Chat
+        </button>
+    </div>
+
+    <div class="debug-panel" id="debugPanel">
+        <h4>Debug Log</h4>
+        <div id="debugLog"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        // FIXED WebRTC Client with proper signaling and user tracking
+        class FixedWebRTCClient {
+            constructor() {
+                this.socket = null;
+                this.peerConnection = null;
+                this.localStream = null;
+                this.remoteStream = null;
+                this.roomId = null;
+                this.isInitiator = false;
+                this.connectionState = 'disconnected';
+                this.heartbeatInterval = null;
+                
+                // FIXED WebRTC Configuration
+                this.rtcConfig = {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' }
+                    ],
+                    iceCandidatePoolSize: 10
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.log('🚀 FIXED WebRTC Client initializing...');
+                this.connectToSignalingServer();
+                this.setupHeartbeat();
+            }
+            
+            // FIXED: Connect to signaling server with proper error handling
+            connectToSignalingServer() {
+                const serverUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3001' 
+                    : window.location.origin;
+                    
+                this.socket = io(serverUrl, {
+                    transports: ['websocket', 'polling'],
+                    timeout: 20000,
+                    forceNew: true
+                });
+                
+                this.setupSocketListeners();
+            }
+            
+            // FIXED: Setup socket event listeners with proper error handling
+            setupSocketListeners() {
+                this.socket.on('connect', () => {
+                    this.log('✅ Connected to signaling server');
+                    this.updateStatus('Connected to server', 'connected');
+                });
+                
+                this.socket.on('disconnect', (reason) => {
+                    this.log(`❌ Disconnected: ${reason}`);
+                    this.updateStatus('Disconnected', 'disconnected');
+                    this.cleanup();
+                });
+                
+                this.socket.on('userStats', (stats) => {
+                    this.updateStats(stats);
+                });
+                
+                // FIXED: Handle match found
+                this.socket.on('matched', async (data) => {
+                    this.log(`🎉 Matched! Room: ${data.roomId}, Initiator: ${data.isInitiator}`);
+                    this.roomId = data.roomId;
+                    this.isInitiator = data.isInitiator;
+                    
+                    document.getElementById('currentRoom').textContent = data.roomId.substring(0, 8) + '...';
+                    
+                    await this.createPeerConnection();
+                    
+                    if (this.isInitiator) {
+                        this.log('📞 Creating offer as initiator');
+                        await this.createOffer();
+                    }
+                    
+                    this.updateStatus('Connected to peer', 'connected');
+                });
+                
+                this.socket.on('waiting', (data) => {
+                    this.log(`⏳ Waiting: ${data.message} (Position: ${data.queuePosition})`);
+                    this.updateStatus(data.message, 'connecting');
+                });
+                
+                // FIXED: Handle WebRTC signaling
+                this.socket.on('signal', async (data) => {
+                    this.log(`📡 Received signal: ${data.payload.type || 'ice-candidate'}`);
+                    await this.handleSignal(data.payload);
+                });
+                
+                this.socket.on('peer_left', (data) => {
+                    this.log(`👋 Peer left room: ${data.roomId}`);
+                    this.handlePeerLeft();
+                });
+                
+                this.socket.on('chat_message', (data) => {
+                    this.log(`💬 Chat: ${data.message}`);
+                });
+                
+                this.socket.on('heartbeat_ack', () => {
+                    // Heartbeat acknowledged
+                });
+                
+                this.socket.on('error', (error) => {
+                    this.log(`❌ Socket error: ${error}`);
+                    this.updateStatus('Connection error', 'disconnected');
+                });
+            }
+            
+            // FIXED: Start looking for a match
+            async findMatch() {
+                this.log('🔍 Looking for match...');
+                
+                try {
+                    // Get user media first
+                    await this.getUserMedia();
+                    
+                    // Request match from server
+                    this.socket.emit('find_match', {});
+                    this.updateStatus('Looking for someone...', 'connecting');
+                    
+                } catch (error) {
+                    this.log(`❌ Error starting match: ${error.message}`);
+                    this.updateStatus('Media access denied', 'disconnected');
+                    throw error;
+                }
+            }
+            
+            // FIXED: Get user media with proper constraints
+            async getUserMedia() {
+                try {
+                    const constraints = {
+                        video: {
+                            width: { ideal: 640, max: 1280 },
+                            height: { ideal: 480, max: 720 },
+                            facingMode: 'user',
+                            frameRate: { ideal: 30 }
+                        },
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true
+                        }
+                    };
+                    
+                    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    // Set local video
+                    const localVideo = document.getElementById('localVideo');
+                    if (localVideo) {
+                        localVideo.srcObject = this.localStream;
+                        localVideo.muted = true; // Prevent feedback
+                    }
+                    
+                    this.log('📹 Local media stream acquired');
+                    return this.localStream;
+                    
+                } catch (error) {
+                    this.log(`❌ Media access error: ${error.message}`);
+                    throw new Error('Camera/microphone access denied. Please allow permissions and try again.');
+                }
+            }
+            
+            // FIXED: Create WebRTC peer connection with proper event handlers
+            async createPeerConnection() {
+                try {
+                    this.peerConnection = new RTCPeerConnection(this.rtcConfig);
+                    
+                    // Add local stream tracks
+                    if (this.localStream) {
+                        this.localStream.getTracks().forEach(track => {
+                            this.peerConnection.addTrack(track, this.localStream);
+                            this.log(`➕ Added ${track.kind} track`);
+                        });
+                    }
+                    
+                    // FIXED: Handle ICE candidates
+                    this.peerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            this.log('🧊 Sending ICE candidate');
+                            this.socket.emit('signal', {
+                                roomId: this.roomId,
+                                payload: { candidate: event.candidate }
+                            });
+                        } else {
+                            this.log('🏁 ICE gathering complete');
+                        }
+                    };
+                    
+                    // FIXED: Handle remote stream
+                    this.peerConnection.ontrack = (event) => {
+                        this.log('🎥 Received remote stream');
+                        this.remoteStream = event.streams[0];
+                        
+                        const remoteVideo = document.getElementById('remoteVideo');
+                        if (remoteVideo) {
+                            remoteVideo.srcObject = this.remoteStream;
+                            
+                            // Update status when video starts playing
+                            remoteVideo.onloadedmetadata = () => {
+                                this.updateStatus('Video chat active!', 'connected');
+                            };
+                        }
+                    };
+                    
+                    // FIXED: Handle connection state changes
+                    this.peerConnection.onconnectionstatechange = () => {
+                        const state = this.peerConnection.connectionState;
+                        this.log(`🔗 Connection state: ${state}`);
+                        this.connectionState = state;
+                        
+                        switch (state) {
+                            case 'connected':
+                                this.updateStatus('Connected!', 'connected');
+                                break;
+                            case 'disconnected':
+                                this.updateStatus('Connection lost', 'connecting');
+                                break;
+                            case 'failed':
+                                this.updateStatus('Connection failed', 'disconnected');
+                                this.handleConnectionFailure();
+                                break;
+                            case 'closed':
+                                this.updateStatus('Disconnected', 'disconnected');
+                                break;
+                        }
+                    };
+                    
+                    // FIXED: Handle ICE connection state
+                    this.peerConnection.oniceconnectionstatechange = () => {
+                        const state = this.peerConnection.iceConnectionState;
+                        this.log(`🧊 ICE state: ${state}`);
+                        
+                        if (state === 'failed') {
+                            this.handleConnectionFailure();
+                        }
+                    };
+                    
+                    this.log('✅ Peer connection created');
+                    
+                } catch (error) {
+                    this.log(`❌ Error creating peer connection: ${error.message}`);
+                    throw error;
+                }
+            }
+            
+            // FIXED: Create offer with proper SDP handling
+            async createOffer() {
+                try {
+                    const offer = await this.peerConnection.createOffer({
+                        offerToReceiveAudio: true,
+                        offerToReceiveVideo: true
+                    });
+                    
+                    await this.peerConnection.setLocalDescription(offer);
+                    
+                    this.log('📤 Sending offer');
+                    this.socket.emit('signal', {
+                        roomId: this.roomId,
+                        payload: { type: 'offer', sdp: offer.sdp }
+                    });
+                    
+                } catch (error) {
+                    this.log(`❌ Error creating offer: ${error.message}`);
+                }
+            }
+            
+            // FIXED: Handle incoming signals with proper validation
+            async handleSignal(payload) {
+                try {
+                    if (!this.peerConnection) {
+                        this.log('⚠️ No peer connection for signal');
+                        return;
+                    }
+                    
+                    if (payload.type === 'offer') {
+                        this.log('📥 Processing offer');
+                        
+                        await this.peerConnection.setRemoteDescription({
+                            type: 'offer',
+                            sdp: payload.sdp
+                        });
+                        
+                        const answer = await this.peerConnection.createAnswer();
+                        await this.peerConnection.setLocalDescription(answer);
+                        
+                        this.socket.emit('signal', {
+                            roomId: this.roomId,
+                            payload: { type: 'answer', sdp: answer.sdp }
+                        });
+                        
+                    } else if (payload.type === 'answer') {
+                        this.log('📥 Processing answer');
+                        
+                        await this.peerConnection.setRemoteDescription({
+                            type: 'answer',
+                            sdp: payload.sdp
+                        });
+                        
+                    } else if (payload.candidate) {
+                        this.log('📥 Processing ICE candidate');
+                        
+                        await this.peerConnection.addIceCandidate(payload.candidate);
+                    }
+                    
+                } catch (error) {
+                    this.log(`❌ Error handling signal: ${error.message}`);
+                }
+            }
+            
+            // FIXED: Handle connection failure with ICE restart
+            async handleConnectionFailure() {
+                this.log('🔄 Connection failed, attempting restart...');
+                
+                try {
+                    if (this.peerConnection && this.isInitiator) {
+                        const offer = await this.peerConnection.createOffer({ iceRestart: true });
+                        await this.peerConnection.setLocalDescription(offer);
+                        
+                        this.socket.emit('signal', {
+                            roomId: this.roomId,
+                            payload: { type: 'offer', sdp: offer.sdp }
+                        });
+                    }
+                } catch (error) {
+                    this.log(`❌ ICE restart failed: ${error.message}`);
+                }
+            }
+            
+            // FIXED: Handle peer leaving
+            handlePeerLeft() {
+                this.updateStatus('Peer disconnected', 'disconnected');
+                
+                // Clear remote video
+                const remoteVideo = document.getElementById('remoteVideo');
+                if (remoteVideo) {
+                    remoteVideo.srcObject = null;
+                }
+                
+                // Close peer connection
+                if (this.peerConnection) {
+                    this.peerConnection.close();
+                    this.peerConnection = null;
+                }
+                
+                this.roomId = null;
+                this.remoteStream = null;
+                document.getElementById('currentRoom').textContent = 'None';
+            }
+            
+            // FIXED: Find next user
+            findNext() {
+                this.log('⏭️ Finding next user...');
+                
+                // Leave current room
+                if (this.roomId) {
+                    this.socket.emit('leave_room', { roomId: this.roomId });
+                }
+                
+                this.handlePeerLeft();
+                
+                // Start new search
+                setTimeout(() => {
+                    this.findMatch();
+                }, 1000);
+            }
+            
+            // Media controls
+            toggleVideo() {
+                if (this.localStream) {
+                    const videoTrack = this.localStream.getVideoTracks()[0];
+                    if (videoTrack) {
+                        videoTrack.enabled = !videoTrack.enabled;
+                        const btn = document.getElementById('videoBtn');
+                        btn.textContent = videoTrack.enabled ? '📹 Video ON' : '📹 Video OFF';
+                        btn.className = videoTrack.enabled ? 'control-btn' : 'control-btn danger';
+                        this.log(`📹 Video: ${videoTrack.enabled ? 'ON' : 'OFF'}`);
+                        return videoTrack.enabled;
+                    }
+                }
+                return false;
+            }
+            
+            toggleAudio() {
+                if (this.localStream) {
+                    const audioTrack = this.localStream.getAudioTracks()[0];
+                    if (audioTrack) {
+                        audioTrack.enabled = !audioTrack.enabled;
+                        const btn = document.getElementById('audioBtn');
+                        btn.textContent = audioTrack.enabled ? '🎤 Audio ON' : '🎤 Audio OFF';
+                        btn.className = audioTrack.enabled ? 'control-btn' : 'control-btn danger';
+                        this.log(`🎤 Audio: ${audioTrack.enabled ? 'ON' : 'OFF'}`);
+                        return audioTrack.enabled;
+                    }
+                }
+                return false;
+            }
+            
+            // FIXED: Cleanup resources
+            cleanup() {
+                this.log('🧹 Cleaning up resources...');
+                
+                // Stop local stream
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                    this.localStream = null;
+                }
+                
+                // Close peer connection
+                if (this.peerConnection) {
+                    this.peerConnection.close();
+                    this.peerConnection = null;
+                }
+                
+                // Clear videos
+                const localVideo = document.getElementById('localVideo');
+                const remoteVideo = document.getElementById('remoteVideo');
+                
+                if (localVideo) localVideo.srcObject = null;
+                if (remoteVideo) remoteVideo.srcObject = null;
+                
+                // Reset state
+                this.roomId = null;
+                this.remoteStream = null;
+                this.connectionState = 'disconnected';
+                
+                // Update UI
+                this.updateButtons(false);
+                document.getElementById('currentRoom').textContent = 'None';
+            }
+            
+            // FIXED: Setup heartbeat
+            setupHeartbeat() {
+                this.heartbeatInterval = setInterval(() => {
+                    if (this.socket && this.socket.connected) {
+                        this.socket.emit('heartbeat');
+                    }
+                }, 10000); // Every 10 seconds
+            }
+            
+            // UI update methods
+            updateStatus(text, status) {
+                document.getElementById('statusText').textContent = text;
+                document.getElementById('statusIndicator').className = `status-indicator ${status}`;
+                this.log(`📊 Status: ${text}`);
+            }
+            
+            updateStats(stats) {
+                document.getElementById('onlineCount').textContent = stats.onlineUsers || 0;
+                document.getElementById('roomCount').textContent = stats.usersInRooms || 0;
+                document.getElementById('waitingCount').textContent = stats.waitingUsers || 0;
+            }
+            
+            updateButtons(chatActive) {
+                document.getElementById('startBtn').disabled = chatActive;
+                document.getElementById('videoBtn').disabled = !chatActive;
+                document.getElementById('audioBtn').disabled = !chatActive;
+                document.getElementById('nextBtn').disabled = !chatActive;
+                document.getElementById('stopBtn').disabled = !chatActive;
+            }
+            
+            // FIXED: Logging with timestamp
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage);
+                
+                // Add to debug panel
+                const debugLog = document.getElementById('debugLog');
+                const logDiv = document.createElement('div');
+                logDiv.className = 'debug-log';
+                logDiv.textContent = logMessage;
+                debugLog.appendChild(logDiv);
+                
+                // Keep only last 10 logs
+                while (debugLog.children.length > 10) {
+                    debugLog.removeChild(debugLog.firstChild);
+                }
+                
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+        
+        // Global instance and functions
+        let webrtcClient = null;
+        
+        function startChat() {
+            if (!webrtcClient) {
+                webrtcClient = new FixedWebRTCClient();
+            }
+            webrtcClient.findMatch();
+            webrtcClient.updateButtons(true);
+        }
+        
+        function toggleVideo() {
+            if (webrtcClient) webrtcClient.toggleVideo();
+        }
+        
+        function toggleAudio() {
+            if (webrtcClient) webrtcClient.toggleAudio();
+        }
+        
+        function findNext() {
+            if (webrtcClient) webrtcClient.findNext();
+        }
+        
+        function stopChat() {
+            if (webrtcClient) {
+                webrtcClient.cleanup();
+                webrtcClient.updateStatus('Chat stopped', 'disconnected');
+            }
+        }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🎉 FIXED WebRTC Client page loaded');
+            webrtcClient = new FixedWebRTCClient();
+        });
+    </script>
+</body>
+</html>
