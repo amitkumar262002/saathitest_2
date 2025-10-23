@@ -27,8 +27,8 @@ Saathi TV is a modern, mobile-responsive video chat application that allows user
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/saathi-tv/saathi-tv.git
-   cd saathi-tv
+   git clone https://github.com/amitkumar262002/saathitest_2.git
+   cd saathitest_2
    ```
 
 2. **Install backend dependencies**
@@ -63,7 +63,7 @@ Saathi TV is a modern, mobile-responsive video chat application that allows user
 ## 📁 Project Structure
 
 ```
-saathi-tv/
+saathitest_2/
 ├── frontend/                 # Frontend application
 │   ├── css/
 │   │   └── styles.css       # Main stylesheet
@@ -268,5 +268,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Made with ❤️ by the Saathi TV Team**
 
 *Connecting people, one conversation at a time.*
-# test
-# test
+## 🔧 Recent Updates
+
+### Login System Fixes
+- ✅ Fixed missing JavaScript functions (togglePassword, showTerms, etc.)
+- ✅ Enhanced Firebase authentication with better error handling
+- ✅ Added comprehensive debug tool (`login-debug.html`)
+- ✅ Improved user feedback with loading states
+
+### WebRTC Improvements
+- ✅ Created unified WebRTC client system
+- ✅ Added signaling server for proper peer connections
+- ✅ Resolved conflicts between multiple WebRTC implementations
+- ✅ Enhanced connection stability and error handling
+
+### Debug Tools
+- 🔧 **login-debug.html** - Test Firebase authentication
+- 🔧 **simple-test.html** - Test WebRTC connections
+- 🔧 **firebase-test.html** - Firebase integration testing
