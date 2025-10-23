@@ -54,8 +54,14 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Serve static files from frontend
+// Serve static files from frontend and backend
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname)));
+
+// Serve the main index.html from backend directory
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Enhanced Room and User Management with Live Tracking
 class RoomManager {
@@ -96,7 +102,7 @@ class RoomManager {
     broadcastStats() {
         const stats = this.getStats();
         io.emit('userStats', stats);
-        console.log('📊 Broadcasting stats:', stats);
+        // Debug logging removed - stats are broadcast silently
     }
 
     addUser(socketId, userInfo) {
@@ -110,7 +116,7 @@ class RoomManager {
         this.onlineUsers.add(socketId);
         this.userStats.activeUsers++;
         this.userStats.totalConnections++;
-        console.log(`👤 User ${socketId} added. Online users: ${this.onlineUsers.size}`);
+        // User added silently
     }
 
     removeUser(socketId) {
@@ -131,7 +137,7 @@ class RoomManager {
             // Remove user
             this.users.delete(socketId);
             this.userStats.activeUsers--;
-            console.log(`👤 User ${socketId} removed. Online users: ${this.onlineUsers.size}`);
+            // User removed silently
         }
     }
 
@@ -139,26 +145,26 @@ class RoomManager {
         const user = this.users.get(socketId);
         if (!user) return null;
 
-        console.log(`🔍 Finding match for user ${socketId}. Waiting users: ${this.waitingUsers.size}`);
+        // Finding match...
 
         // Look for waiting users with compatible preferences
         for (const [waitingSocketId, waitingUser] of this.waitingUsers) {
             if (waitingSocketId === socketId) continue;
             
-            console.log(`🤝 Checking compatibility with ${waitingSocketId}`);
+            // Checking compatibility...
             
             // Check compatibility
             if (this.isCompatible(user, waitingUser, preferences)) {
                 // Remove from waiting list
                 this.waitingUsers.delete(waitingSocketId);
-                console.log(`✅ Match found! ${socketId} <-> ${waitingSocketId}`);
+                // Match found
                 return waitingSocketId;
             }
         }
 
         // No match found, add to waiting list
         this.waitingUsers.set(socketId, { ...user, preferences });
-        console.log(`⏳ No match found for ${socketId}. Added to waiting list. Total waiting: ${this.waitingUsers.size}`);
+        // Added to waiting list
         return null;
     }
 
@@ -208,7 +214,7 @@ class RoomManager {
         this.usersInRooms.set(user2Id, roomId);
 
         this.userStats.totalRooms++;
-        console.log(`🏠 Room ${roomId} created for users ${user1Id} and ${user2Id}`);
+        // Room created
         return roomId;
     }
 
@@ -276,23 +282,9 @@ app.get('/api/stats', (req, res) => {
     res.json(roomManager.getStats());
 });
 
-// Browser check endpoint
+// Browser check endpoint (simplified)
 app.post('/api/browser-check', (req, res) => {
-    const browserData = req.body;
-    console.log('🔍 Browser Check Data:', {
-        type: browserData.type,
-        timestamp: browserData.timestamp,
-        browser: browserData.browserInfo?.browser,
-        os: browserData.browserInfo?.os
-    });
-    
-    // Store browser data (you can save to database here)
-    if (browserData.type === 'element-data') {
-        console.log('📋 Element:', browserData.element.tagName, browserData.element.id || browserData.element.className);
-    } else if (browserData.type === 'console-data') {
-        console.log('💬 Console:', browserData.console.type, browserData.console.message);
-    }
-    
+    // Browser data received and processed silently
     res.json({ status: 'received', timestamp: new Date().toISOString() });
 });
 
@@ -329,8 +321,11 @@ io.on('connection', (socket) => {
 
     // Broadcast updated user count
     io.emit('userCount', roomManager.userStats.activeUsers);
+    
+    // Also emit for simple client compatibility
+    io.emit('online_count', { count: roomManager.userStats.activeUsers });
 
-    // Handle join room request
+    // Handle join room request (original)
     socket.on('joinRoom', (data) => {
         console.log(`User ${socket.id} requesting to join room with preferences:`, data);
         
@@ -360,9 +355,72 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Handle simple find match (for simple client)
+    socket.on('find_match', () => {
+        // Looking for match...
+        
+        // Check if user is already waiting (prevent duplicates)
+        if (roomManager.waitingUsers.has(socket.id)) {
+            // Already in queue
+            return;
+        }
+        
+        // Find a match using existing room manager
+        const matchedUserId = roomManager.findMatch(socket.id, {});
+        
+        if (matchedUserId) {
+            // Create room with matched user
+            const roomId = roomManager.createRoom(socket.id, matchedUserId);
+            
+            // Join both users to the room
+            socket.join(roomId);
+            io.sockets.sockets.get(matchedUserId)?.join(roomId);
+            
+            // Notify both users they are matched (simple client format)
+            io.to(roomId).emit('matched', {
+                roomId: roomId,
+                peer1: socket.id,
+                peer2: matchedUserId
+            });
+            
+            // Match successful
+        } else {
+            // No match found, user is in waiting list
+            socket.emit('waiting', { 
+                message: 'Looking for someone to chat with...',
+                position: roomManager.waitingUsers.size 
+            });
+        }
+    });
+
+    // Handle simple signaling (for simple client)
+    socket.on('signal', (data) => {
+        const { roomId, signal } = data;
+        
+        // WebRTC signal forwarded
+        
+        // Forward signal to other user in the room
+        socket.to(roomId).emit('signal', {
+            from: socket.id,
+            signal: signal
+        });
+    });
+
+    // Handle leave room (simple client)
+    socket.on('leave_room', (data) => {
+        const { roomId } = data;
+        // User leaving room
+        
+        socket.leave(roomId);
+        roomManager.leaveRoom(socket.id, roomId);
+        
+        // Notify other users in the room
+        socket.to(roomId).emit('peer_left', { roomId });
+    });
+
     // Handle leaving room
     socket.on('leaveRoom', (roomId) => {
-        console.log(`User ${socket.id} leaving room ${roomId}`);
+        // User leaving room
         
         socket.leave(roomId);
         roomManager.leaveRoom(socket.id, roomId);
@@ -373,7 +431,7 @@ io.on('connection', (socket) => {
 
     // Handle WebRTC signaling
     socket.on('offer', (data) => {
-        console.log(`Offer from ${socket.id} to room ${data.roomId}`);
+        // WebRTC offer forwarded
         socket.to(data.roomId).emit('offer', {
             offer: data.offer,
             roomId: data.roomId,
@@ -382,7 +440,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('answer', (data) => {
-        console.log(`Answer from ${socket.id} to room ${data.roomId}`);
+        // WebRTC answer forwarded
         socket.to(data.roomId).emit('answer', {
             answer: data.answer,
             roomId: data.roomId,
@@ -391,7 +449,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('ice-candidate', (data) => {
-        console.log(`ICE candidate from ${socket.id} to room ${data.roomId}`);
+        // ICE candidate forwarded
         socket.to(data.roomId).emit('ice-candidate', {
             candidate: data.candidate,
             roomId: data.roomId,
@@ -417,7 +475,7 @@ io.on('connection', (socket) => {
         // Broadcast to room (excluding sender)
         socket.to(user.roomId).emit('message', message);
         
-        console.log(`Message in room ${user.roomId}: ${data.text}`);
+        // Message sent
     });
 
     // Handle typing indicators
@@ -437,7 +495,7 @@ io.on('connection', (socket) => {
 
     // Handle user reporting
     socket.on('report-user', (data) => {
-        console.log(`User ${socket.id} reported user ${data.reportedUserId} for: ${data.reason}`);
+        // User reported
         
         // In a real application, you would store this in a database
         // and implement moderation features
@@ -456,28 +514,27 @@ io.on('connection', (socket) => {
 
     // Handle disconnection
     socket.on('disconnect', (reason) => {
-        console.log(`User disconnected: ${socket.id}, reason: ${reason}`);
+        // User disconnected
         
         // Remove user from room manager
         roomManager.removeUser(socket.id);
         
         // Broadcast updated user count
         io.emit('userCount', roomManager.userStats.activeUsers);
+        
+        // Also emit for simple client compatibility
+        io.emit('online_count', { count: roomManager.userStats.activeUsers });
     });
 
     // Handle browser check data
     socket.on('browser-check', (data) => {
-        console.log(`🔍 Browser Check from ${socket.id}:`, {
-            type: data.type,
-            browser: data.browserInfo?.browser,
-            timestamp: data.timestamp
-        });
+        // Browser check received
         
         // You can store this data in database or process it
         if (data.type === 'element-data') {
-            console.log('📋 Element Update:', data.element.tagName, data.element.action);
+            // Element update logged
         } else if (data.type === 'console-data') {
-            console.log('💬 Console Log:', data.console.type, data.console.message.substring(0, 100));
+            // Console log received
         }
     });
 
@@ -515,7 +572,7 @@ setInterval(() => {
     const WAIT_TIMEOUT = 10 * 60 * 1000; // 10 minutes
     for (const [socketId, waitingUser] of roomManager.waitingUsers) {
         if (now - waitingUser.joinedAt > WAIT_TIMEOUT) {
-            console.log(`Removing user from waiting list: ${socketId}`);
+            // Removing inactive user from waiting list
             roomManager.waitingUsers.delete(socketId);
         }
     }
@@ -545,8 +602,7 @@ async function startServer() {
         
         server.listen(availablePort, () => {
             console.log(`🚀 Saathi TV server running on port ${availablePort}`);
-            console.log(`📱 Frontend available at http://localhost:${availablePort}`);
-            console.log(`🔌 Socket.io server ready for connections`);
+            console.log(`📱 Website available at http://localhost:${availablePort}`);
             
             if (availablePort !== PORT) {
                 console.log(`⚠️  Port ${PORT} was busy, using port ${availablePort} instead`);

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Service Worker</title>
+</head>
+<body>
+    <h1>Fixing Service Worker Issues...</h1>
+    <div id="status">Checking...</div>
+    
+    <script>
+        async function fixServiceWorker() {
+            const statusEl = document.getElementById('status');
+            
+            if ('serviceWorker' in navigator) {
+                try {
+                    // Get all registrations
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    
+                    if (registrations.length === 0) {
+                        statusEl.innerHTML = '✅ No service workers found. All clean!';
+                        return;
+                    }
+                    
+                    // Unregister all service workers
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('Unregistered:', registration.scope);
+                    }
+                    
+                    statusEl.innerHTML = `✅ Unregistered ${registrations.length} service worker(s). Refresh the page and try again.`;
+                    
+                    // Clear caches
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(
+                            cacheNames.map(cacheName => caches.delete(cacheName))
+                        );
+                        statusEl.innerHTML += '<br>✅ Cleared all caches.';
+                    }
+                    
+                } catch (error) {
+                    statusEl.innerHTML = `❌ Error: ${error.message}`;
+                }
+            } else {
+                statusEl.innerHTML = '✅ Service workers not supported.';
+            }
+        }
+        
+        fixServiceWorker();
+    </script>
+</body>
+</html>

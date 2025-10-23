@@ -51,6 +51,242 @@
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Saathi TV Login Debug Tool</h1>
+    
+    <div class="debug-container">
+        <h2>System Status</h2>
+        <button class="test-btn" onclick="checkFirebase()">Check Firebase Connection</button>
+        <button class="test-btn" onclick="checkDependencies()">Check Dependencies</button>
+        <button class="test-btn" onclick="clearStorage()">Clear Local Storage</button>
+        <div id="systemResults"></div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>Quick Login Test</h2>
+        <div class="input-group">
+            <label for="testEmail">Email:</label>
+            <input type="email" id="testEmail" value="test@example.com" placeholder="Enter test email">
+        </div>
+        <div class="input-group">
+            <label for="testPassword">Password:</label>
+            <input type="password" id="testPassword" value="test123456" placeholder="Enter test password">
+        </div>
+        <button class="test-btn" onclick="testEmailLogin()">Test Email Login</button>
+        <button class="test-btn" onclick="testGoogleLogin()">Test Google Login</button>
+        <button class="test-btn" onclick="testSignup()">Test Signup</button>
+        <div id="loginResults"></div>
+    </div>
+    
+    <div class="debug-container">
+        <h2>Console Logs</h2>
+        <div id="consoleLogs" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXrbJQJhjfwp4ugkp2dAckoXodtPqH73E",
+            authDomain: "saathi-5fa22.firebaseapp.com",
+            databaseURL: "https://saathi-5fa22-default-rtdb.firebaseio.com",
+            projectId: "saathi-5fa22",
+            storageBucket: "saathi-5fa22.firebasestorage.app",
+            messagingSenderId: "189814220535",
+            appId: "1:189814220535:web:c22305089ff101282b95f2"
+        };
+        
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            logMessage('✅ Firebase initialized successfully');
+        } catch (error) {
+            logMessage('❌ Firebase initialization failed: ' + error.message);
+        }
+        
+        function logMessage(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('consoleLogs');
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function showResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+            container.appendChild(resultDiv);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (container.contains(resultDiv)) {
+                    container.removeChild(resultDiv);
+                }
+            }, 5000);
+        }
+        
+        function checkFirebase() {
+            try {
+                if (typeof firebase === 'undefined') {
+                    showResult('systemResults', 'Firebase SDK not loaded', 'error');
+                    return;
+                }
+                
+                if (!firebase.apps.length) {
+                    showResult('systemResults', 'Firebase not initialized', 'error');
+                    return;
+                }
+                
+                const auth = firebase.auth();
+                if (auth) {
+                    showResult('systemResults', 'Firebase Auth is working ✅', 'success');
+                    logMessage('Firebase Auth instance created successfully');
+                } else {
+                    showResult('systemResults', 'Firebase Auth not available', 'error');
+                }
+            } catch (error) {
+                showResult('systemResults', 'Firebase check failed: ' + error.message, 'error');
+                logMessage('Firebase check error: ' + error.message);
+            }
+        }
+        
+        function checkDependencies() {
+            const checks = [
+                { name: 'Firebase App', check: () => typeof firebase !== 'undefined' },
+                { name: 'Firebase Auth', check: () => firebase.auth !== undefined },
+                { name: 'Google Auth Provider', check: () => firebase.auth.GoogleAuthProvider !== undefined },
+                { name: 'Local Storage', check: () => typeof localStorage !== 'undefined' },
+                { name: 'Fetch API', check: () => typeof fetch !== 'undefined' }
+            ];
+            
+            let allPassed = true;
+            checks.forEach(check => {
+                try {
+                    if (check.check()) {
+                        logMessage(`✅ ${check.name} - OK`);
+                    } else {
+                        logMessage(`❌ ${check.name} - FAILED`);
+                        allPassed = false;
+                    }
+                } catch (error) {
+                    logMessage(`❌ ${check.name} - ERROR: ${error.message}`);
+                    allPassed = false;
+                }
+            });
+            
+            showResult('systemResults', 
+                allPassed ? 'All dependencies OK ✅' : 'Some dependencies missing ❌', 
+                allPassed ? 'success' : 'error'
+            );
+        }
+        
+        function clearStorage() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                showResult('systemResults', 'Storage cleared successfully ✅', 'success');
+                logMessage('Local and session storage cleared');
+            } catch (error) {
+                showResult('systemResults', 'Failed to clear storage: ' + error.message, 'error');
+            }
+        }
+        
+        async function testEmailLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            if (!email || !password) {
+                showResult('loginResults', 'Please enter email and password', 'error');
+                return;
+            }
+            
+            try {
+                logMessage(`🔍 Testing email login for: ${email}`);
+                const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+                showResult('loginResults', `Email login successful! User: ${result.user.email}`, 'success');
+                logMessage(`✅ Email login successful for: ${result.user.email}`);
+            } catch (error) {
+                showResult('loginResults', `Email login failed: ${error.message}`, 'error');
+                logMessage(`❌ Email login error: ${error.code} - ${error.message}`);
+            }
+        }
+        
+        async function testGoogleLogin() {
+            try {
+                logMessage('🔍 Testing Google login...');
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
+                const result = await firebase.auth().signInWithPopup(provider);
+                showResult('loginResults', `Google login successful! User: ${result.user.email}`, 'success');
+                logMessage(`✅ Google login successful for: ${result.user.email}`);
+            } catch (error) {
+                showResult('loginResults', `Google login failed: ${error.message}`, 'error');
+                logMessage(`❌ Google login error: ${error.code} - ${error.message}`);
+            }
+        }
+        
+        async function testSignup() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            if (!email || !password) {
+                showResult('loginResults', 'Please enter email and password', 'error');
+                return;
+            }
+            
+            try {
+                logMessage(`🔍 Testing signup for: ${email}`);
+                const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                showResult('loginResults', `Signup successful! User: ${result.user.email}`, 'success');
+                logMessage(`✅ Signup successful for: ${result.user.email}`);
+            } catch (error) {
+                showResult('loginResults', `Signup failed: ${error.message}`, 'error');
+                logMessage(`❌ Signup error: ${error.code} - ${error.message}`);
+            }
+        }
+        
+        // Monitor auth state changes
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                logMessage(`🔐 User signed in: ${user.email}`);
+            } else {
+                logMessage('🔓 User signed out');
+            }
+        });
+        
+        // Auto-run initial checks
+        setTimeout(() => {
+            checkFirebase();
+            checkDependencies();
+        }, 1000);
+    </script>
+</body>
+</html>
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
         .form-test {
             border: 1px solid #ddd;
             padding: 15px;

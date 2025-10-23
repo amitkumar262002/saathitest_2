@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Test - Saathi TV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .video-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        video {
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.connected { background: #d4edda; color: #155724; }
+        .status.connecting { background: #fff3cd; color: #856404; }
+        .status.disconnected { background: #f8d7da; color: #721c24; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+        
+        .preferences {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: center;
+        }
+        
+        select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .online-count {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎥 Saathi TV WebRTC Test</h1>
+        <p>This page tests the new WebRTC system. Open in two browser tabs to test peer connections.</p>
+        
+        <div class="online-count">
+            👥 Online Users: <span id="onlineCount">0</span>
+        </div>
+        
+        <div class="status disconnected" id="connectionStatus">
+            📡 Status: Disconnected
+        </div>
+        
+        <div class="preferences">
+            <label>Country:</label>
+            <select id="countrySelect">
+                <option value="any">🌍 Any Country</option>
+                <option value="IN">🇮🇳 India</option>
+                <option value="US">🇺🇸 United States</option>
+                <option value="GB">🇬🇧 United Kingdom</option>
+            </select>
+            
+            <label>Gender:</label>
+            <select id="genderSelect">
+                <option value="any">🌟 Anyone</option>
+                <option value="male">👨 Male</option>
+                <option value="female">👩 Female</option>
+            </select>
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startTest()">🎬 Start Video Chat</button>
+            <button id="nextBtn" onclick="findNext()" disabled>⏭️ Next User</button>
+            <button id="toggleAudio" onclick="toggleAudio()" disabled>🎤 Toggle Audio</button>
+            <button id="toggleVideo" onclick="toggleVideo()" disabled>📹 Toggle Video</button>
+            <button id="stopBtn" onclick="stopTest()" disabled>🛑 Stop</button>
+        </div>
+        
+        <div class="video-container">
+            <div>
+                <h3>📹 Your Video</h3>
+                <video id="localVideo" autoplay muted playsinline></video>
+            </div>
+            <div>
+                <h3>👥 Remote Video</h3>
+                <video id="remoteVideo" autoplay playsinline></video>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="connectionState">disconnected</div>
+                <div>Connection State</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="roomId">-</div>
+                <div>Room ID</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="localTracks">0</div>
+                <div>Local Tracks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="remoteTracks">0</div>
+                <div>Remote Tracks</div>
+            </div>
+        </div>
+        
+        <h3>📋 Event Log</h3>
+        <div class="log" id="eventLog"></div>
+    </div>
+
+    <!-- Include Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    
+    <!-- Include our WebRTC files -->
+    <script src="js/webrtc-client.js"></script>
+    
+    <script>
+        let testClient = null;
+        let isActive = false;
+        
+        // Initialize test
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 WebRTC Test initialized');
+            
+            // Wait for WebRTC client to be ready
+            const checkClient = () => {
+                if (window.webrtcClient) {
+                    testClient = window.webrtcClient;
+                    log('✅ WebRTC Client connected');
+                    setupEventListeners();
+                    return;
+                }
+                setTimeout(checkClient, 100);
+            };
+            checkClient();
+        });
+        
+        function setupEventListeners() {
+            // Listen for connection status changes
+            window.addEventListener('connectionStatusChanged', (event) => {
+                const { text, status } = event.detail;
+                updateStatus(text, status);
+                updateStats();
+            });
+            
+            // Update online count
+            testClient.socket.on('online_count', ({ count }) => {
+                document.getElementById('onlineCount').textContent = count;
+                log(`👥 Online users: ${count}`);
+            });
+            
+            log('🎯 Event listeners setup complete');
+        }
+        
+        async function startTest() {
+            if (!testClient) {
+                log('❌ WebRTC client not ready');
+                return;
+            }
+            
+            try {
+                log('🎬 Starting video chat test...');
+                
+                const country = document.getElementById('countrySelect').value;
+                const gender = document.getElementById('genderSelect').value;
+                
+                await testClient.findMatch({ country, gender });
+                
+                isActive = true;
+                updateButtons();
+                log(`✅ Started matching with preferences: ${country}, ${gender}`);
+                
+            } catch (error) {
+                log(`❌ Error starting test: ${error.message}`);
+                alert(`Error: ${error.message}`);
+            }
+        }
+        
+        function findNext() {
+            if (!testClient || !isActive) return;
+            
+            log('⏭️ Finding next user...');
+            const country = document.getElementById('countrySelect').value;
+            const gender = document.getElementById('genderSelect').value;
+            
+            testClient.findNext({ country, gender });
+        }
+        
+        function toggleAudio() {
+            if (!testClient) return;
+            
+            const enabled = testClient.toggleAudio();
+            const btn = document.getElementById('toggleAudio');
+            btn.textContent = enabled ? '🎤 Audio ON' : '🔇 Audio OFF';
+            btn.style.background = enabled ? '#4CAF50' : '#f44336';
+            
+            log(`🎤 Audio ${enabled ? 'enabled' : 'disabled'}`);
+        }
+        
+        function toggleVideo() {
+            if (!testClient) return;
+            
+            const enabled = testClient.toggleVideo();
+            const btn = document.getElementById('toggleVideo');
+            btn.textContent = enabled ? '📹 Video ON' : '📹 Video OFF';
+            btn.style.background = enabled ? '#4CAF50' : '#f44336';
+            
+            log(`📹 Video ${enabled ? 'enabled' : 'disabled'}`);
+        }
+        
+        function stopTest() {
+            if (!testClient) return;
+            
+            log('🛑 Stopping test...');
+            testClient.cleanup();
+            
+            isActive = false;
+            updateButtons();
+            updateStatus('Stopped', 'disconnected');
+            
+            // Clear videos
+            document.getElementById('localVideo').srcObject = null;
+            document.getElementById('remoteVideo').srcObject = null;
+            
+            log('✅ Test stopped');
+        }
+        
+        function updateStatus(text, status) {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.textContent = `📡 Status: ${text}`;
+            statusEl.className = `status ${status}`;
+            
+            log(`📊 Status: ${text} (${status})`);
+        }
+        
+        function updateButtons() {
+            const startBtn = document.getElementById('startBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const toggleAudio = document.getElementById('toggleAudio');
+            const toggleVideo = document.getElementById('toggleVideo');
+            const stopBtn = document.getElementById('stopBtn');
+            
+            startBtn.disabled = isActive;
+            nextBtn.disabled = !isActive;
+            toggleAudio.disabled = !isActive;
+            toggleVideo.disabled = !isActive;
+            stopBtn.disabled = !isActive;
+        }
+        
+        function updateStats() {
+            if (!testClient) return;
+            
+            document.getElementById('connectionState').textContent = testClient.connectionState || 'disconnected';
+            document.getElementById('roomId').textContent = testClient.roomId || '-';
+            
+            // Count tracks
+            let localTracks = 0;
+            let remoteTracks = 0;
+            
+            if (testClient.localStream) {
+                localTracks = testClient.localStream.getTracks().length;
+            }
+            
+            if (testClient.remoteStream) {
+                remoteTracks = testClient.remoteStream.getTracks().length;
+            }
+            
+            document.getElementById('localTracks').textContent = localTracks;
+            document.getElementById('remoteTracks').textContent = remoteTracks;
+        }
+        
+        function log(message) {
+            const logEl = document.getElementById('eventLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logEl.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message);
+        }
+        
+        // Update stats every 2 seconds
+        setInterval(updateStats, 2000);
+    </script>
+</body>
+</html>

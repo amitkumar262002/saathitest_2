@@ -1,13 +1,14 @@
-// Super Simple Connect - Guaranteed connection between tabs
-console.log('💥 Super Simple Connect loaded');
+// DEPRECATED: This file creates fake "guaranteed" connections between tabs
+// The main WebRTC system in index.html handles real P2P connections
+// This system was causing false positive connection states
 
-class SuperSimpleConnect {
+console.log('⚠️ Super Simple Connect is DEPRECATED - Use main WebRTC system instead');
+
+// Disabled class to prevent conflicts
+class SuperSimpleConnectDeprecated {
     constructor() {
-        this.myId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-        this.connected = false;
-        this.partnerId = null;
-        
-        this.init();
+        console.log('❌ SuperSimpleConnect is disabled - creates fake guaranteed connections');
+        return null;
     }
     
     init() {

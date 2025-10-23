@@ -10,14 +10,6 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/enhanced-navbar.css">
-    <link rel="stylesheet" href="css/ometv-style.css">
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="stylesheet" href="css/video-chat-professional.css">
-    <link rel="stylesheet" href="css/responsive-enhanced.css">
-    <link rel="stylesheet" href="css/theme-system.css">
-    <link rel="stylesheet" href="css/notifications.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -29,25 +21,71 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        /* Navbar Login Button Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .nav-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #667eea;
+        }
+        
         .nav-login-btn {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-            position: relative;
-            overflow: hidden;
-            margin: 0 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         
         .nav-login-btn:hover {
@@ -55,24 +93,438 @@
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
         }
         
-        .nav-login-btn:active {
-            transform: translateY(0px);
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            color: white;
         }
         
-        .nav-login-btn i {
+        .hero-title {
+            font-size: 3em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .user-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .chat-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .control-group label {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .control-select {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            min-width: 150px;
+        }
+        
+        .premium-chat-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-chat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .premium-chat-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .video-chat-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+        }
+        
+        .chat-header {
+            background: rgba(0,0,0,0.8);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .ometv-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: calc(100vh - 140px);
+        }
+        
+        .video-side {
+            position: relative;
+            background: #000;
+        }
+        
+        .main-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
             font-size: 12px;
         }
         
-        /* Responsive navbar login button */
+        .ometv-controls {
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .video-control-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-control-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status.disconnected { background: #f8d7da; color: #721c24; }
+        .status.connecting { background: #fff3cd; color: #856404; }
+        .status.waiting { background: #cce5ff; color: #004085; }
+        .status.connected { background: #d4edda; color: #155724; }
+        
+        .log {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+        
         @media (max-width: 768px) {
-            .nav-login-btn {
-                padding: 6px 12px;
-                font-size: 12px;
-                margin: 0 4px;
+            .ometv-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
             }
             
-            .nav-login-btn i {
-                font-size: 10px;
+            .chat-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero-title {
+                font-size: 2em;
+            }
+        }
+        
+        .features {
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .about {
+            padding: 80px 20px;
+            color: white;
+        }
+        
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat h3 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .rules {
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .rule-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 10px;
+            color: #333;
+        }
+        
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 50px 20px 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .bar {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        
+        .chat-panel {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1001;
+        }
+        
+        .chat-panel.hidden {
+            display: none;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .chat-input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        .chat-input-container button {
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .ometv-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            
+            .chat-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero-title {
+                font-size: 2em;
+            }
+            
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-toggle {
+                display: flex;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .stats {
+                justify-content: center;
             }
         }
     </style>
@@ -108,7 +560,7 @@
                     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
                         <i class="fas fa-moon"></i>
                     </button>
-                    <button id="navLoginBtn" class="nav-login-btn" onclick="redirectToSecureLogin()" style="transform: translateY(-2px);">
+                    <button id="navLoginBtn" class="nav-login-btn" onclick="handleLogin()" style="transform: translateY(-2px);">
                         <i class="fas fa-user"></i> Login
                     </button>
                     <div id="navUserSection" class="nav-user-section">
@@ -507,22 +959,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/complete-error-fix.js"></script>
-    <script src="js/performance-fix.js"></script>
-    <script src="js/dom-safety-fix.js"></script>
-    <script src="js/localhost-server-fix.js"></script>
-    <script src="js/github-pages-fix.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
-    <script>
-        // Check if splash screen should be shown
-        if (!sessionStorage.getItem('splashShown') && !window.location.search.includes('nosplash')) {
-            sessionStorage.setItem('splashShown', 'true');
-            window.location.href = 'splash-enhanced.html';
-        }
-    </script>
-    <script src="js/login-system.js"></script>
-    <script src="js/webrtc-fix.js"></script>
-    <script src="js/function-fix-system.js"></script>
     <!-- Firebase SDK v9 (compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -640,13 +1077,10 @@
                     securityLevel: isGoogleUser ? 'protected++' : 'protected+'
                 };
                 
-                if (isGoogleUser) {
-                    console.log('🛡️ Google user detected - Security level set to Protected++');
-                } else {
-                    console.log('🔒 Email user detected - Security level set to Protected+');
-                }
-                
                 localStorage.setItem('saathi_current_user', JSON.stringify(userData));
+                
+                // Update login button
+                updateLoginButton(true, user);
                 
                 // Call login callbacks
                 window.firebaseAuthManager.loginCallbacks.forEach(callback => callback(userData));
@@ -662,6 +1096,9 @@
                 // Clear localStorage
                 localStorage.removeItem('saathi_current_user');
                 
+                // Update login button
+                updateLoginButton(false);
+                
                 // Call logout callbacks
                 window.firebaseAuthManager.logoutCallbacks.forEach(callback => callback());
                 
@@ -672,22 +1109,7 @@
             }
         });
     </script>
-    <script src="js/navbar-functionality.js"></script>
-    <!-- <script src="js/browser-checker.js"></script> --> <!-- Disabled - causes spam -->
-    <!-- <script src="js/error-checker.js"></script> --> <!-- Disabled - causes spam -->
-    <script src="js/online-message-system.js"></script>
-    <script src="js/url-encryption.js"></script>
-    <!-- <script src="js/real-time-features.js"></script> --> <!-- Disabled - causes infinite loops -->
-    <!-- <script src="js/enhanced-interactions.js"></script> --> <!-- Temporarily disabled due to syntax errors -->
-    <script src="js/audio-video-controls.js"></script>
-    <script src="js/chat-system-fix.js"></script>
-    <!-- <script src="js/function-analyzer.js"></script> --> <!-- Disabled - causes spam -->
-    <script src="js/security.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/webrtc.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/video-controls-global.js"></script>
-    <script src="js/login-test.js"></script>
+    <!-- Working WebRTC Implementation -->
     
     <script>
         // Secure Login Integration Functions
@@ -699,100 +1121,641 @@
             }
         }
         
-        function handleStartWebChat() {
-            console.log('🔍 Start Video Chat button clicked!');
+        // Global variables
+        let socket = null;
+        let localStream = null;
+        let peerConnection = null;
+        let currentRoom = null;
+        let isAudioEnabled = true;
+        let isVideoEnabled = true;
+        
+        // WebRTC configuration
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Saathi TV starting...');
+            connectToServer();
+        });
+        
+        // Connect to signaling server
+        function connectToServer() {
+            log('🔌 Connecting to server...');
             
-            if (!isUserLoggedIn()) {
-                console.log('❌ User not logged in, redirecting to login...');
-                alert('Please login first to start video chat!');
-                redirectToSecureLogin();
+            socket = io('http://localhost:3000');
+            
+            socket.on('connect', () => {
+                log('✅ Connected to server');
+                updateStatus('Connected - Ready to start video chat', 'connected');
+                document.getElementById('mainChatBtn').disabled = false;
+            });
+            
+            socket.on('disconnect', () => {
+                log('❌ Disconnected from server');
+                updateStatus('Disconnected from server', 'disconnected');
+                cleanup();
+            });
+            
+            socket.on('online_count', ({ count }) => {
+                document.getElementById('userCount').textContent = count;
+                log(`👥 Online users: ${count}`);
+            });
+            
+            socket.on('waiting', ({ message }) => {
+                log(`⏳ ${message}`);
+                updateStatus(message, 'waiting');
+            });
+            
+            socket.on('matched', async ({ roomId, peer1, peer2 }) => {
+                log(`🎉 Matched! Room: ${roomId}`);
+                updateStatus('Matched! Establishing connection...', 'connecting');
+                
+                currentRoom = roomId;
+                const isInitiator = peer1 === socket.id;
+                
+                await createPeerConnection(isInitiator);
+                showVideoChat();
+            });
+            
+            socket.on('signal', async ({ signal }) => {
+                log(`📡 Received signal: ${signal.type || 'ice-candidate'}`);
+                await handleSignal(signal);
+            });
+            
+            socket.on('peer_left', () => {
+                log('👋 Peer disconnected');
+                updateStatus('Peer disconnected', 'disconnected');
+                cleanup();
+            });
+            
+            socket.on('connect_error', (error) => {
+                log(`❌ Connection error: ${error.message}`);
+                updateStatus('Connection failed - Make sure server is running', 'disconnected');
+            });
+        }
+        
+        // Start video chat
+        async function startVideoChat() {
+            if (!socket || !socket.connected) {
+                log('❌ Not connected to server');
                 return;
             }
             
-            console.log('✅ User is logged in, starting video chat...');
-            
             try {
-                startVideoChat();
+                log('📹 Getting camera and microphone...');
+                updateStatus('Getting camera access...', 'connecting');
                 
-                // Check if video chat started successfully after 3 seconds
-                setTimeout(() => {
-                    const videoSection = document.getElementById('videoChat');
-                    if (!videoSection || videoSection.style.display === 'none') {
-                        console.log('⚠️ Main video chat failed, showing backup button...');
-                        showBackupButton();
-                    }
-                }, 3000);
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: { echoCancellation: true, noiseSuppression: true }
+                });
+                
+                document.getElementById('localVideo').srcObject = localStream;
+                log('✅ Got local video stream');
+                
+                log('🔍 Looking for match...');
+                updateStatus('Looking for someone to chat with...', 'connecting');
+                socket.emit('find_match');
+                
+                document.getElementById('mainChatBtn').disabled = true;
                 
             } catch (error) {
-                console.error('❌ Main video chat failed:', error);
-                showBackupButton();
+                log(`❌ Error: ${error.message}`);
+                updateStatus('Camera access denied - Please allow permissions', 'disconnected');
+                alert('Please allow camera and microphone access to start video chat.');
             }
         }
         
-        
-        function showBackupButton() {
-            const mainBtn = document.getElementById('mainChatBtn');
+        // Create WebRTC peer connection
+        async function createPeerConnection(isInitiator) {
+            log(`🔗 Creating peer connection (initiator: ${isInitiator})`);
             
-            if (mainBtn) {
-                console.log('⚠️ Main video chat failed, but backup button feature has been removed');
+            peerConnection = new RTCPeerConnection(rtcConfig);
+            
+            // Add local stream
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+            }
+            
+            // Handle ICE candidates
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit('signal', {
+                        roomId: currentRoom,
+                        signal: { candidate: event.candidate }
+                    });
+                }
+            };
+            
+            // Handle remote stream
+            peerConnection.ontrack = (event) => {
+                log('🎥 Got remote stream!');
+                document.getElementById('remoteVideo').srcObject = event.streams[0];
+                updateStatus('Connected! 🎉 Enjoy your chat!', 'connected');
+            };
+            
+            // Handle connection state
+            peerConnection.onconnectionstatechange = () => {
+                const state = peerConnection.connectionState;
+                log(`🔗 Connection state: ${state}`);
                 
-                // Just disable main button and show error message
-                mainBtn.style.opacity = '0.5';
-                mainBtn.style.pointerEvents = 'none';
-                mainBtn.style.filter = 'grayscale(50%)';
-                
-                // Show notification
-                alert('⚠️ Video chat system is currently unavailable.\n\nPlease try again later or contact support.');
-                
-                console.log('❌ Video chat system unavailable');
-            } else {
-                console.error('❌ Could not find main button');
+                if (state === 'failed' || state === 'disconnected') {
+                    updateStatus('Connection lost', 'disconnected');
+                }
+            };
+            
+            // Create offer if initiator
+            if (isInitiator) {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                socket.emit('signal', {
+                    roomId: currentRoom,
+                    signal: { type: 'offer', sdp: offer.sdp }
+                });
             }
         }
         
+        // Handle WebRTC signals
+        async function handleSignal(signal) {
+            if (!peerConnection) return;
+            
+            try {
+                if (signal.type === 'offer') {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    socket.emit('signal', {
+                        roomId: currentRoom,
+                        signal: { type: 'answer', sdp: answer.sdp }
+                    });
+                } else if (signal.type === 'answer') {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
+                } else if (signal.candidate) {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate));
+                }
+            } catch (error) {
+                log(`❌ Signal error: ${error.message}`);
+            }
+        }
         
+        // Show video chat interface
+        function showVideoChat() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('videoChat').style.display = 'block';
+        }
+        
+        // Hide video chat interface
+        function hideVideoChat() {
+            document.getElementById('home').style.display = 'block';
+            document.getElementById('videoChat').style.display = 'none';
+            document.getElementById('mainChatBtn').disabled = false;
+        }
+        
+        // Next user function
+        function nextUser() {
+            log('⏭️ Finding next user...');
+            if (currentRoom) {
+                socket.emit('leave_room', { roomId: currentRoom });
+            }
+            cleanup();
+            setTimeout(() => {
+                if (localStream) {
+                    socket.emit('find_match');
+                    updateStatus('Looking for someone new...', 'connecting');
+                }
+            }, 1000);
+        }
+        
+        // Toggle audio
+        function toggleAudio() {
+            if (!localStream) return;
+            
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) {
+                isAudioEnabled = !isAudioEnabled;
+                audioTrack.enabled = isAudioEnabled;
+                
+                const btn = document.getElementById('toggleAudio');
+                if (btn) {
+                    btn.style.background = isAudioEnabled ? 'rgba(255,255,255,0.2)' : 'rgba(255,0,0,0.5)';
+                }
+                
+                log(`🎤 Audio ${isAudioEnabled ? 'enabled' : 'disabled'}`);
+            }
+        }
+        
+        // Cleanup connections
+        function cleanup() {
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            
+            document.getElementById('remoteVideo').srcObject = null;
+            currentRoom = null;
+        }
+        
+        // Update status display
+        function updateStatus(text, type) {
+            const statusEl = document.getElementById('statusText');
+            if (statusEl) {
+                statusEl.textContent = text;
+            }
+            
+            // Add status display to hero section if not in video chat
+            const heroSection = document.getElementById('home');
+            if (heroSection && heroSection.style.display !== 'none') {
+                let statusDiv = document.getElementById('heroStatus');
+                if (!statusDiv) {
+                    statusDiv = document.createElement('div');
+                    statusDiv.id = 'heroStatus';
+                    statusDiv.className = 'status';
+                    const userCount = document.querySelector('.user-count');
+                    userCount.parentNode.insertBefore(statusDiv, userCount.nextSibling);
+                }
+                statusDiv.textContent = `📡 Status: ${text}`;
+                statusDiv.className = `status ${type}`;
+            }
+        }
+        
+        // Log events
+        function log(message) {
+            const time = new Date().toLocaleTimeString();
+            console.log(`[${time}] ${message}`);
+        }
+        
+        // Utility functions for compatibility
         function isUserLoggedIn() {
-            // Check Firebase authentication first
-            if (window.firebaseAuthManager && window.firebaseAuthManager.isUserLoggedIn()) {
-                return true;
-            }
-            
-            // Check localStorage for user data
-            const currentUser = localStorage.getItem('saathi_current_user');
-            if (currentUser) {
-                try {
-                    const userData = JSON.parse(currentUser);
-                    return !!userData.id;
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                    localStorage.removeItem('saathi_current_user');
-                }
-            }
-            
-            return false;
-            
-            // Check secure session
-            if (secureSession) {
-                try {
-                    const sessionData = JSON.parse(secureSession);
-                    const now = Date.now();
-                    const sessionAge = now - sessionData.timestamp;
-                    const timeout = 30 * 60 * 1000; // 30 minutes
-                    
-                    if (sessionAge < timeout) return true;
-                } catch (error) {
-                    console.error('Error parsing secure session:', error);
-                }
-            }
-            
-            // Check other session types
-            return !!(userSession || currentUser);
+            return !!window.firebaseAuthManager?.getCurrentUser();
         }
         
         function redirectToSecureLogin() {
-            const currentUrl = encodeURIComponent(window.location.href);
-            window.location.href = `login.html?return=${currentUrl}`;
+            window.location.href = 'login.html';
         }
+        
+        // Handle login button click
+        async function handleLogin() {
+            if (window.firebaseAuthManager?.getCurrentUser()) {
+                // User is already logged in, sign out
+                const result = await window.firebaseAuthManager.signOut();
+                if (result.success) {
+                    updateLoginButton(false);
+                    alert('Signed out successfully!');
+                }
+            } else {
+                // User not logged in, show login options
+                showLoginModal();
+            }
+        }
+        
+        // Show login modal
+        function showLoginModal() {
+            const modal = document.createElement('div');
+            modal.id = 'loginModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    max-width: 400px;
+                    width: 90%;
+                    text-align: center;
+                    position: relative;
+                ">
+                    <button onclick="closeLoginModal()" style="
+                        position: absolute;
+                        top: 10px;
+                        right: 15px;
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        color: #666;
+                    ">&times;</button>
+                    
+                    <h2 style="color: #333; margin-bottom: 20px;">Login to Saathi TV</h2>
+                    
+                    <button onclick="loginWithGoogle()" style="
+                        width: 100%;
+                        padding: 15px;
+                        margin: 10px 0;
+                        background: #4285f4;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                    ">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    
+                    <div style="margin: 20px 0; color: #666;">or</div>
+                    
+                    <input type="email" id="loginEmail" placeholder="Email" style="
+                        width: 100%;
+                        padding: 12px;
+                        margin: 5px 0;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        font-size: 16px;
+                    ">
+                    
+                    <input type="password" id="loginPassword" placeholder="Password" style="
+                        width: 100%;
+                        padding: 12px;
+                        margin: 5px 0;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        font-size: 16px;
+                    ">
+                    
+                    <button onclick="loginWithEmail()" style="
+                        width: 100%;
+                        padding: 15px;
+                        margin: 10px 0;
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        cursor: pointer;
+                    ">
+                        Sign In with Email
+                    </button>
+                    
+                    <p style="color: #666; font-size: 14px; margin-top: 15px;">
+                        Don't have an account? 
+                        <a href="#" onclick="showSignupForm()" style="color: #667eea;">Sign up here</a>
+                    </p>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // Close login modal
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Login with Google
+        async function loginWithGoogle() {
+            try {
+                const result = await window.firebaseAuthManager.signInWithGoogle();
+                if (result.success) {
+                    closeLoginModal();
+                    updateLoginButton(true, result.user);
+                    alert('Welcome! You are now signed in.');
+                } else {
+                    alert('Login failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('Login error: ' + error.message);
+            }
+        }
+        
+        // Login with email
+        async function loginWithEmail() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            try {
+                const result = await window.firebaseAuthManager.signInWithEmail(email, password);
+                if (result.success) {
+                    closeLoginModal();
+                    updateLoginButton(true, result.user);
+                    alert('Welcome back! You are now signed in.');
+                } else {
+                    alert('Login failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('Login error: ' + error.message);
+            }
+        }
+        
+        // Update login button based on auth state
+        function updateLoginButton(isLoggedIn, user = null) {
+            const loginBtn = document.getElementById('navLoginBtn');
+            if (loginBtn) {
+                if (isLoggedIn && user) {
+                    loginBtn.innerHTML = `<i class="fas fa-user"></i> ${user.displayName || user.email || 'User'}`;
+                    loginBtn.title = 'Click to sign out';
+                } else {
+                    loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                    loginBtn.title = 'Click to sign in';
+                }
+            }
+        }
+        
+        // Show signup form
+        function showSignupForm() {
+            closeLoginModal();
+            
+            const modal = document.createElement('div');
+            modal.id = 'signupModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    max-width: 400px;
+                    width: 90%;
+                    text-align: center;
+                    position: relative;
+                ">
+                    <button onclick="closeSignupModal()" style="
+                        position: absolute;
+                        top: 10px;
+                        right: 15px;
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        color: #666;
+                    ">&times;</button>
+                    
+                    <h2 style="color: #333; margin-bottom: 20px;">Create Account</h2>
+                    
+                    <input type="text" id="signupName" placeholder="Full Name" style="
+                        width: 100%;
+                        padding: 12px;
+                        margin: 5px 0;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        font-size: 16px;
+                    ">
+                    
+                    <input type="email" id="signupEmail" placeholder="Email" style="
+                        width: 100%;
+                        padding: 12px;
+                        margin: 5px 0;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        font-size: 16px;
+                    ">
+                    
+                    <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" style="
+                        width: 100%;
+                        padding: 12px;
+                        margin: 5px 0;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        font-size: 16px;
+                    ">
+                    
+                    <button onclick="signupWithEmail()" style="
+                        width: 100%;
+                        padding: 15px;
+                        margin: 15px 0;
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        cursor: pointer;
+                    ">
+                        Create Account
+                    </button>
+                    
+                    <div style="margin: 20px 0; color: #666;">or</div>
+                    
+                    <button onclick="loginWithGoogle()" style="
+                        width: 100%;
+                        padding: 15px;
+                        margin: 10px 0;
+                        background: #4285f4;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                    ">
+                        <i class="fab fa-google"></i>
+                        Sign up with Google
+                    </button>
+                    
+                    <p style="color: #666; font-size: 14px; margin-top: 15px;">
+                        Already have an account? 
+                        <a href="#" onclick="showLoginModal(); closeSignupModal();" style="color: #667eea;">Sign in here</a>
+                    </p>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // Close signup modal
+        function closeSignupModal() {
+            const modal = document.getElementById('signupModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Signup with email
+        async function signupWithEmail() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            if (!name || !email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+            
+            try {
+                const result = await window.firebaseAuthManager.signUpWithEmail(email, password, name);
+                if (result.success) {
+                    closeSignupModal();
+                    updateLoginButton(true, result.user);
+                    alert('Account created successfully! Welcome to Saathi TV.');
+                } else {
+                    alert('Signup failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('Signup error: ' + error.message);
+            }
+        }
+        
+        
+        function toggleChat() {
+            const chatPanel = document.getElementById('chatPanel');
+            if (chatPanel) {
+                chatPanel.classList.toggle('hidden');
+            }
+        }
+        
+        
+        function reportUser() {
+            alert('User reported');
+        }
+        
+        function toggleFullscreen() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen();
+            }
+        }
+        
+        
+        
+        
         
         // Modern Notification System
         function showNotification(message, type = 'info', duration = 3000) {
@@ -966,143 +1929,25 @@
             console.log(`🎨 Theme loaded: ${theme}`);
         }
         
-        function startVideoChat() {
-            console.log('🚀 Starting video chat...');
-            
-            // Show notification to user
-            alert('🎥 Starting Video Chat!\n\nConnecting you to the video chat system...');
-            
-            // Check if video chat section exists
-            const videoSection = document.getElementById('videoChat');
-            const heroSection = document.querySelector('.hero');
-            
-            console.log('🔍 Checking video chat elements:', {
-                videoSection: !!videoSection,
-                heroSection: !!heroSection,
-                saathiTV: !!window.saathiTV,
-                webRTCFix: !!window.webRTCFix
-            });
-            
-            if (videoSection && heroSection) {
-                console.log('✅ Switching to video chat view...');
-                heroSection.style.display = 'none';
-                videoSection.style.display = 'flex';
-                
-                // Update username in video overlay
-                if (window.updateUserVideoLabel) {
-                    setTimeout(window.updateUserVideoLabel, 100);
-                }
-                
-                // Initialize main SaathiTV chat if available
-                if (window.saathiTV && window.saathiTV.startChat) {
-                    console.log('🎯 Using main SaathiTV chat system...');
-                    setTimeout(() => {
-                        window.saathiTV.startChat();
-                    }, 500);
-                } else if (window.webRTCFix && window.webRTCFix.startChat) {
-                    console.log('🎯 Using WebRTC fix chat system...');
-                    setTimeout(() => {
-                        window.webRTCFix.startChat();
-                    }, 500);
-                } else {
-                    console.log('⚠️ No chat system found, initializing fallback...');
-                    // Fallback: try to initialize basic video chat
-                    initializeFallbackVideoChat();
-                }
-            } else {
-                console.log('❌ Video chat elements not found, creating basic interface...');
-                createBasicVideoInterface();
-            }
-        }
-        
-        function initializeFallbackVideoChat() {
-            console.log('🔄 Initializing fallback video chat...');
-            
-            // Try to find and initialize any available video chat system
-            setTimeout(() => {
-                if (window.saathiTV && window.saathiTV.startChat) {
-                    console.log('✅ SaathiTV system found, starting...');
-                    window.saathiTV.startChat();
-                } else {
-                    console.log('⚠️ No video chat system available');
-                    alert('Video chat system is still loading. Please try again in a moment.');
-                }
-            }, 2000);
-        }
-        
-        function createBasicVideoInterface() {
-            console.log('🔧 Creating basic video interface...');
-            alert('Video chat interface is being prepared. Please wait...');
-            
-            // Try to redirect to a working video chat page or show message
-            setTimeout(() => {
-                alert('Video chat system is currently being set up. Please try again later or contact support.');
-            }, 1000);
-        }
+        // This function is now handled by the working WebRTC implementation above
+        // Removed debug code and fallback systems that were causing conflicts
         
         
         
-        // Setup login callbacks
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.loginSystem) {
-                window.loginSystem.onLogin((user) => {
-                    console.log('👤 User logged in:', user.name);
-                    
-                    // Check if we should start video chat
-                    const urlParams = new URLSearchParams(window.location.search);
-                    if (window.location.hash === '#videoChat' || urlParams.get('startChat') === 'true') {
-                        startVideoChat();
-                    }
-                });
-            }
-        });
+        // Login callbacks removed - handled by Firebase auth system above
     </script>
     <script>
-        // Check user login status
+        // Simplified login status check
         function checkLoginStatus() {
-            let currentUser = null;
-            
-            // Check Firebase authentication first
-            if (window.firebaseAuthManager && window.firebaseAuthManager.getCurrentUser) {
-                const firebaseUser = window.firebaseAuthManager.getCurrentUser();
-                if (firebaseUser) {
-                    const isGoogleUser = firebaseUser.providerData[0]?.providerId === 'google.com';
-                    currentUser = {
-                        id: firebaseUser.uid,
-                        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-                        email: firebaseUser.email,
-                        avatar: firebaseUser.photoURL || '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>',
-                        loginMethod: isGoogleUser ? 'google' : 'email',
-                        verified: firebaseUser.emailVerified,
-                        securityLevel: isGoogleUser ? 'protected++' : 'protected+'
-                    };
-                }
-            }
-            
-            // Fallback to localStorage
-            if (!currentUser) {
-                try {
-                    currentUser = JSON.parse(localStorage.getItem('saathi_current_user'));
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                }
-            }
-            
+            const currentUser = window.firebaseAuthManager?.getCurrentUser();
             const userStatus = document.getElementById('userStatus');
             const userName = document.getElementById('userName');
-            const loginLink = document.querySelector('.login-link');
             
-            if (currentUser) {
-                if (userStatus) userStatus.style.display = 'flex';
-                if (userName) userName.textContent = currentUser.name || currentUser.email || 'User';
-                if (loginLink) loginLink.style.display = 'none';
-                
-                console.log('✅ User is logged in:', currentUser.name || currentUser.email);
-            } else {
-                if (userStatus) userStatus.style.display = 'none';
-                if (loginLink) loginLink.style.display = 'block';
-                
-                console.log('❌ No user logged in');
+            if (currentUser && userStatus && userName) {
+                userStatus.style.display = 'flex';
+                userName.textContent = currentUser.displayName || currentUser.email || 'User';
+            } else if (userStatus) {
+                userStatus.style.display = 'none';
             }
         }
         

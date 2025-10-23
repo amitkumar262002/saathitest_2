@@ -1,17 +1,14 @@
-// Peer Matching System - Advanced P2P Connection with Room Management
-console.log('🤝 Peer Matching System loaded');
+// DEPRECATED: This file has been removed as it creates false positive connections
+// The main WebRTC system in index.html handles all connections properly
+// This system was causing "PEER CONNECTED" status without actual video/audio
 
-class PeerMatchingSystem {
+console.log('⚠️ Peer Matching System is DEPRECATED - Use main WebRTC system instead');
+
+// Disabled class to prevent conflicts
+class PeerMatchingSystemDeprecated {
     constructor() {
-        this.peerId = 'peer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-        this.roomId = null;
-        this.isConnected = false;
-        this.partnerId = null;
-        this.connectionType = null; // 'host' or 'client'
-        this.heartbeatInterval = null;
-        this.searchInterval = null;
-        
-        this.init();
+        console.log('❌ PeerMatchingSystem is disabled - conflicts with main WebRTC system');
+        return null;
     }
     
     init() {

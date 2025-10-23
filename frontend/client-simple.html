@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Simple WebRTC Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .online-count {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status.disconnected { background: #f8d7da; color: #721c24; }
+        .status.connecting { background: #fff3cd; color: #856404; }
+        .status.waiting { background: #cce5ff; color: #004085; }
+        .status.connected { background: #d4edda; color: #155724; }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .video-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+        
+        .log-entry.info { color: #0066cc; }
+        .log-entry.success { color: #009900; }
+        .log-entry.warning { color: #ff6600; }
+        .log-entry.error { color: #cc0000; }
+        
+        @media (max-width: 768px) {
+            .video-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 14px;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">🎥 Saathi TV</h1>
+            <div class="online-count">
+                👥 Online Users: <span id="onlineCount">0</span>
+            </div>
+        </div>
+        
+        <!-- Status Display -->
+        <div class="status disconnected" id="connectionStatus">
+            📡 Status: Disconnected from server
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button id="findMatchBtn" onclick="findMatch()" disabled>
+                🔍 Find Match
+            </button>
+            <button id="nextUserBtn" onclick="nextUser()" disabled>
+                ⏭️ Next User
+            </button>
+            <button id="toggleAudioBtn" onclick="toggleAudio()" disabled>
+                🎤 Audio: ON
+            </button>
+            <button id="toggleVideoBtn" onclick="toggleVideo()" disabled>
+                📹 Video: ON
+            </button>
+        </div>
+        
+        <!-- Video Streams -->
+        <div class="video-container">
+            <div class="video-wrapper">
+                <video id="localVideo" autoplay muted playsinline></video>
+                <div class="video-label">📹 You</div>
+            </div>
+            <div class="video-wrapper">
+                <video id="remoteVideo" autoplay playsinline></video>
+                <div class="video-label">👤 Stranger</div>
+            </div>
+        </div>
+        
+        <!-- Event Log -->
+        <div class="log" id="eventLog"></div>
+    </div>
+
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    
+    <script>
+        // Global variables
+        let socket = null;
+        let localStream = null;
+        let remoteStream = null;
+        let peerConnection = null;
+        let currentRoom = null;
+        let isAudioEnabled = true;
+        let isVideoEnabled = true;
+        
+        // WebRTC configuration
+        const rtcConfig = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+                // Add TURN servers for production:
+                // { 
+                //     urls: 'turn:your-turn-server.com:3478',
+                //     username: 'your-username',
+                //     credential: 'your-password'
+                // }
+            ]
+        };
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            log('🚀 Saathi TV Client starting...', 'info');
+            
+            try {
+                // Get user media first
+                await getUserMedia();
+                
+                // Connect to signaling server
+                connectToServer();
+                
+            } catch (error) {
+                log(`❌ Initialization failed: ${error.message}`, 'error');
+                updateStatus('Media access denied - Please allow camera/microphone', 'error');
+            }
+        });
+        
+        // Get user media (camera and microphone)
+        async function getUserMedia() {
+            log('📹 Requesting camera and microphone access...', 'info');
+            
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    },
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+                
+                // Display local video
+                const localVideo = document.getElementById('localVideo');
+                localVideo.srcObject = localStream;
+                
+                log('✅ Camera and microphone access granted', 'success');
+                
+            } catch (error) {
+                throw new Error('Camera/microphone access denied. Please allow permissions and refresh.');
+            }
+        }
+        
+        // Connect to signaling server
+        function connectToServer() {
+            log('🔌 Connecting to signaling server...', 'info');
+            
+            // Connect to server (adjust URL for your setup)
+            const serverUrl = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : 'https://your-server.com';
+                
+            socket = io(serverUrl);
+            
+            // Connection events
+            socket.on('connect', () => {
+                log('✅ Connected to signaling server', 'success');
+                updateStatus('Connected to server - Ready to find match', 'connected');
+                document.getElementById('findMatchBtn').disabled = false;
+            });
+            
+            socket.on('disconnect', () => {
+                log('❌ Disconnected from server', 'error');
+                updateStatus('Disconnected from server', 'disconnected');
+                cleanup();
+            });
+            
+            // Online count updates
+            socket.on('online_count', ({ count }) => {
+                document.getElementById('onlineCount').textContent = count;
+                log(`👥 Online users: ${count}`, 'info');
+            });
+            
+            // Waiting for match
+            socket.on('waiting', ({ message, position }) => {
+                log(`⏳ ${message} (Position: ${position})`, 'info');
+                updateStatus(`${message} (Position: ${position})`, 'waiting');
+            });
+            
+            // Matched with another user
+            socket.on('matched', async ({ roomId, peer1, peer2 }) => {
+                log(`🎉 Matched! Room: ${roomId}`, 'success');
+                updateStatus('Matched! Establishing connection...', 'connecting');
+                
+                currentRoom = roomId;
+                const isInitiator = peer1 === socket.id;
+                
+                await createPeerConnection(isInitiator);
+                
+                document.getElementById('nextUserBtn').disabled = false;
+                document.getElementById('toggleAudioBtn').disabled = false;
+                document.getElementById('toggleVideoBtn').disabled = false;
+            });
+            
+            // WebRTC signaling
+            socket.on('signal', async ({ from, signal }) => {
+                log(`📡 Received signal from ${from}: ${signal.type || 'ice-candidate'}`, 'info');
+                await handleSignal(signal);
+            });
+            
+            // Peer left
+            socket.on('peer_left', ({ roomId }) => {
+                log('👋 Peer disconnected', 'warning');
+                updateStatus('Peer disconnected - Click "Find Match" to find someone new', 'disconnected');
+                cleanup();
+            });
+            
+            // Connection errors
+            socket.on('connect_error', (error) => {
+                log(`❌ Connection error: ${error.message}`, 'error');
+                updateStatus('Connection failed - Check if server is running', 'error');
+            });
+        }
+        
+        // Find a match
+        function findMatch() {
+            if (!socket || !socket.connected) {
+                log('❌ Not connected to server', 'error');
+                return;
+            }
+            
+            log('🔍 Looking for match...', 'info');
+            updateStatus('Looking for someone to chat with...', 'connecting');
+            
+            socket.emit('find_match');
+            
+            document.getElementById('findMatchBtn').disabled = true;
+        }
+        
+        // Create WebRTC peer connection
+        async function createPeerConnection(isInitiator) {
+            log(`🔗 Creating peer connection (initiator: ${isInitiator})`, 'info');
+            
+            try {
+                peerConnection = new RTCPeerConnection(rtcConfig);
+                
+                // Add local stream tracks
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                    log(`➕ Added ${track.kind} track`, 'info');
+                });
+                
+                // Handle ICE candidates
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        log('🧊 Sending ICE candidate', 'info');
+                        socket.emit('signal', {
+                            roomId: currentRoom,
+                            signal: { candidate: event.candidate }
+                        });
+                    }
+                };
+                
+                // Handle remote stream
+                peerConnection.ontrack = (event) => {
+                    log('🎥 Received remote stream', 'success');
+                    remoteStream = event.streams[0];
+                    document.getElementById('remoteVideo').srcObject = remoteStream;
+                    updateStatus('Connected! 🎉', 'connected');
+                };
+                
+                // Handle connection state changes
+                peerConnection.onconnectionstatechange = () => {
+                    const state = peerConnection.connectionState;
+                    log(`🔗 Connection state: ${state}`, 'info');
+                    
+                    if (state === 'connected') {
+                        updateStatus('Connected! 🎉', 'connected');
+                    } else if (state === 'disconnected' || state === 'failed') {
+                        updateStatus('Connection lost', 'error');
+                    }
+                };
+                
+                // If initiator, create offer
+                if (isInitiator) {
+                    log('📞 Creating offer...', 'info');
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    
+                    socket.emit('signal', {
+                        roomId: currentRoom,
+                        signal: { type: 'offer', sdp: offer.sdp }
+                    });
+                }
+                
+            } catch (error) {
+                log(`❌ Error creating peer connection: ${error.message}`, 'error');
+            }
+        }
+        
+        // Handle incoming WebRTC signals
+        async function handleSignal(signal) {
+            try {
+                if (signal.type === 'offer') {
+                    log('📥 Handling offer', 'info');
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
+                    
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    
+                    socket.emit('signal', {
+                        roomId: currentRoom,
+                        signal: { type: 'answer', sdp: answer.sdp }
+                    });
+                    
+                } else if (signal.type === 'answer') {
+                    log('📥 Handling answer', 'info');
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
+                    
+                } else if (signal.candidate) {
+                    log('📥 Adding ICE candidate', 'info');
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate));
+                }
+                
+            } catch (error) {
+                log(`❌ Error handling signal: ${error.message}`, 'error');
+            }
+        }
+        
+        // Find next user
+        function nextUser() {
+            log('⏭️ Finding next user...', 'info');
+            
+            // Leave current room
+            if (currentRoom) {
+                socket.emit('leave_room', { roomId: currentRoom });
+            }
+            
+            cleanup();
+            
+            // Start new search
+            setTimeout(() => {
+                findMatch();
+            }, 1000);
+        }
+        
+        // Toggle audio
+        function toggleAudio() {
+            if (!localStream) return;
+            
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) {
+                isAudioEnabled = !isAudioEnabled;
+                audioTrack.enabled = isAudioEnabled;
+                
+                const btn = document.getElementById('toggleAudioBtn');
+                btn.textContent = isAudioEnabled ? '🎤 Audio: ON' : '🔇 Audio: OFF';
+                btn.style.background = isAudioEnabled ? '#4CAF50' : '#f44336';
+                
+                log(`🎤 Audio ${isAudioEnabled ? 'enabled' : 'disabled'}`, 'info');
+            }
+        }
+        
+        // Toggle video
+        function toggleVideo() {
+            if (!localStream) return;
+            
+            const videoTrack = localStream.getVideoTracks()[0];
+            if (videoTrack) {
+                isVideoEnabled = !isVideoEnabled;
+                videoTrack.enabled = isVideoEnabled;
+                
+                const btn = document.getElementById('toggleVideoBtn');
+                btn.textContent = isVideoEnabled ? '📹 Video: ON' : '📹 Video: OFF';
+                btn.style.background = isVideoEnabled ? '#4CAF50' : '#f44336';
+                
+                log(`📹 Video ${isVideoEnabled ? 'enabled' : 'disabled'}`, 'info');
+            }
+        }
+        
+        // Cleanup connections
+        function cleanup() {
+            log('🧹 Cleaning up connections...', 'info');
+            
+            // Close peer connection
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            
+            // Clear remote video
+            const remoteVideo = document.getElementById('remoteVideo');
+            remoteVideo.srcObject = null;
+            
+            // Reset state
+            currentRoom = null;
+            remoteStream = null;
+            
+            // Reset buttons
+            document.getElementById('findMatchBtn').disabled = false;
+            document.getElementById('nextUserBtn').disabled = true;
+            document.getElementById('toggleAudioBtn').disabled = true;
+            document.getElementById('toggleVideoBtn').disabled = true;
+        }
+        
+        // Update status display
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.textContent = `📡 Status: ${message}`;
+            statusEl.className = `status ${type}`;
+        }
+        
+        // Log events
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('eventLog');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+            
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            if (socket) {
+                socket.disconnect();
+            }
+        });
+    </script>
+</body>
+</html>

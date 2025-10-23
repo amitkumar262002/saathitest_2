@@ -1,15 +1,14 @@
-// Instant Connect System - Immediate connection between tabs
-console.log('⚡ Instant Connect System loaded');
+// DEPRECATED: This file creates fake connections between browser tabs
+// The main WebRTC system in index.html handles real P2P connections
+// This system was causing false positive "CONNECTED" status
 
-class InstantConnect {
+console.log('⚠️ Instant Connect System is DEPRECATED - Use main WebRTC system instead');
+
+// Disabled class to prevent conflicts
+class InstantConnectDeprecated {
     constructor() {
-        this.connectionId = 'instant_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-        this.isHost = false;
-        this.isGuest = false;
-        this.partnerId = null;
-        this.connected = false;
-        
-        this.init();
+        console.log('❌ InstantConnect is disabled - creates fake tab connections');
+        return null;
     }
     
     init() {
