@@ -20,39 +20,39 @@ class UserStatsDisplay {
     }
     
     createStatsDisplay() {
-        // Create stats display element
-        const statsDisplay = document.createElement('div');
-        statsDisplay.id = 'userStatsDisplay';
-        statsDisplay.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            z-index: 1000;
-            min-width: 200px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        `;
+        // Stats display disabled - removed debug UI element
+        // const statsDisplay = document.createElement('div');
+        // statsDisplay.id = 'userStatsDisplay';
+        // statsDisplay.style.cssText = `
+        //     position: fixed;
+        //     top: 10px;
+        //     right: 10px;
+        //     background: rgba(0, 0, 0, 0.8);
+        //     color: white;
+        //     padding: 15px;
+        //     border-radius: 10px;
+        //     font-family: Arial, sans-serif;
+        //     font-size: 12px;
+        //     z-index: 1000;
+        //     min-width: 200px;
+        //     backdrop-filter: blur(10px);
+        //     border: 1px solid rgba(255, 255, 255, 0.1);
+        // `;
         
-        statsDisplay.innerHTML = `
-            <div style="font-weight: bold; margin-bottom: 10px; color: #4CAF50;">
-                📊 Live Stats
-            </div>
-            <div id="statsContent">
-                <div>🟢 Online Users: <span id="onlineCount">0</span></div>
-                <div>💬 In Rooms: <span id="roomCount">0</span></div>
-                <div>⏳ Waiting: <span id="waitingCount">0</span></div>
-                <div>🏠 Active Rooms: <span id="activeRooms">0</span></div>
-            </div>
-        `;
+        // statsDisplay.innerHTML = `
+        //     <div style="font-weight: bold; margin-bottom: 10px; color: #4CAF50;">
+        //         📊 Live Stats
+        //     </div>
+        //     <div id="statsContent">
+        //         <div>🟢 Online Users: <span id="onlineCount">0</span></div>
+        //         <div>💬 In Rooms: <span id="roomCount">0</span></div>
+        //         <div>⏳ Waiting: <span id="waitingCount">0</span></div>
+        //         <div>🏠 Active Rooms: <span id="activeRooms">0</span></div>
+        //     </div>
+        // `;
         
-        document.body.appendChild(statsDisplay);
-        console.log('📊 Stats display created');
+        // document.body.appendChild(statsDisplay);
+        console.log('📊 Stats display disabled for clean UI');
     }
     
     connectToSocket() {

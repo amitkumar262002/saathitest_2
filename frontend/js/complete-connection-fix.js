@@ -220,17 +220,18 @@ class CompleteConnectionFix {
     
     overrideGlobalFunctions() {
         // Ensure global functions work properly
-        window.startVideoChat = () => {
+        const self = this; // Store reference to this
+        window.startVideoChat = function() {
             console.log('🎥 Starting video chat via connection fix...');
             
-            if (!this.isConnected) {
+            if (!self.isConnected) {
                 console.log('🔌 Socket not connected, attempting to connect...');
-                this.establishSocketConnection();
+                self.establishSocketConnection();
                 
                 // Wait for connection then start
                 const waitForConnection = () => {
-                    if (this.isConnected) {
-                        this.startVideoChat();
+                    if (self.isConnected) {
+                        self.startVideoChat();
                     } else {
                         setTimeout(waitForConnection, 1000);
                     }
@@ -239,7 +240,7 @@ class CompleteConnectionFix {
                 return;
             }
             
-            this.startVideoChat();
+            self.startVideoChat();
         };
         
         window.handleStartWebChat = window.startVideoChat;
