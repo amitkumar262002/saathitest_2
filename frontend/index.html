@@ -1547,22 +1547,19 @@
         function handleStartWebChat() {
             console.log('🔍 Start Video Chat button clicked!');
             
-            if (!isUserLoggedIn()) {
-                console.log('❌ User not logged in, redirecting to login...');
-                alert('Please login first to start video chat!');
-                redirectToSecureLogin();
-                return;
-            }
-            
-            console.log('✅ User is logged in, starting auto-join video chat...');
+            // Skip login check for now - allow anonymous video chat
+            console.log('✅ Starting video chat (anonymous mode)...');
             
             try {
-                // Use auto-join manager if available
-                if (window.autoJoinManager) {
+                // Try unified WebRTC system first
+                if (window.unifiedWebRTC && typeof window.unifiedWebRTC.startVideoChat === 'function') {
+                    console.log('🎯 Using Unified WebRTC System');
+                    window.unifiedWebRTC.startVideoChat();
+                } else if (window.autoJoinManager) {
                     console.log('🎯 Using Auto-Join Manager for enhanced chat');
                     window.autoJoinManager.startEnhancedChat();
                 } else {
-                    console.log('⚠️ Auto-Join Manager not available, using fallback');
+                    console.log('⚠️ Using fallback startVideoChat function');
                     startVideoChat();
                 }
                 
@@ -1570,14 +1567,61 @@
                 setTimeout(() => {
                     const videoSection = document.getElementById('videoChat');
                     if (!videoSection || videoSection.style.display === 'none') {
-                        console.log('⚠️ Video chat failed, showing backup button...');
-                        showBackupButton();
+                        console.log('⚠️ Video chat failed, trying alternative method...');
+                        // Try alternative initialization
+                        initializeAlternativeVideoChat();
                     }
                 }, 3000);
                 
             } catch (error) {
                 console.error('❌ Video chat failed:', error);
-                showBackupButton();
+                console.log('🔄 Trying alternative video chat initialization...');
+                initializeAlternativeVideoChat();
+            }
+        }
+        
+        function initializeAlternativeVideoChat() {
+            console.log('🔄 Initializing alternative video chat...');
+            
+            try {
+                // Show video chat interface
+                const videoSection = document.getElementById('videoChat');
+                const heroSection = document.querySelector('.hero');
+                
+                if (videoSection && heroSection) {
+                    heroSection.style.display = 'none';
+                    videoSection.style.display = 'flex';
+                    
+                    // Update status
+                    const statusText = document.getElementById('statusText');
+                    if (statusText) {
+                        statusText.textContent = 'Connecting to video chat...';
+                    }
+                    
+                    // Try to initialize basic video chat
+                    if (window.saathiTV && window.saathiTV.startChat) {
+                        window.saathiTV.startChat();
+                    } else {
+                        console.log('⚠️ No chat system available, showing demo mode');
+                        showDemoMode();
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Alternative video chat failed:', error);
+                showDemoMode();
+            }
+        }
+        
+        function showDemoMode() {
+            console.log('🎭 Showing demo mode...');
+            const statusText = document.getElementById('statusText');
+            if (statusText) {
+                statusText.textContent = 'Demo Mode - No server connection';
+            }
+            
+            // Show demo notification
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Demo Mode: Video chat features are limited without server connection', 'info');
             }
         }
         

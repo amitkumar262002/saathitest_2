@@ -48,6 +48,16 @@ class UnifiedWebRTCSystem {
     
     waitForSocket() {
         const checkSocket = () => {
+            // Check if we're on GitHub Pages (no local server)
+            const isGitHubPages = window.location.hostname.includes('github.io') || 
+                                 window.location.hostname.includes('github.com');
+            
+            if (isGitHubPages) {
+                console.log('🌐 GitHub Pages detected - using demo mode');
+                this.setupDemoMode();
+                return;
+            }
+            
             // Try multiple socket sources
             if (window.saathiTV && window.saathiTV.socket) {
                 this.socket = window.saathiTV.socket;
@@ -161,6 +171,34 @@ class UnifiedWebRTCSystem {
         console.log('✅ Socket listeners set up');
     }
     
+    setupDemoMode() {
+        console.log('🎭 Setting up demo mode for GitHub Pages');
+        
+        // Create a mock socket for demo mode
+        this.socket = {
+            connected: false,
+            emit: (event, data) => {
+                console.log(`🎭 Demo Mode - Socket emit: ${event}`, data);
+            },
+            on: (event, callback) => {
+                console.log(`🎭 Demo Mode - Socket listener: ${event}`);
+            },
+            disconnect: () => {
+                console.log('🎭 Demo Mode - Socket disconnect');
+            }
+        };
+        
+        // Update debug info
+        if (window.webrtcDebugTool) {
+            window.webrtcDebugTool.debugInfo.socketStatus = 'Demo Mode';
+        }
+        
+        // Show demo notification
+        if (window.strangerNotifications) {
+            window.strangerNotifications.showNotification('Demo Mode: Running on GitHub Pages without server connection', 'info');
+        }
+    }
+    
     async startVideoChat() {
         console.log('🎥 Starting video chat...');
         
@@ -175,6 +213,13 @@ class UnifiedWebRTCSystem {
             // Show video chat interface
             this.showVideoInterface();
             
+            // Check if we're in demo mode
+            if (this.socket && !this.socket.connected && this.socket.emit) {
+                console.log('🎭 Demo Mode: Simulating video chat experience');
+                this.simulateDemoExperience();
+                return;
+            }
+            
             // Join room to find a partner
             this.findPartner();
             
@@ -185,6 +230,44 @@ class UnifiedWebRTCSystem {
             console.error('❌ Error starting video chat:', error);
             this.showError('Failed to start video chat. Please check camera/microphone permissions.');
         }
+    }
+    
+    simulateDemoExperience() {
+        console.log('🎭 Simulating demo video chat experience...');
+        
+        // Update status
+        this.updateStatus('Demo Mode - Simulating connection...');
+        
+        // Simulate finding a partner after 3 seconds
+        setTimeout(() => {
+            this.updateStatus('Demo Mode - Connected to simulated stranger');
+            
+            // Show demo notification
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Demo Mode: This is a simulated connection for demonstration purposes', 'info');
+            }
+            
+            // Update debug info
+            if (window.webrtcDebugTool) {
+                window.webrtcDebugTool.debugInfo.socketStatus = 'Demo Mode';
+                window.webrtcDebugTool.debugInfo.peerConnectionStatus = 'Demo';
+                window.webrtcDebugTool.debugInfo.iceConnectionStatus = 'Demo';
+                window.webrtcDebugTool.debugInfo.roomId = 'demo-room-123';
+                window.webrtcDebugTool.debugInfo.isInitiator = 'Demo';
+            }
+            
+        }, 3000);
+        
+        // Simulate periodic status updates
+        setInterval(() => {
+            const statuses = [
+                'Demo Mode - Chatting with simulated stranger',
+                'Demo Mode - Connection stable',
+                'Demo Mode - Audio/Video working'
+            ];
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            this.updateStatus(randomStatus);
+        }, 10000);
     }
     
     async getLocalMedia() {
