@@ -48,14 +48,36 @@ class UnifiedWebRTCSystem {
     
     waitForSocket() {
         const checkSocket = () => {
-            // Check if we're on GitHub Pages (no local server)
+            // Check if we're on GitHub Pages or production
             const isGitHubPages = window.location.hostname.includes('github.io') || 
                                  window.location.hostname.includes('github.com');
             
+            const isProduction = window.location.hostname.includes('saathi-tv') || 
+                                window.location.hostname.includes('saathi-tv.com');
+            
+            // If on GitHub Pages but has deployed backend URL, try to connect
             if (isGitHubPages) {
-                console.log('🌐 GitHub Pages detected - using demo mode');
-                this.setupDemoMode();
-                return;
+                // Try to connect to deployed backend first
+                const deployedBackendURL = 'https://your-backend-server.com'; // TODO: Replace with your deployed backend URL
+                
+                if (window.io) {
+                    try {
+                        console.log(`🔗 Attempting to connect to deployed backend: ${deployedBackendURL}`);
+                        this.socket = window.io(deployedBackendURL, {
+                            transports: ['websocket', 'polling'],
+                            timeout: 5000,
+                            forceNew: true
+                        });
+                        this.setupSocketListeners();
+                        console.log('✅ Connected to deployed backend');
+                        return;
+                    } catch (error) {
+                        console.warn('⚠️ Could not connect to deployed backend:', error);
+                        console.log('🌐 Falling back to demo mode');
+                        this.setupDemoMode();
+                        return;
+                    }
+                }
             }
             
             // Try multiple socket sources
