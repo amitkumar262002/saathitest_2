@@ -327,7 +327,16 @@
         async function handleGoogleLogin() {
             try {
                 console.log('🔍 Starting Google login...');
+                
+                // Check if Firebase is loaded
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase is not loaded');
+                }
+                
                 const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
                 const result = await firebase.auth().signInWithPopup(provider);
                 
                 console.log('✅ Google login successful:', result.user.email);
@@ -337,12 +346,25 @@
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('❌ Google login error:', error);
-                alert('Login failed: ' + error.message);
+                
+                // More specific error messages
+                let errorMessage = 'Login failed: ';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage += 'Login popup was closed. Please try again.';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage += 'Popup was blocked by browser. Please allow popups for this site.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage += 'Network error. Please check your internet connection.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                alert(errorMessage);
             }
         }
         
         async function handleEmailLogin() {
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             
             if (!email || !password) {
@@ -350,8 +372,19 @@
                 return;
             }
             
+            // Show loading state
+            const submitBtn = document.querySelector('#emailLoginForm .submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+            
+            if (btnText && btnLoader) {
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'block';
+                submitBtn.disabled = true;
+            }
+            
             try {
-                console.log('🔍 Starting email login...');
+                console.log('🔍 Starting email login for:', email);
                 const result = await firebase.auth().signInWithEmailAndPassword(email, password);
                 
                 console.log('✅ Email login successful:', result.user.email);
@@ -361,7 +394,29 @@
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('❌ Email login error:', error);
-                alert('Login failed: ' + error.message);
+                
+                // More specific error messages
+                let errorMessage = 'Login failed: ';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage += 'No account found with this email. Please sign up first.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage += 'Incorrect password. Please try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage += 'Too many failed attempts. Please try again later.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                alert(errorMessage);
+            } finally {
+                // Reset button state
+                if (btnText && btnLoader) {
+                    btnText.style.display = 'block';
+                    btnLoader.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
             }
         }
         
@@ -400,9 +455,80 @@
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('❌ Email signup error:', error);
-                alert('Signup failed: ' + error.message);
+                
+                // More specific error messages
+                let errorMessage = 'Signup failed: ';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage += 'An account with this email already exists. Please sign in instead.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage += 'Password is too weak. Please choose a stronger password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                alert(errorMessage);
             }
         }
+        
+        // Missing utility functions
+        window.togglePassword = function(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.parentElement.querySelector('.password-toggle i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                button.className = 'fas fa-eye';
+            }
+        };
+        
+        window.showTerms = function() {
+            alert('Terms of Service: By using Saathi TV, you agree to our community guidelines and safety policies. Please be respectful and follow our community standards.');
+        };
+        
+        window.showPrivacy = function() {
+            alert('Privacy Policy: We protect your privacy and do not store personal conversations. Your data is encrypted and secure.');
+        };
+        
+        window.showForgotPassword = function() {
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        };
+        
+        window.closeForgotPassword = function() {
+            document.getElementById('forgotPasswordModal').style.display = 'none';
+        };
+        
+        window.handleForgotPassword = async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('resetEmail').value.trim();
+            
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
+                alert('Password reset link sent to: ' + email);
+                closeForgotPassword();
+                document.getElementById('resetEmail').value = '';
+            } catch (error) {
+                console.error('❌ Password reset error:', error);
+                let errorMessage = 'Reset failed: ';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage += 'No account found with this email address.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else {
+                    errorMessage += error.message;
+                }
+                alert(errorMessage);
+            }
+        };
         
         // Add event listeners when page loads
         document.addEventListener('DOMContentLoaded', function() {

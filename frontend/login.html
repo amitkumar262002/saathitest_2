@@ -457,7 +457,20 @@
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('❌ Email signup error:', error);
-                alert('Signup failed: ' + error.message);
+                
+                // More specific error messages
+                let errorMessage = 'Signup failed: ';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage += 'An account with this email already exists. Please sign in instead.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage += 'Password is too weak. Please choose a stronger password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                alert(errorMessage);
             }
         }
         
@@ -491,14 +504,31 @@
             document.getElementById('forgotPasswordModal').style.display = 'none';
         };
         
-        window.handleForgotPassword = function(event) {
+        window.handleForgotPassword = async function(event) {
             event.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            if (email) {
+            const email = document.getElementById('resetEmail').value.trim();
+            
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
                 alert('Password reset link sent to: ' + email);
                 closeForgotPassword();
-            } else {
-                alert('Please enter your email address');
+                document.getElementById('resetEmail').value = '';
+            } catch (error) {
+                console.error('❌ Password reset error:', error);
+                let errorMessage = 'Reset failed: ';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage += 'No account found with this email address.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else {
+                    errorMessage += error.message;
+                }
+                alert(errorMessage);
             }
         };
         

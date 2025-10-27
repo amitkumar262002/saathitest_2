@@ -113,22 +113,38 @@ Document.prototype.getElementById = function(id) {
 
 // Also override for Element prototype
 if (Element.prototype.querySelector) {
+    const originalElementQuerySelector = Element.prototype.querySelector;
     Element.prototype.querySelector = function(selector) {
         try {
-            return originalQuerySelector.call(this, selector);
+            // Skip invalid selectors
+            if (!selector || selector === '#' || selector === '.' || selector.trim() === '') {
+                return null;
+            }
+            return originalElementQuerySelector.call(this, selector);
         } catch (error) {
-            console.warn(`⚠️ Element querySelector error: ${selector}`, error.message);
+            // Only log if it's not a common invalid selector
+            if (!selector.includes('#') || selector.length > 1) {
+                console.warn(`⚠️ Element querySelector error: ${selector}`, error.message);
+            }
             return null;
         }
     };
 }
 
 if (Element.prototype.querySelectorAll) {
+    const originalElementQuerySelectorAll = Element.prototype.querySelectorAll;
     Element.prototype.querySelectorAll = function(selector) {
         try {
-            return originalQuerySelectorAll.call(this, selector);
+            // Skip invalid selectors
+            if (!selector || selector === '#' || selector === '.' || selector.trim() === '') {
+                return [];
+            }
+            return originalElementQuerySelectorAll.call(this, selector);
         } catch (error) {
-            console.warn(`⚠️ Element querySelectorAll error: ${selector}`, error.message);
+            // Only log if it's not a common invalid selector or "Illegal invocation"
+            if (!error.message.includes('Illegal invocation') && selector && selector.length > 1) {
+                console.warn(`⚠️ Element querySelectorAll error: ${selector}`, error.message);
+            }
             return [];
         }
     };

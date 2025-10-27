@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Enhanced Live User Tracking & Stranger Matching</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #FFD700;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .test-card h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-card p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        
+        .status-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .enhanced-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .stat-trend {
+            font-size: 0.8em;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            margin-top: 5px;
+        }
+        
+        .log-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .log-entry.success { color: #4CAF50; }
+        .log-entry.error { color: #f44336; }
+        .log-entry.warning { color: #ff9800; }
+        .log-entry.info { color: #2196F3; }
+        
+        .preferences-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .preference-group {
+            margin-bottom: 15px;
+        }
+        
+        .preference-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .preference-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .preference-group select option {
+            background: #333;
+            color: white;
+        }
+        
+        .notification-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .notification-controls button {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .progress-container {
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressPulse 2s infinite;
+        }
+        
+        @keyframes progressPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .progress-text {
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-align: center;
+        }
+        
+        .geographic-display {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .geo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+        
+        .geo-country {
+            font-weight: bold;
+        }
+        
+        .geo-count {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .device-analytics {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .device-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+        
+        .device-type {
+            font-weight: bold;
+        }
+        
+        .device-count {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .presence-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .presence-online { background: #4CAF50; }
+        .presence-waiting { background: #ff9800; }
+        .presence-matched { background: #2196F3; }
+        .presence-offline { background: #f44336; }
+        
+        .activity-timeline {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .activity-item {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.8em;
+        }
+        
+        .activity-time {
+            color: #888;
+            font-size: 0.7em;
+        }
+        
+        .activity-action {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎥 Saathi TV</h1>
+            <p>Enhanced Live User Tracking & Stranger Matching System</p>
+            <p style="font-size: 1em; margin-top: 10px; opacity: 0.8;">
+                Inspired by Azar's advanced user tracking and matching algorithms
+            </p>
+        </div>
+        
+        <div class="test-grid">
+            <!-- Enhanced User Stats Card -->
+            <div class="test-card">
+                <h3>🌍 Enhanced Live Stats</h3>
+                <p>Real-time tracking with geographic distribution, device analytics, and user behavior patterns.</p>
+                <div class="enhanced-stats-grid" id="enhancedLiveStats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="onlineUsersEnhanced">0</div>
+                        <div class="stat-label">Online</div>
+                        <div class="stat-trend" id="onlineTrend"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="waitingUsersEnhanced">0</div>
+                        <div class="stat-label">Waiting</div>
+                        <div class="stat-trend" id="waitingTrend"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="activeRoomsEnhanced">0</div>
+                        <div class="stat-label">Chatting</div>
+                        <div class="stat-trend" id="roomsTrend"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="averageWaitTime">0s</div>
+                        <div class="stat-label">Avg Wait</div>
+                        <div class="stat-trend" id="waitTimeTrend"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="peakUsers">0</div>
+                        <div class="stat-label">Peak Today</div>
+                        <div class="stat-trend" id="peakTrend"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalConnections">0</div>
+                        <div class="stat-label">Total</div>
+                        <div class="stat-trend" id="totalTrend"></div>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="refreshEnhancedStats()">Refresh Enhanced Stats</button>
+            </div>
+            
+            <!-- Enhanced Stranger Matching Card -->
+            <div class="test-card">
+                <h3>🔍 Enhanced Stranger Matching</h3>
+                <p>Advanced matching algorithm with compatibility scoring, behavior analysis, and preference optimization.</p>
+                <div class="status-display" id="enhancedMatchingStatus">
+                    Ready to find a stranger with enhanced matching!
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="enhancedMatchingProgress"></div>
+                    </div>
+                    <div class="progress-text" id="enhancedMatchingProgressText">Ready to search...</div>
+                </div>
+                <div class="status-display" id="enhancedWaitingTime"></div>
+                <div class="status-display" id="enhancedQueuePosition" style="display: none;"></div>
+                <button class="btn btn-success" onclick="findStrangerEnhanced()">Find Stranger Enhanced</button>
+                <button class="btn btn-danger" onclick="stopSearchingEnhanced()">Stop Search</button>
+            </div>
+            
+            <!-- Enhanced Preferences Card -->
+            <div class="test-card">
+                <h3>🎯 Enhanced Preferences</h3>
+                <p>Advanced preference system with geographic, device, and connection quality filtering.</p>
+                <div class="preferences-panel">
+                    <div class="preference-group">
+                        <label for="countrySelectEnhanced">Country:</label>
+                        <select id="countrySelectEnhanced">
+                            <option value="any">Any Country</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="CA">Canada</option>
+                            <option value="AU">Australia</option>
+                            <option value="IN">India</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="JP">Japan</option>
+                            <option value="BR">Brazil</option>
+                            <option value="RU">Russia</option>
+                            <option value="CN">China</option>
+                            <option value="KR">South Korea</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="regionSelect">Region:</label>
+                        <select id="regionSelect">
+                            <option value="any">Any Region</option>
+                            <option value="north-america">North America</option>
+                            <option value="europe">Europe</option>
+                            <option value="asia">Asia</option>
+                            <option value="south-america">South America</option>
+                            <option value="africa">Africa</option>
+                            <option value="oceania">Oceania</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="genderSelectEnhanced">Gender:</label>
+                        <select id="genderSelectEnhanced">
+                            <option value="any">Any Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="ageRangeSelectEnhanced">Age Range:</label>
+                        <select id="ageRangeSelectEnhanced">
+                            <option value="any">Any Age</option>
+                            <option value="18-25">18-25</option>
+                            <option value="26-35">26-35</option>
+                            <option value="36-45">36-45</option>
+                            <option value="46-55">46-55</option>
+                            <option value="55+">55+</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="connectionQuality">Connection Quality:</label>
+                        <select id="connectionQuality">
+                            <option value="any">Any Quality</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="languagePreference">Language:</label>
+                        <select id="languagePreference">
+                            <option value="any">Any Language</option>
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="ja">Japanese</option>
+                            <option value="ko">Korean</option>
+                            <option value="zh">Chinese</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="applyEnhancedPreferences()">Apply Enhanced Preferences</button>
+            </div>
+            
+            <!-- Enhanced Notifications Card -->
+            <div class="test-card">
+                <h3>🔔 Enhanced Notifications</h3>
+                <p>Advanced notification system with sound, vibration, and custom styling for different event types.</p>
+                <div class="notification-controls">
+                    <button class="btn btn-success" onclick="testSuccessNotification()">Success</button>
+                    <button class="btn btn-danger" onclick="testErrorNotification()">Error</button>
+                    <button class="btn btn-warning" onclick="testWarningNotification()">Warning</button>
+                    <button class="btn btn-info" onclick="testInfoNotification()">Info</button>
+                </div>
+                <div class="notification-controls">
+                    <button class="btn btn-info" onclick="testMatchNotification()">Match Found</button>
+                    <button class="btn btn-info" onclick="testQueueNotification()">Queue Update</button>
+                </div>
+                <div class="notification-controls">
+                    <button class="btn btn-info" onclick="toggleNotificationSound()">Toggle Sound</button>
+                    <button class="btn btn-info" onclick="toggleNotificationVibration()">Toggle Vibration</button>
+                </div>
+            </div>
+            
+            <!-- Geographic Distribution Card -->
+            <div class="test-card">
+                <h3>🌍 Geographic Distribution</h3>
+                <p>Real-time geographic distribution of users across different countries and regions.</p>
+                <div class="geographic-display" id="geographicStats">
+                    <div class="geo-item">
+                        <span class="geo-country">Loading...</span>
+                        <span class="geo-count">0</span>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="refreshGeographicStats()">Refresh Geographic Stats</button>
+            </div>
+            
+            <!-- Device Analytics Card -->
+            <div class="test-card">
+                <h3>📱 Device Analytics</h3>
+                <p>Real-time device type distribution and connection quality analytics.</p>
+                <div class="device-analytics" id="deviceStats">
+                    <div class="device-item">
+                        <span class="device-type">Loading...</span>
+                        <span class="device-count">0</span>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="refreshDeviceStats()">Refresh Device Stats</button>
+            </div>
+            
+            <!-- User Presence Card -->
+            <div class="test-card">
+                <h3>👤 User Presence</h3>
+                <p>Real-time user presence tracking and activity monitoring.</p>
+                <div class="status-display" id="userPresenceStatus">
+                    <div class="presence-indicator presence-online"></div>
+                    Status: Online
+                </div>
+                <div class="activity-timeline" id="userActivityTimeline">
+                    <div class="activity-item">
+                        <span class="activity-time">Just now</span>
+                        <span class="activity-action">System initialized</span>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="refreshUserPresence()">Refresh Presence</button>
+            </div>
+            
+            <!-- Enhanced System Log Card -->
+            <div class="test-card">
+                <h3>📋 Enhanced System Log</h3>
+                <p>Comprehensive logging of all enhanced system events, user interactions, and performance metrics.</p>
+                <div class="log-container" id="enhancedSystemLog">
+                    <div class="log-entry info">Enhanced system initialized...</div>
+                </div>
+                <button class="btn btn-danger" onclick="clearEnhancedLog()">Clear Log</button>
+                <button class="btn btn-info" onclick="exportLog()">Export Log</button>
+            </div>
+        </div>
+        
+        <!-- Enhanced Test Instructions -->
+        <div class="test-card">
+            <h3>📖 Enhanced Test Instructions</h3>
+            <p><strong>How to test the enhanced live user tracking and stranger matching system:</strong></p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Open multiple browser tabs/windows</strong> to simulate different users from different locations</li>
+                <li><strong>Set different enhanced preferences</strong> in each tab (country, region, device type, etc.)</li>
+                <li><strong>Click "Find Stranger Enhanced"</strong> in one tab - monitor the enhanced matching progress</li>
+                <li><strong>Click "Find Stranger Enhanced"</strong> in another tab - they should be matched using advanced algorithms</li>
+                <li><strong>Monitor enhanced live stats</strong> including geographic distribution and device analytics</li>
+                <li><strong>Test enhanced notifications</strong> with different types and customizations</li>
+                <li><strong>Check user presence tracking</strong> and activity timeline</li>
+                <li><strong>Monitor the enhanced system log</strong> for detailed event tracking</li>
+                <li><strong>Test connection quality updates</strong> and device analytics</li>
+                <li><strong>Verify geographic distribution</strong> updates in real-time</li>
+            </ol>
+            <p style="margin-top: 15px;"><strong>Enhanced features to test:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Advanced compatibility scoring with multiple factors</li>
+                <li>Real-time geographic distribution tracking</li>
+                <li>Device type analytics and connection quality monitoring</li>
+                <li>Enhanced user presence and activity tracking</li>
+                <li>Advanced notification system with sound and vibration</li>
+                <li>Behavior analysis and preference optimization</li>
+                <li>Heartbeat monitoring and connection quality updates</li>
+                <li>Enhanced matching progress with visual indicators</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="js/live-user-tracking.js"></script>
+    <script src="js/enhanced-live-user-tracking.js"></script>
+    <script src="js/stranger-notifications.js"></script>
+    <script src="js/unified-webrtc-system.js"></script>
+    
+    <script>
+        // Enhanced test page specific functions
+        let enhancedSystemLog = [];
+        let enhancedWaitingTimer = null;
+        let userActivityTimeline = [];
+        
+        // Initialize enhanced test page
+        document.addEventListener('DOMContentLoaded', () => {
+            logEnhanced('Enhanced test page initialized', 'info');
+            
+            // Set up periodic enhanced stats refresh
+            setInterval(refreshEnhancedStats, 2000);
+            
+            // Set up enhanced waiting timer
+            startEnhancedWaitingTimer();
+            
+            // Set up user activity tracking
+            startUserActivityTracking();
+        });
+        
+        function findStrangerEnhanced() {
+            logEnhanced('Starting enhanced stranger search...', 'info');
+            
+            if (window.enhancedLiveUserTracking) {
+                window.enhancedLiveUserTracking.findStrangerEnhanced();
+            } else if (window.liveUserTracking) {
+                window.liveUserTracking.findStranger();
+            } else if (window.unifiedWebRTC) {
+                window.unifiedWebRTC.startVideoChat();
+            } else {
+                logEnhanced('No enhanced tracking system available', 'error');
+            }
+        }
+        
+        function stopSearchingEnhanced() {
+            logEnhanced('Stopping enhanced stranger search...', 'warning');
+            
+            if (window.enhancedLiveUserTracking) {
+                window.enhancedLiveUserTracking.stopSearchingEnhanced();
+            } else if (window.liveUserTracking) {
+                window.liveUserTracking.stopSearching();
+            } else if (window.unifiedWebRTC) {
+                window.unifiedWebRTC.stopChat();
+            }
+        }
+        
+        function applyEnhancedPreferences() {
+            const preferences = {
+                country: document.getElementById('countrySelectEnhanced').value,
+                region: document.getElementById('regionSelect').value,
+                gender: document.getElementById('genderSelectEnhanced').value,
+                ageRange: document.getElementById('ageRangeSelectEnhanced').value,
+                connectionQuality: document.getElementById('connectionQuality').value,
+                language: document.getElementById('languagePreference').value
+            };
+            
+            logEnhanced(`Enhanced preferences applied: ${JSON.stringify(preferences)}`, 'info');
+            
+            if (window.enhancedLiveUserTracking) {
+                window.enhancedLiveUserTracking.updateEnhancedPreferences(preferences);
+            }
+        }
+        
+        function refreshEnhancedStats() {
+            if (window.enhancedLiveUserTracking) {
+                const stats = window.enhancedLiveUserTracking.getUserStatsEnhanced();
+                updateEnhancedStatsDisplay(stats);
+                logEnhanced(`Enhanced stats refreshed: ${JSON.stringify(stats)}`, 'info');
+            }
+        }
+        
+        function updateEnhancedStatsDisplay(stats) {
+            document.getElementById('onlineUsersEnhanced').textContent = stats.onlineUsers || stats.activeUsers || 0;
+            document.getElementById('waitingUsersEnhanced').textContent = stats.waitingUsers || 0;
+            document.getElementById('activeRoomsEnhanced').textContent = stats.activeRooms || 0;
+            document.getElementById('averageWaitTime').textContent = `${stats.averageWaitTime || 0}s`;
+            document.getElementById('peakUsers').textContent = stats.peakUsers || 0;
+            document.getElementById('totalConnections').textContent = stats.totalConnections || 0;
+        }
+        
+        function refreshGeographicStats() {
+            if (window.enhancedLiveUserTracking) {
+                const geoStats = window.enhancedLiveUserTracking.getGeographicStats();
+                updateGeographicDisplay(geoStats);
+                logEnhanced(`Geographic stats refreshed: ${JSON.stringify(geoStats)}`, 'info');
+            }
+        }
+        
+        function updateGeographicDisplay(geoStats) {
+            const geoContainer = document.getElementById('geographicStats');
+            if (!geoContainer) return;
+            
+            const sortedCountries = Object.entries(geoStats)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            geoContainer.innerHTML = sortedCountries.map(([country, count]) => `
+                <div class="geo-item">
+                    <span class="geo-country">${country}</span>
+                    <span class="geo-count">${count}</span>
+                </div>
+            `).join('');
+        }
+        
+        function refreshDeviceStats() {
+            if (window.enhancedLiveUserTracking) {
+                const deviceStats = window.enhancedLiveUserTracking.getUserStatsEnhanced().deviceTypes;
+                updateDeviceDisplay(deviceStats);
+                logEnhanced(`Device stats refreshed: ${JSON.stringify(deviceStats)}`, 'info');
+            }
+        }
+        
+        function updateDeviceDisplay(deviceStats) {
+            const deviceContainer = document.getElementById('deviceStats');
+            if (!deviceContainer) return;
+            
+            const sortedDevices = Object.entries(deviceStats)
+                .sort((a, b) => b[1] - a[1]);
+            
+            deviceContainer.innerHTML = sortedDevices.map(([deviceType, count]) => `
+                <div class="device-item">
+                    <span class="device-type">${deviceType}</span>
+                    <span class="device-count">${count}</span>
+                </div>
+            `).join('');
+        }
+        
+        function refreshUserPresence() {
+            if (window.enhancedLiveUserTracking) {
+                const presence = window.enhancedLiveUserTracking.getUserPresence();
+                updateUserPresenceDisplay(presence);
+                logEnhanced(`User presence refreshed: ${JSON.stringify(presence)}`, 'info');
+            }
+        }
+        
+        function updateUserPresenceDisplay(presence) {
+            const presenceStatus = document.getElementById('userPresenceStatus');
+            if (presenceStatus) {
+                const currentUser = Object.values(presence)[0];
+                if (currentUser) {
+                    const statusClass = `presence-${currentUser.status}`;
+                    presenceStatus.innerHTML = `
+                        <div class="presence-indicator ${statusClass}"></div>
+                        Status: ${currentUser.status}
+                    `;
+                }
+            }
+        }
+        
+        function startUserActivityTracking() {
+            setInterval(() => {
+                if (window.enhancedLiveUserTracking) {
+                    const activity = window.enhancedLiveUserTracking.getUserStatsEnhanced().userActivity;
+                    updateUserActivityTimeline(activity);
+                }
+            }, 5000);
+        }
+        
+        function updateUserActivityTimeline(activity) {
+            const timeline = document.getElementById('userActivityTimeline');
+            if (!timeline) return;
+            
+            const activities = Object.values(activity).flat();
+            const recentActivities = activities
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 10);
+            
+            timeline.innerHTML = recentActivities.map(act => `
+                <div class="activity-item">
+                    <span class="activity-time">${new Date(act.timestamp).toLocaleTimeString()}</span>
+                    <span class="activity-action">${act.action}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Enhanced notification testing
+        function testSuccessNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Enhanced success notification!', 'success');
+                logEnhanced('Success notification test', 'success');
+            }
+        }
+        
+        function testErrorNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Enhanced error notification!', 'error');
+                logEnhanced('Error notification test', 'error');
+            }
+        }
+        
+        function testWarningNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Enhanced warning notification!', 'warning');
+                logEnhanced('Warning notification test', 'warning');
+            }
+        }
+        
+        function testInfoNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Enhanced info notification!', 'info');
+                logEnhanced('Info notification test', 'info');
+            }
+        }
+        
+        function testMatchNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showMatchNotification({
+                    roomId: 'test-room-123',
+                    matchedUserId: 'test-user-456',
+                    matchTime: Date.now(),
+                    compatibilityScore: 95
+                });
+                logEnhanced('Match notification test', 'success');
+            }
+        }
+        
+        function testQueueNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showQueueNotification({
+                    position: 3,
+                    totalWaiting: 15,
+                    estimatedWaitTime: 45
+                });
+                logEnhanced('Queue notification test', 'info');
+            }
+        }
+        
+        function toggleNotificationSound() {
+            if (window.strangerNotifications) {
+                const enabled = window.strangerNotifications.toggleSound();
+                logEnhanced(`Notification sound ${enabled ? 'enabled' : 'disabled'}`, 'info');
+            }
+        }
+        
+        function toggleNotificationVibration() {
+            if (window.strangerNotifications) {
+                const enabled = window.strangerNotifications.toggleVibration();
+                logEnhanced(`Notification vibration ${enabled ? 'enabled' : 'disabled'}`, 'info');
+            }
+        }
+        
+        function startEnhancedWaitingTimer() {
+            enhancedWaitingTimer = setInterval(() => {
+                const waitingTimeElement = document.getElementById('enhancedWaitingTime');
+                if (waitingTimeElement) {
+                    const now = Date.now();
+                    const startTime = window.enhancedLiveUserTracking?.waitingStartTime || now;
+                    const elapsed = Math.floor((now - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    
+                    waitingTimeElement.textContent = `Enhanced waiting time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        
+        function logEnhanced(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                message,
+                type
+            };
+            
+            enhancedSystemLog.push(logEntry);
+            
+            const logContainer = document.getElementById('enhancedSystemLog');
+            if (logContainer) {
+                const entryElement = document.createElement('div');
+                entryElement.className = `log-entry ${type}`;
+                entryElement.textContent = `[${timestamp}] ${message}`;
+                
+                logContainer.appendChild(entryElement);
+                logContainer.scrollTop = logContainer.scrollHeight;
+                
+                // Keep only last 100 entries
+                while (logContainer.children.length > 100) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+            }
+        }
+        
+        function clearEnhancedLog() {
+            enhancedSystemLog = [];
+            const logContainer = document.getElementById('enhancedSystemLog');
+            if (logContainer) {
+                logContainer.innerHTML = '<div class="log-entry info">Enhanced log cleared...</div>';
+            }
+        }
+        
+        function exportLog() {
+            const logData = enhancedSystemLog.map(entry => 
+                `[${entry.timestamp}] ${entry.type.toUpperCase()}: ${entry.message}`
+            ).join('\n');
+            
+            const blob = new Blob([logData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `enhanced-system-log-${new Date().toISOString().slice(0, 19)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            logEnhanced('Enhanced log exported', 'success');
+        }
+        
+        // Override enhanced tracking functions to show in test page
+        if (window.enhancedLiveUserTracking) {
+            const originalUpdateWaitingStatus = window.enhancedLiveUserTracking.updateWaitingStatus;
+            window.enhancedLiveUserTracking.updateWaitingStatus = function(message) {
+                if (originalUpdateWaitingStatus) {
+                    originalUpdateWaitingStatus.call(this, message);
+                }
+                
+                const statusElement = document.getElementById('enhancedMatchingStatus');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                }
+                
+                logEnhanced(`Enhanced status update: ${message}`, 'info');
+            };
+            
+            window.enhancedLiveUserTracking.updateQueuePosition = function(position) {
+                const queueElement = document.getElementById('enhancedQueuePosition');
+                if (queueElement) {
+                    if (position > 0) {
+                        queueElement.textContent = `Enhanced position in queue: ${position}`;
+                        queueElement.style.display = 'block';
+                    } else {
+                        queueElement.style.display = 'none';
+                    }
+                }
+                
+                logEnhanced(`Enhanced queue position: ${position}`, 'info');
+            };
+            
+            window.enhancedLiveUserTracking.updateMatchingProgress = function(percentage) {
+                const progressFill = document.getElementById('enhancedMatchingProgress');
+                const progressText = document.getElementById('enhancedMatchingProgressText');
+                
+                if (progressFill) {
+                    progressFill.style.width = `${percentage}%`;
+                }
+                
+                if (progressText) {
+                    if (percentage === 0) {
+                        progressText.textContent = 'Ready to search...';
+                    } else if (percentage < 50) {
+                        progressText.textContent = 'Finding enhanced matches...';
+                    } else if (percentage < 90) {
+                        progressText.textContent = 'Almost there...';
+                    } else {
+                        progressText.textContent = 'Connecting...';
+                    }
+                }
+                
+                logEnhanced(`Enhanced matching progress: ${percentage}%`, 'info');
+            };
+        }
+        
+        // Override notification functions to log to enhanced test page
+        if (window.strangerNotifications) {
+            const originalShowNotification = window.strangerNotifications.showNotification;
+            window.strangerNotifications.showNotification = function(message, type, options) {
+                if (originalShowNotification) {
+                    originalShowNotification.call(this, message, type, options);
+                }
+                
+                logEnhanced(`Enhanced notification: ${message} (${type})`, type);
+            };
+        }
+    </script>
+</body>
+</html>

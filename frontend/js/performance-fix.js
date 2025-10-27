@@ -82,8 +82,11 @@ function monitorPerformance() {
         const currentTime = performance.now();
         const timeDiff = currentTime - lastTime;
         
-        if (timeDiff > 100) { // If frame took more than 100ms
-            console.warn('⚠️ Slow frame detected:', timeDiff + 'ms');
+        if (timeDiff > 500) { // If frame took more than 500ms (increased threshold)
+            // Only log occasionally to prevent spam
+            if (frameCount % 30 === 0) {
+                console.warn('⚠️ Slow frame detected:', timeDiff + 'ms');
+            }
             
             // Break up any pending tasks
             setTimeout(() => {

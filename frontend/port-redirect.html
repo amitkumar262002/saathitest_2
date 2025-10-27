@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to Saathi TV...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .redirect-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .manual-link {
+            margin-top: 20px;
+        }
+        .manual-link a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .manual-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-container">
+        <h1>🚀 Saathi TV</h1>
+        <div class="spinner"></div>
+        <p>Redirecting to the correct server...</p>
+        <div class="manual-link">
+            <p>If you're not redirected automatically, <a href="http://localhost:3001" id="manualLink">click here</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Automatic redirect to port 3001
+        function redirectToCorrectPort() {
+            const currentUrl = window.location.href;
+            const targetUrl = currentUrl.replace(':3000', ':3001');
+            
+            console.log('Redirecting from:', currentUrl);
+            console.log('Redirecting to:', targetUrl);
+            
+            // Update manual link
+            document.getElementById('manualLink').href = targetUrl;
+            
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
+        }
+        
+        // Start redirect process
+        redirectToCorrectPort();
+        
+        // Also handle manual click
+        document.getElementById('manualLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = e.target.href;
+        });
+    </script>
+</body>
+</html>

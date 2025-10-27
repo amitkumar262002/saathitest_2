@@ -76,6 +76,230 @@
                 font-size: 10px;
             }
         }
+        
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .auth-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .auth-btn.logout-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .auth-btn.logout-btn:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        /* Login Modal */
+        .login-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        
+        .login-modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .login-modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .login-modal-header h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5em;
+            color: #FFD700;
+        }
+        
+        .login-modal-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .login-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .login-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+        }
+        
+        .login-form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .login-form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .login-form-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .login-form-btn.primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .login-form-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .login-form-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .google-login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .google-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        
+        .close-modal:hover {
+            opacity: 1;
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .divider span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 15px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
     </style>
     
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -192,7 +416,7 @@
                     </div>
                 </div>
 
-                        <button onclick="handleStartWebChat()" class="premium-chat-btn" id="mainChatBtn">
+                        <button onclick="window.unifiedWebRTC ? window.unifiedWebRTC.startVideoChat() : handleStartWebChat()" class="premium-chat-btn" id="mainChatBtn">
                             <div class="btn-content">
                                 <div class="btn-icon">
                                     <i class="fas fa-video"></i>
@@ -207,6 +431,18 @@
                             </div>
                             <div class="btn-glow"></div>
                         </button>
+                        
+                        <!-- Firebase Login/Logout Buttons -->
+                        <div class="auth-buttons">
+                            <button onclick="showLoginModal()" class="auth-btn login-btn" id="loginBtn">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Login with Firebase</span>
+                            </button>
+                            <button onclick="showLogoutModal()" class="auth-btn logout-btn" id="logoutBtn" style="display: none;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
                         
                     </div>
                 </div>
@@ -300,7 +536,7 @@
                         <path d="M19 10v2c0 3.87-3.13 7-7 7s-7-3.13-7-7v-2h2v2c0 2.76 2.24 5 5 5s5-2.24 5-5v-2h2z" fill="currentColor"></path>
                     </svg>
                 </button>
-                <button id="nextBtn" class="video-control-btn ripple" onclick="nextUser()" title="Next User" style="transform: translateY(0px);">
+                <button id="nextBtn" class="video-control-btn ripple" onclick="window.unifiedWebRTC ? window.unifiedWebRTC.nextUser() : nextUser()" title="Next User" style="transform: translateY(0px);">
                     <i class="fas fa-forward"></i>
                 </button>
                 <button id="reportBtn" class="video-control-btn ripple" onclick="reportUser()" title="Report User" style="transform: translateY(0px);">
@@ -507,44 +743,70 @@
         </div>
     </footer>
 
+    <!-- Firebase Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-modal-content">
+            <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+            
+            <div class="login-modal-header">
+                <h3>🔐 Firebase Login</h3>
+                <p>Sign in to access enhanced features</p>
+            </div>
+            
+            <!-- User Info (shown when logged in) -->
+            <div id="userInfo" class="user-info" style="display: none;">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-name" id="userName"></div>
+                <div class="user-email" id="userEmail"></div>
+            </div>
+            
+            <!-- Login Form (shown when not logged in) -->
+            <div id="loginForm">
+                <button class="google-login-btn" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google"></i>
+                    <span>Continue with Google</span>
+                </button>
+                
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
+                <div class="login-form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                
+                <div class="login-form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                
+                <div class="login-form-buttons">
+                    <button class="login-form-btn primary" onclick="handleEmailLogin()">Login</button>
+                    <button class="login-form-btn secondary" onclick="handleEmailSignup()">Sign Up</button>
+                </div>
+            </div>
+            
+            <!-- Logout Button (shown when logged in) -->
+            <div id="logoutSection" style="display: none;">
+                <button class="login-form-btn primary" onclick="handleLogout()" style="width: 100%;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
-    <script src="js/direct-test.js"></script>
-    <script src="js/ultra-simple-fix.js"></script>
-    <!-- <script src="js/complete-error-fix.js"></script> --> <!-- Disabled - causing connection issues -->
-    <script src="js/performance-fix.js"></script>
-    <script src="js/dom-safety-fix.js"></script>
-    <script src="js/localhost-server-fix.js"></script>
-    <script src="js/github-pages-fix.js"></script>
-    <script src="js/auto-join-fix.js"></script>
-    <script src="js/mobile-controls-fix.js"></script>
-    <script src="js/force-mobile-controls.js"></script>
-    <!-- <script src="js/cross-tab-connection.js"></script> --> <!-- Disabled - may interfere with main connection -->
-    <!-- <script src="js/connection-debug.js"></script> --> <!-- Disabled - may interfere with main connection -->
-    <!-- <script src="js/instant-connect.js"></script> --> <!-- Disabled - conflicts with main WebRTC system -->
-    <!-- <script src="js/peer-matching-system.js"></script> --> <!-- Disabled - shows false PEER CONNECTED status -->
-    <!-- <script src="js/super-simple-connect.js"></script> --> <!-- Disabled - conflicts with main WebRTC system -->
-    <script src="js/omegle-style-chat.js"></script>
-    <!-- <script src="js/real-webrtc-connection.js"></script> --> <!-- Disabled - conflicts with main WebRTC system -->
-    <!-- Socket.io already loaded above -->
-    <script src="js/connection-fix.js"></script>
-    <script>
-        // Check if splash screen should be shown
-        if (!sessionStorage.getItem('splashShown') && !window.location.search.includes('nosplash')) {
-            sessionStorage.setItem('splashShown', 'true');
-            window.location.href = 'splash-enhanced.html';
-        }
-    </script>
-    <script src="js/login-system.js"></script>
-    <!-- <script src="js/webrtc-fix.js"></script> --> <!-- Disabled - conflicts with main WebRTC system -->
-    <script src="js/function-fix-system.js"></script>
-    <!-- Firebase SDK v9 (compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
-    <script>
-        // Firebase configuration
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAXrbJQJhjfwp4ugkp2dAckoXodtPqH73E",
             authDomain: "saathi-5fa22.firebaseapp.com",
@@ -556,15 +818,579 @@
         };
         
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        window.firebaseApp = firebase.app();
-        window.firebaseAuth = firebase.auth();
-        window.firebaseDb = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+        
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.googleProvider = googleProvider;
         
         console.log('🔥 Firebase initialized successfully!');
         
-        // Simple Firebase Auth Manager
-        window.firebaseAuthManager = {
+        // Enhanced Firebase Auth Manager with Live User Tracking Integration
+        class EnhancedFirebaseAuthManager {
+            constructor() {
+                this.currentUser = null;
+                this.isLoggedIn = false;
+                this.loginCallbacks = [];
+                this.logoutCallbacks = [];
+                
+                // Listen for auth state changes
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        this.handleUserLogin(user);
+                    } else {
+                        this.handleUserLogout();
+                    }
+                });
+            }
+            
+            // Google Sign In with Enhanced Tracking
+            async signInWithGoogle() {
+                try {
+                    const result = await signInWithPopup(auth, googleProvider);
+                    const user = result.user;
+                    
+                    // Save user data to Firestore with enhanced tracking info
+                    await this.saveUserToFirestore(user, 'google');
+                    
+                    // Initialize enhanced user tracking for logged-in user
+                    this.initializeEnhancedTracking(user);
+                    
+                    return {
+                        success: true,
+                        user: this.formatUserData(user, 'google')
+                    };
+                } catch (error) {
+                    console.error('Google sign in error:', error);
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+            
+            // Email Sign In with Enhanced Tracking
+            async signInWithEmail(email, password) {
+                try {
+                    const result = await signInWithEmailAndPassword(auth, email, password);
+                    const user = result.user;
+                    
+                    // Initialize enhanced user tracking for logged-in user
+                    this.initializeEnhancedTracking(user);
+                    
+                    return {
+                        success: true,
+                        user: this.formatUserData(user, 'email')
+                    };
+                } catch (error) {
+                    console.error('Email sign in error:', error);
+                    return {
+                        success: false,
+                        error: this.getErrorMessage(error.code)
+                    };
+                }
+            }
+            
+            // Email Sign Up with Enhanced Tracking
+            async signUpWithEmail(email, password, displayName) {
+                try {
+                    const result = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = result.user;
+                    
+                    // Update user profile with display name
+                    await user.updateProfile({
+                        displayName: displayName
+                    });
+                    
+                    // Save user data to Firestore with enhanced tracking info
+                    await this.saveUserToFirestore(user, 'email', { displayName });
+                    
+                    // Initialize enhanced user tracking for logged-in user
+                    this.initializeEnhancedTracking(user);
+                    
+                    return {
+                        success: true,
+                        user: this.formatUserData(user, 'email')
+                    };
+                } catch (error) {
+                    console.error('Email sign up error:', error);
+                    return {
+                        success: false,
+                        error: this.getErrorMessage(error.code)
+                    };
+                }
+            }
+            
+            // Sign Out with Enhanced Tracking Cleanup
+            async signOutUser() {
+                try {
+                    // Cleanup enhanced tracking before logout
+                    this.cleanupEnhancedTracking();
+                    
+                    await signOut(auth);
+                    return { success: true };
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+            
+            // Initialize Enhanced Tracking for Logged-in User
+            initializeEnhancedTracking(user) {
+                if (window.enhancedLiveUserTracking) {
+                    // Set user info in enhanced tracking
+                    window.enhancedLiveUserTracking.currentUser = this.formatUserData(user, 'firebase');
+                    
+                    // Update user preferences with Firebase user data
+                    const userPreferences = {
+                        userId: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        loginMethod: 'firebase',
+                        verified: user.emailVerified,
+                        avatar: user.photoURL,
+                        createdAt: user.metadata.creationTime,
+                        lastLogin: new Date().toISOString()
+                    };
+                    
+                    window.enhancedLiveUserTracking.updateEnhancedPreferences(userPreferences);
+                    
+                    console.log('🔐 Enhanced tracking initialized for Firebase user:', user.uid);
+                }
+            }
+            
+            // Cleanup Enhanced Tracking on Logout
+            cleanupEnhancedTracking() {
+                if (window.enhancedLiveUserTracking) {
+                    // Stop any ongoing searches
+                    window.enhancedLiveUserTracking.stopSearchingEnhanced();
+                    
+                    // Clear user data
+                    window.enhancedLiveUserTracking.currentUser = null;
+                    
+                    // Reset preferences
+                    window.enhancedLiveUserTracking.userPreferences.clear();
+                    
+                    console.log('🔐 Enhanced tracking cleaned up for logout');
+                }
+            }
+            
+            // Save user data to Firestore with Enhanced Tracking Info
+            async saveUserToFirestore(user, loginMethod, additionalData = {}) {
+                try {
+                    const userRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userRef);
+                    
+                    const userData = {
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName || additionalData.displayName || 'User',
+                        photoURL: user.photoURL || null,
+                        loginMethod: loginMethod,
+                        lastLogin: new Date().toISOString(),
+                        verified: user.emailVerified,
+                        createdAt: userDoc.exists() ? userDoc.data().createdAt : new Date().toISOString(),
+                        // Enhanced tracking data
+                        deviceInfo: {
+                            userAgent: navigator.userAgent,
+                            platform: navigator.platform,
+                            language: navigator.language,
+                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                        },
+                        preferences: {
+                            country: 'any',
+                            region: 'any',
+                            gender: 'any',
+                            ageRange: 'any',
+                            language: navigator.language.split('-')[0] || 'en'
+                        },
+                        ...additionalData
+                    };
+                    
+                    await setDoc(userRef, userData, { merge: true });
+                    return userData;
+                } catch (error) {
+                    console.error('Error saving user to Firestore:', error);
+                    throw error;
+                }
+            }
+            
+            // Format user data for the app
+            formatUserData(user, loginMethod) {
+                return {
+                    id: user.uid,
+                    name: user.displayName || user.email?.split('@')[0] || 'User',
+                    email: user.email,
+                    avatar: user.photoURL || this.generateDefaultAvatar(user.email),
+                    loginMethod: loginMethod,
+                    verified: user.emailVerified,
+                    createdAt: user.metadata.creationTime,
+                    lastLogin: new Date().toISOString(),
+                    securityLevel: user.emailVerified ? 'high' : 'medium'
+                };
+            }
+            
+            // Generate default avatar
+            generateDefaultAvatar(email) {
+                const colors = ['#FF6B35', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+                const color = colors[email.length % colors.length];
+                const initial = email.charAt(0).toUpperCase();
+                
+                return `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="20" fill="${color}"/>
+                    <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">${initial}</text>
+                </svg>`;
+            }
+            
+            // Handle user login
+            handleUserLogin(user) {
+                this.currentUser = this.formatUserData(user, user.providerData[0]?.providerId === 'google.com' ? 'google' : 'email');
+                this.isLoggedIn = true;
+                
+                // Save to localStorage
+                localStorage.setItem('saathi_current_user', JSON.stringify(this.currentUser));
+                
+                // Initialize enhanced tracking
+                this.initializeEnhancedTracking(user);
+                
+                // Call login callbacks
+                this.loginCallbacks.forEach(callback => callback(this.currentUser));
+                
+                console.log('🔐 User logged in:', this.currentUser.name);
+            }
+            
+            // Handle user logout
+            handleUserLogout() {
+                this.currentUser = null;
+                this.isLoggedIn = false;
+                
+                // Cleanup enhanced tracking
+                this.cleanupEnhancedTracking();
+                
+                // Clear localStorage
+                localStorage.removeItem('saathi_current_user');
+                
+                // Call logout callbacks
+                this.logoutCallbacks.forEach(callback => callback());
+                
+                console.log('🔐 User logged out');
+            }
+            
+            // Add login callback
+            onLogin(callback) {
+                this.loginCallbacks.push(callback);
+            }
+            
+            // Add logout callback
+            onLogout(callback) {
+                this.logoutCallbacks.push(callback);
+            }
+            
+            // Get current user
+            getCurrentUser() {
+                return this.currentUser;
+            }
+            
+            // Check if user is logged in
+            isUserLoggedIn() {
+                return this.isLoggedIn;
+            }
+            
+            // Get error message
+            getErrorMessage(errorCode) {
+                const errorMessages = {
+                    'auth/user-not-found': 'No account found with this email address.',
+                    'auth/wrong-password': 'Incorrect password.',
+                    'auth/email-already-in-use': 'An account with this email already exists.',
+                    'auth/weak-password': 'Password should be at least 6 characters.',
+                    'auth/invalid-email': 'Invalid email address.',
+                    'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
+                    'auth/popup-closed-by-user': 'Sign-in popup was closed before completion.',
+                    'auth/cancelled-popup-request': 'Sign-in was cancelled.',
+                    'auth/popup-blocked': 'Sign-in popup was blocked by the browser.'
+                };
+                
+                return errorMessages[errorCode] || 'An error occurred during authentication.';
+            }
+        }
+        
+        // Create global instance
+        window.firebaseAuthManager = new EnhancedFirebaseAuthManager();
+        
+        // Legacy compatibility
+        window.firebaseAuth = window.firebaseAuthManager;
+    </script>
+    
+    <!-- Firebase Login System -->
+    <script src="js/firebase-auth.js"></script>
+    
+    <!-- Live User Tracking System -->
+    <script src="js/live-user-tracking.js"></script>
+    
+    <!-- Enhanced Live User Tracking System -->
+    <script src="js/enhanced-live-user-tracking.js"></script>
+    
+    <!-- Enhanced Notification System -->
+    <script src="js/stranger-notifications.js"></script>
+    
+    <!-- Essential Fixes and Core Logic -->
+    <script src="js/complete-connection-fix.js"></script>
+    <script src="js/ultra-simple-fix.js"></script>
+    <script src="js/performance-fix.js"></script>
+    
+    <!-- Firebase Login Functions -->
+    <script>
+        // Firebase Login Modal Functions
+        function showLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'block';
+            updateLoginModal();
+        }
+        
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'none';
+        }
+        
+        function showLogoutModal() {
+            showLoginModal();
+        }
+        
+        function updateLoginModal() {
+            const userInfo = document.getElementById('userInfo');
+            const loginForm = document.getElementById('loginForm');
+            const logoutSection = document.getElementById('logoutSection');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            if (window.firebaseAuthManager && window.firebaseAuthManager.isUserLoggedIn()) {
+                const user = window.firebaseAuthManager.getCurrentUser();
+                
+                // Show user info
+                userInfo.style.display = 'block';
+                loginForm.style.display = 'none';
+                logoutSection.style.display = 'block';
+                
+                // Update user info
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userAvatar').innerHTML = user.avatar;
+                
+                // Update buttons
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'flex';
+                
+            } else {
+                // Show login form
+                userInfo.style.display = 'none';
+                loginForm.style.display = 'block';
+                logoutSection.style.display = 'none';
+                
+                // Update buttons
+                loginBtn.style.display = 'flex';
+                logoutBtn.style.display = 'none';
+            }
+        }
+        
+        // Firebase Authentication Handlers
+        async function handleGoogleLogin() {
+            try {
+                if (!window.firebaseAuthManager) {
+                    showNotification('Firebase not initialized. Please refresh the page.', 'error');
+                    return;
+                }
+                
+                showNotification('Signing in with Google...', 'info');
+                const result = await window.firebaseAuthManager.signInWithGoogle();
+                
+                if (result.success) {
+                    showNotification(`Welcome, ${result.user.name}!`, 'success');
+                    updateLoginModal();
+                    closeLoginModal();
+                } else {
+                    showNotification(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Google login error:', error);
+                showNotification('Google login failed. Please try again.', 'error');
+            }
+        }
+        
+        async function handleEmailLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showNotification('Please enter both email and password.', 'error');
+                return;
+            }
+            
+            try {
+                if (!window.firebaseAuthManager) {
+                    showNotification('Firebase not initialized. Please refresh the page.', 'error');
+                    return;
+                }
+                
+                showNotification('Signing in...', 'info');
+                const result = await window.firebaseAuthManager.signInWithEmail(email, password);
+                
+                if (result.success) {
+                    showNotification(`Welcome back, ${result.user.name}!`, 'success');
+                    updateLoginModal();
+                    closeLoginModal();
+                } else {
+                    showNotification(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Email login error:', error);
+                showNotification('Login failed. Please try again.', 'error');
+            }
+        }
+        
+        async function handleEmailSignup() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showNotification('Please enter both email and password.', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters.', 'error');
+                return;
+            }
+            
+            try {
+                if (!window.firebaseAuthManager) {
+                    showNotification('Firebase not initialized. Please refresh the page.', 'error');
+                    return;
+                }
+                
+                showNotification('Creating account...', 'info');
+                const displayName = email.split('@')[0];
+                const result = await window.firebaseAuthManager.signUpWithEmail(email, password, displayName);
+                
+                if (result.success) {
+                    showNotification(`Account created! Welcome, ${result.user.name}!`, 'success');
+                    updateLoginModal();
+                    closeLoginModal();
+                } else {
+                    showNotification(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Email signup error:', error);
+                showNotification('Signup failed. Please try again.', 'error');
+            }
+        }
+        
+        async function handleLogout() {
+            try {
+                if (!window.firebaseAuthManager) {
+                    showNotification('Firebase not initialized. Please refresh the page.', 'error');
+                    return;
+                }
+                
+                showNotification('Signing out...', 'info');
+                const result = await window.firebaseAuthManager.signOutUser();
+                
+                if (result.success) {
+                    showNotification('Successfully signed out!', 'success');
+                    updateLoginModal();
+                    closeLoginModal();
+                } else {
+                    showNotification(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                showNotification('Logout failed. Please try again.', 'error');
+            }
+        }
+        
+        // Notification function
+        function showNotification(message, type = 'info') {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification(message, type);
+            } else {
+                console.log(`🔔 ${type.toUpperCase()}: ${message}`);
+                alert(message);
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target === modal) {
+                closeLoginModal();
+            }
+        }
+        
+        // Initialize login state when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for Firebase to initialize
+            setTimeout(() => {
+                updateLoginModal();
+                
+                // Listen for auth state changes
+                if (window.firebaseAuthManager) {
+                    window.firebaseAuthManager.onLogin(() => {
+                        updateLoginModal();
+                        console.log('🔐 User logged in via Firebase');
+                    });
+                    
+                    window.firebaseAuthManager.onLogout(() => {
+                        updateLoginModal();
+                        console.log('🔐 User logged out via Firebase');
+                    });
+                }
+            }, 1000);
+        });
+    </script>
+    <script src="js/dom-safety-fix.js"></script>
+    <script src="js/localhost-server-fix.js"></script>
+    <script src="js/github-pages-fix.js"></script>
+    <script src="js/auto-join-fix.js"></script>
+    <script src="js/mobile-controls-fix.js"></script>
+    <script src="js/force-mobile-controls.js"></script>
+    <script src="js/omegle-style-chat.js"></script>
+    <script src="js/connection-fix.js"></script>
+
+    <!-- Main Application Logic (SaathiTV class) -->
+    <script src="js/main.js"></script>
+
+    <!-- Unified WebRTC System - Main WebRTC Handler -->
+    <script src="js/unified-webrtc-system.js"></script>
+    
+    <!-- Connection Test -->
+    <script src="js/connection-test-simple.js"></script>
+    
+    <!-- WebRTC Debug Tool -->
+    <script src="js/webrtc-debug-tool.js"></script>
+    <script>
+        // Check if splash screen should be shown
+        if (!sessionStorage.getItem('splashShown') && !window.location.search.includes('nosplash')) {
+            sessionStorage.setItem('splashShown', 'true');
+            window.location.href = 'splash-enhanced.html';
+        }
+    </script>
+    <script src="js/login-system.js"></script>
+    <!-- <script src="js/webrtc-fix.js"></script> --> <!-- Disabled - conflicts with unified WebRTC system -->
+    <!-- <script src="js/simple-webrtc-fix.js"></script> --> <!-- Disabled - conflicts with unified WebRTC system -->
+    <script src="js/function-fix-system.js"></script>
+    <!-- Firebase SDK v9 (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Duplicate Firebase script removed to avoid conflicts -->
             currentUser: null,
             loginCallbacks: [],
             logoutCallbacks: [],
@@ -697,13 +1523,13 @@
     <script src="js/audio-video-controls.js"></script>
     <script src="js/chat-system-fix.js"></script>
     <!-- <script src="js/function-analyzer.js"></script> --> <!-- Disabled - causes spam -->
-    <script src="js/connection-test.js"></script>
+    <!-- <script src="js/connection-test.js"></script> --> <!-- Disabled - causes excessive console logging -->
     <script src="js/debug-connection.js"></script>
     <script src="js/user-stats-display.js"></script>
     <script src="js/security.js"></script>
-    <script src="js/main.js"></script>
+    <!-- <script src="js/main.js"></script> --> <!-- Disabled - conflicts with unified WebRTC system -->
     <!-- <script src="js/webrtc.js"></script> --> <!-- Disabled - using simple-webrtc-fix instead -->
-    <script src="js/simple-webrtc-fix.js"></script>
+    <!-- <script src="js/simple-webrtc-fix.js"></script> --> <!-- Disabled - using unified WebRTC system -->
     <script src="js/chat.js"></script>
     <script src="js/video-controls-global.js"></script>
     <script src="js/login-test.js"></script>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saathi TV - Live User Tracking & Stranger Matching Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-card h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .test-card p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        
+        .status-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .log-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .log-entry.success { color: #4CAF50; }
+        .log-entry.error { color: #f44336; }
+        .log-entry.warning { color: #ff9800; }
+        .log-entry.info { color: #2196F3; }
+        
+        .preferences-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .preference-group {
+            margin-bottom: 15px;
+        }
+        
+        .preference-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .preference-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .preference-group select option {
+            background: #333;
+            color: white;
+        }
+        
+        .notification-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .notification-controls button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎥 Saathi TV</h1>
+            <p>Live User Tracking & Stranger Matching Test</p>
+        </div>
+        
+        <div class="test-grid">
+            <!-- User Stats Card -->
+            <div class="test-card">
+                <h3>👥 Live User Stats</h3>
+                <p>Real-time tracking of online users, waiting users, and active chats.</p>
+                <div class="stats-display" id="liveStats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="onlineUsers">0</div>
+                        <div class="stat-label">Online</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="waitingUsers">0</div>
+                        <div class="stat-label">Waiting</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="activeRooms">0</div>
+                        <div class="stat-label">Chatting</div>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="refreshStats()">Refresh Stats</button>
+            </div>
+            
+            <!-- Stranger Matching Card -->
+            <div class="test-card">
+                <h3>🔍 Stranger Matching</h3>
+                <p>Find and connect with strangers for video chat.</p>
+                <div class="status-display" id="matchingStatus">
+                    Ready to find a stranger!
+                </div>
+                <button class="btn btn-success" onclick="findStranger()">Find Stranger</button>
+                <button class="btn btn-danger" onclick="stopSearching()">Stop Search</button>
+            </div>
+            
+            <!-- Preferences Card -->
+            <div class="test-card">
+                <h3>🎯 Chat Preferences</h3>
+                <p>Set your preferences for stranger matching.</p>
+                <div class="preferences-panel">
+                    <div class="preference-group">
+                        <label for="countrySelect">Country:</label>
+                        <select id="countrySelect">
+                            <option value="any">Any Country</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="CA">Canada</option>
+                            <option value="AU">Australia</option>
+                            <option value="IN">India</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="JP">Japan</option>
+                            <option value="BR">Brazil</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="genderSelect">Gender:</label>
+                        <select id="genderSelect">
+                            <option value="any">Any Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="preference-group">
+                        <label for="ageRangeSelect">Age Range:</label>
+                        <select id="ageRangeSelect">
+                            <option value="any">Any Age</option>
+                            <option value="18-25">18-25</option>
+                            <option value="26-35">26-35</option>
+                            <option value="36-45">36-45</option>
+                            <option value="46-55">46-55</option>
+                            <option value="55+">55+</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-info" onclick="applyPreferences()">Apply Preferences</button>
+            </div>
+            
+            <!-- Notifications Card -->
+            <div class="test-card">
+                <h3>🔔 Notifications</h3>
+                <p>Test the notification system for matches and updates.</p>
+                <div class="notification-controls">
+                    <button class="btn btn-success" onclick="testSuccessNotification()">Success</button>
+                    <button class="btn btn-danger" onclick="testErrorNotification()">Error</button>
+                    <button class="btn btn-info" onclick="testInfoNotification()">Info</button>
+                </div>
+                <div class="notification-controls">
+                    <button class="btn btn-info" onclick="toggleNotificationSound()">Toggle Sound</button>
+                    <button class="btn btn-info" onclick="toggleNotificationVibration()">Toggle Vibration</button>
+                </div>
+            </div>
+            
+            <!-- Queue Status Card -->
+            <div class="test-card">
+                <h3>⏳ Queue Status</h3>
+                <p>Monitor your position in the waiting queue.</p>
+                <div class="status-display" id="queueStatus">
+                    Not in queue
+                </div>
+                <div class="status-display" id="waitingTime">
+                    Waiting time: 0:00
+                </div>
+            </div>
+            
+            <!-- System Log Card -->
+            <div class="test-card">
+                <h3>📋 System Log</h3>
+                <p>Real-time logs of system events and user interactions.</p>
+                <div class="log-container" id="systemLog">
+                    <div class="log-entry info">System initialized...</div>
+                </div>
+                <button class="btn btn-danger" onclick="clearLog()">Clear Log</button>
+            </div>
+        </div>
+        
+        <!-- Test Instructions -->
+        <div class="test-card">
+            <h3>📖 Test Instructions</h3>
+            <p><strong>How to test the live user tracking and stranger matching system:</strong></p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Open multiple browser tabs/windows</strong> to simulate different users</li>
+                <li><strong>Set different preferences</strong> in each tab to test the matching algorithm</li>
+                <li><strong>Click "Find Stranger"</strong> in one tab - you should see it added to the waiting queue</li>
+                <li><strong>Click "Find Stranger"</strong> in another tab - they should be matched and connected</li>
+                <li><strong>Monitor the live stats</strong> to see real-time user counts</li>
+                <li><strong>Test notifications</strong> by clicking the notification test buttons</li>
+                <li><strong>Check the system log</strong> for detailed event tracking</li>
+            </ol>
+            <p style="margin-top: 15px;"><strong>Expected behavior:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Users should be matched based on compatibility scores</li>
+                <li>Queue position should update in real-time</li>
+                <li>Notifications should appear for matches and queue updates</li>
+                <li>Live stats should reflect current system state</li>
+                <li>WebRTC connections should establish between matched users</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="js/live-user-tracking.js"></script>
+    <script src="js/stranger-notifications.js"></script>
+    <script src="js/unified-webrtc-system.js"></script>
+    
+    <script>
+        // Test page specific functions
+        let systemLog = [];
+        let waitingTimer = null;
+        
+        // Initialize test page
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Test page initialized', 'info');
+            
+            // Set up periodic stats refresh
+            setInterval(refreshStats, 2000);
+            
+            // Set up waiting timer
+            startWaitingTimer();
+        });
+        
+        function findStranger() {
+            log('Starting stranger search...', 'info');
+            
+            if (window.liveUserTracking) {
+                window.liveUserTracking.findStranger();
+            } else if (window.unifiedWebRTC) {
+                window.unifiedWebRTC.startVideoChat();
+            } else {
+                log('No tracking system available', 'error');
+            }
+        }
+        
+        function stopSearching() {
+            log('Stopping stranger search...', 'warning');
+            
+            if (window.liveUserTracking) {
+                window.liveUserTracking.stopSearching();
+            } else if (window.unifiedWebRTC) {
+                window.unifiedWebRTC.stopChat();
+            }
+        }
+        
+        function applyPreferences() {
+            const preferences = {
+                country: document.getElementById('countrySelect').value,
+                gender: document.getElementById('genderSelect').value,
+                ageRange: document.getElementById('ageRangeSelect').value
+            };
+            
+            log(`Preferences applied: ${JSON.stringify(preferences)}`, 'info');
+            
+            if (window.liveUserTracking) {
+                window.liveUserTracking.updatePreferences(preferences);
+            }
+        }
+        
+        function refreshStats() {
+            if (window.liveUserTracking) {
+                const stats = window.liveUserTracking.getUserStats();
+                updateStatsDisplay(stats);
+                log(`Stats refreshed: ${JSON.stringify(stats)}`, 'info');
+            }
+        }
+        
+        function updateStatsDisplay(stats) {
+            document.getElementById('onlineUsers').textContent = stats.onlineUsers || stats.activeUsers || 0;
+            document.getElementById('waitingUsers').textContent = stats.waitingUsers || 0;
+            document.getElementById('activeRooms').textContent = stats.activeRooms || 0;
+        }
+        
+        function testSuccessNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Test success notification!', 'success');
+                log('Success notification test', 'success');
+            }
+        }
+        
+        function testErrorNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Test error notification!', 'error');
+                log('Error notification test', 'error');
+            }
+        }
+        
+        function testInfoNotification() {
+            if (window.strangerNotifications) {
+                window.strangerNotifications.showNotification('Test info notification!', 'info');
+                log('Info notification test', 'info');
+            }
+        }
+        
+        function toggleNotificationSound() {
+            if (window.strangerNotifications) {
+                const enabled = window.strangerNotifications.toggleSound();
+                log(`Notification sound ${enabled ? 'enabled' : 'disabled'}`, 'info');
+            }
+        }
+        
+        function toggleNotificationVibration() {
+            if (window.strangerNotifications) {
+                const enabled = window.strangerNotifications.toggleVibration();
+                log(`Notification vibration ${enabled ? 'enabled' : 'disabled'}`, 'info');
+            }
+        }
+        
+        function startWaitingTimer() {
+            waitingTimer = setInterval(() => {
+                const waitingTimeElement = document.getElementById('waitingTime');
+                if (waitingTimeElement) {
+                    const now = Date.now();
+                    const startTime = window.liveUserTracking?.waitingStartTime || now;
+                    const elapsed = Math.floor((now - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    
+                    waitingTimeElement.textContent = `Waiting time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                message,
+                type
+            };
+            
+            systemLog.push(logEntry);
+            
+            const logContainer = document.getElementById('systemLog');
+            if (logContainer) {
+                const entryElement = document.createElement('div');
+                entryElement.className = `log-entry ${type}`;
+                entryElement.textContent = `[${timestamp}] ${message}`;
+                
+                logContainer.appendChild(entryElement);
+                logContainer.scrollTop = logContainer.scrollHeight;
+                
+                // Keep only last 50 entries
+                while (logContainer.children.length > 50) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+            }
+        }
+        
+        function clearLog() {
+            systemLog = [];
+            const logContainer = document.getElementById('systemLog');
+            if (logContainer) {
+                logContainer.innerHTML = '<div class="log-entry info">Log cleared...</div>';
+            }
+        }
+        
+        // Override the live user tracking update functions to show in test page
+        const originalUpdateWaitingStatus = window.liveUserTracking?.updateWaitingStatus;
+        if (window.liveUserTracking) {
+            window.liveUserTracking.updateWaitingStatus = function(message) {
+                if (originalUpdateWaitingStatus) {
+                    originalUpdateWaitingStatus.call(this, message);
+                }
+                
+                const statusElement = document.getElementById('matchingStatus');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                }
+                
+                log(`Status update: ${message}`, 'info');
+            };
+            
+            window.liveUserTracking.updateQueuePosition = function(position) {
+                const queueElement = document.getElementById('queueStatus');
+                if (queueElement) {
+                    if (position > 0) {
+                        queueElement.textContent = `Position in queue: ${position}`;
+                    } else {
+                        queueElement.textContent = 'Not in queue';
+                    }
+                }
+                
+                log(`Queue position: ${position}`, 'info');
+            };
+        }
+        
+        // Override notification functions to log to test page
+        const originalShowNotification = window.strangerNotifications?.showNotification;
+        if (window.strangerNotifications) {
+            window.strangerNotifications.showNotification = function(message, type, options) {
+                if (originalShowNotification) {
+                    originalShowNotification.call(this, message, type, options);
+                }
+                
+                log(`Notification: ${message} (${type})`, type);
+            };
+        }
+    </script>
+</body>
+</html>

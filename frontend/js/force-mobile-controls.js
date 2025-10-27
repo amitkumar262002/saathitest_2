@@ -22,10 +22,10 @@ class ForceMobileControls {
         // Force positioning immediately
         this.forceControlsPosition();
         
-        // Keep forcing every 500ms to override any other scripts
+        // Keep forcing every 2 seconds to override any other scripts (reduced frequency)
         this.forceInterval = setInterval(() => {
             this.forceControlsPosition();
-        }, 500);
+        }, 2000);
         
         // Also force on various events
         window.addEventListener('resize', () => this.forceControlsPosition());

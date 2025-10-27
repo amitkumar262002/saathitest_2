@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Login Test - Saathi TV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #FFD700;
+        }
+        
+        .auth-section {
+            margin-bottom: 30px;
+        }
+        
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .google-btn {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+        }
+        
+        .email-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+        }
+        
+        .status.info {
+            background: rgba(33, 150, 243, 0.3);
+            border: 1px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Firebase Login Test</h1>
+        
+        <div id="status" class="status info" style="display: none;">
+            Ready to test Firebase authentication
+        </div>
+        
+        <!-- User Info (shown when logged in) -->
+        <div id="userInfo" class="user-info" style="display: none;">
+            <div class="user-avatar" id="userAvatar"></div>
+            <div id="userName" style="font-weight: bold; margin-bottom: 5px;"></div>
+            <div id="userEmail" style="opacity: 0.8;"></div>
+        </div>
+        
+        <!-- Login Section -->
+        <div id="loginSection">
+            <div class="auth-section">
+                <button class="auth-btn google-btn" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google"></i> Continue with Google
+                </button>
+            </div>
+            
+            <div class="auth-section">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                
+                <button class="auth-btn email-btn" onclick="handleEmailLogin()">
+                    Login with Email
+                </button>
+                
+                <button class="auth-btn email-btn" onclick="handleEmailSignup()">
+                    Create Account
+                </button>
+            </div>
+        </div>
+        
+        <!-- Logout Section -->
+        <div id="logoutSection" style="display: none;">
+            <button class="auth-btn logout-btn" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        
+        <!-- Test Enhanced Tracking -->
+        <div class="auth-section">
+            <button class="auth-btn email-btn" onclick="testEnhancedTracking()">
+                Test Enhanced Tracking Integration
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXrbJQJhjfwp4ugkp2dAckoXodtPqH73E",
+            authDomain: "saathi-5fa22.firebaseapp.com",
+            databaseURL: "https://saathi-5fa22-default-rtdb.firebaseio.com",
+            projectId: "saathi-5fa22",
+            storageBucket: "saathi-5fa22.firebasestorage.app",
+            messagingSenderId: "189814220535",
+            appId: "1:189814220535:web:c22305089ff101282b95f2"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+        
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.googleProvider = googleProvider;
+        
+        console.log('🔥 Firebase initialized successfully!');
+        
+        // Enhanced Firebase Auth Manager with Live User Tracking Integration
+        class TestFirebaseAuthManager {
+            constructor() {
+                this.currentUser = null;
+                this.isLoggedIn = false;
+                this.loginCallbacks = [];
+                this.logoutCallbacks = [];
+                
+                // Listen for auth state changes
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        this.handleUserLogin(user);
+                    } else {
+                        this.handleUserLogout();
+                    }
+                });
+            }
+            
+            // Google Sign In with Enhanced Tracking
+            async signInWithGoogle() {
+                try {
+                    const result = await signInWithPopup(auth, googleProvider);
+                    const user = result.user;
+                    
+                    // Save user data to Firestore with enhanced tracking info
+                    await this.saveUserToFirestore(user, 'google');
+                    
+                    // Initialize enhanced user tracking for logged-in user
+                    this.initializeEnhancedTracking(user);
+                    
+                    return {
+                        success: true,
+                        user: this.formatUserData(user, 'google')
+                    };
+                } catch (error) {
+                    console.error('Google sign in error:', error);
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+            
+            // Email Sign In with Enhanced Tracking
+            async signInWithEmail(email, password) {
+                try {
+                    const result = await signInWithEmailAndPassword(auth, email, password);
+                    const user = result.user;
+                    
+                    // Initialize enhanced user tracking for logged-in user
+                    this.initializeEnhancedTracking(user);
+                    
+                    return {
+                        success: true,
+                        user: this.formatUserData(user, 'email')
+                    };
+                } catch (error) {
+                    console.error('Email sign in error:', error);
+                    return {
+                        success: false,
+                        error: this.getErrorMessage(error.code)
+                    };
+                }
+            }
+            
+            // Email Sign Up with Enhanced Tracking
+            async signUpWithEmail(email, password, displayName) {
+                try {
+                    const result = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = result.user;
+                    
+                    // Update user profile with display name
+                    await user.updateProfile({
+                        displayName: displayName
+                    });
+                    
+                    // Save user data to Firestore with enhanced tracking info
+                    await this.saveUserToFirestore(user, 'email', { displayName });
+                    
+                    // Initialize enhanced user tracking for logged-in user
+                    this.initializeEnhancedTracking(user);
+                    
+                    return {
+                        success: true,
+                        user: this.formatUserData(user, 'email')
+                    };
+                } catch (error) {
+                    console.error('Email sign up error:', error);
+                    return {
+                        success: false,
+                        error: this.getErrorMessage(error.code)
+                    };
+                }
+            }
+            
+            // Sign Out with Enhanced Tracking Cleanup
+            async signOutUser() {
+                try {
+                    // Cleanup enhanced tracking before logout
+                    this.cleanupEnhancedTracking();
+                    
+                    await signOut(auth);
+                    return { success: true };
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+            
+            // Initialize Enhanced Tracking for Logged-in User
+            initializeEnhancedTracking(user) {
+                console.log('🔐 Enhanced tracking initialized for Firebase user:', user.uid);
+                
+                // Simulate enhanced tracking integration
+                if (window.enhancedLiveUserTracking) {
+                    window.enhancedLiveUserTracking.currentUser = this.formatUserData(user, 'firebase');
+                    
+                    const userPreferences = {
+                        userId: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        loginMethod: 'firebase',
+                        verified: user.emailVerified,
+                        avatar: user.photoURL,
+                        createdAt: user.metadata.creationTime,
+                        lastLogin: new Date().toISOString()
+                    };
+                    
+                    window.enhancedLiveUserTracking.updateEnhancedPreferences(userPreferences);
+                }
+            }
+            
+            // Cleanup Enhanced Tracking on Logout
+            cleanupEnhancedTracking() {
+                console.log('🔐 Enhanced tracking cleaned up for logout');
+                
+                if (window.enhancedLiveUserTracking) {
+                    window.enhancedLiveUserTracking.stopSearchingEnhanced();
+                    window.enhancedLiveUserTracking.currentUser = null;
+                    window.enhancedLiveUserTracking.userPreferences.clear();
+                }
+            }
+            
+            // Save user data to Firestore with Enhanced Tracking Info
+            async saveUserToFirestore(user, loginMethod, additionalData = {}) {
+                try {
+                    const userRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userRef);
+                    
+                    const userData = {
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName || additionalData.displayName || 'User',
+                        photoURL: user.photoURL || null,
+                        loginMethod: loginMethod,
+                        lastLogin: new Date().toISOString(),
+                        verified: user.emailVerified,
+                        createdAt: userDoc.exists() ? userDoc.data().createdAt : new Date().toISOString(),
+                        // Enhanced tracking data
+                        deviceInfo: {
+                            userAgent: navigator.userAgent,
+                            platform: navigator.platform,
+                            language: navigator.language,
+                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                        },
+                        preferences: {
+                            country: 'any',
+                            region: 'any',
+                            gender: 'any',
+                            ageRange: 'any',
+                            language: navigator.language.split('-')[0] || 'en'
+                        },
+                        ...additionalData
+                    };
+                    
+                    await setDoc(userRef, userData, { merge: true });
+                    return userData;
+                } catch (error) {
+                    console.error('Error saving user to Firestore:', error);
+                    throw error;
+                }
+            }
+            
+            // Format user data for the app
+            formatUserData(user, loginMethod) {
+                return {
+                    id: user.uid,
+                    name: user.displayName || user.email?.split('@')[0] || 'User',
+                    email: user.email,
+                    avatar: user.photoURL || this.generateDefaultAvatar(user.email),
+                    loginMethod: loginMethod,
+                    verified: user.emailVerified,
+                    createdAt: user.metadata.creationTime,
+                    lastLogin: new Date().toISOString(),
+                    securityLevel: user.emailVerified ? 'high' : 'medium'
+                };
+            }
+            
+            // Generate default avatar
+            generateDefaultAvatar(email) {
+                const colors = ['#FF6B35', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+                const color = colors[email.length % colors.length];
+                const initial = email.charAt(0).toUpperCase();
+                
+                return `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="20" fill="${color}"/>
+                    <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">${initial}</text>
+                </svg>`;
+            }
+            
+            // Handle user login
+            handleUserLogin(user) {
+                this.currentUser = this.formatUserData(user, user.providerData[0]?.providerId === 'google.com' ? 'google' : 'email');
+                this.isLoggedIn = true;
+                
+                // Save to localStorage
+                localStorage.setItem('saathi_current_user', JSON.stringify(this.currentUser));
+                
+                // Initialize enhanced tracking
+                this.initializeEnhancedTracking(user);
+                
+                // Call login callbacks
+                this.loginCallbacks.forEach(callback => callback(this.currentUser));
+                
+                console.log('🔐 User logged in:', this.currentUser.name);
+                updateUI();
+            }
+            
+            // Handle user logout
+            handleUserLogout() {
+                this.currentUser = null;
+                this.isLoggedIn = false;
+                
+                // Cleanup enhanced tracking
+                this.cleanupEnhancedTracking();
+                
+                // Clear localStorage
+                localStorage.removeItem('saathi_current_user');
+                
+                // Call logout callbacks
+                this.logoutCallbacks.forEach(callback => callback());
+                
+                console.log('🔐 User logged out');
+                updateUI();
+            }
+            
+            // Add login callback
+            onLogin(callback) {
+                this.loginCallbacks.push(callback);
+            }
+            
+            // Add logout callback
+            onLogout(callback) {
+                this.logoutCallbacks.push(callback);
+            }
+            
+            // Get current user
+            getCurrentUser() {
+                return this.currentUser;
+            }
+            
+            // Check if user is logged in
+            isUserLoggedIn() {
+                return this.isLoggedIn;
+            }
+            
+            // Get error message
+            getErrorMessage(errorCode) {
+                const errorMessages = {
+                    'auth/user-not-found': 'No account found with this email address.',
+                    'auth/wrong-password': 'Incorrect password.',
+                    'auth/email-already-in-use': 'An account with this email already exists.',
+                    'auth/weak-password': 'Password should be at least 6 characters.',
+                    'auth/invalid-email': 'Invalid email address.',
+                    'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
+                    'auth/popup-closed-by-user': 'Sign-in popup was closed before completion.',
+                    'auth/cancelled-popup-request': 'Sign-in was cancelled.',
+                    'auth/popup-blocked': 'Sign-in popup was blocked by the browser.'
+                };
+                
+                return errorMessages[errorCode] || 'An error occurred during authentication.';
+            }
+        }
+        
+        // Create global instance
+        window.firebaseAuthManager = new TestFirebaseAuthManager();
+        
+        // UI Update Functions
+        function updateUI() {
+            const userInfo = document.getElementById('userInfo');
+            const loginSection = document.getElementById('loginSection');
+            const logoutSection = document.getElementById('logoutSection');
+            const status = document.getElementById('status');
+            
+            if (window.firebaseAuthManager && window.firebaseAuthManager.isUserLoggedIn()) {
+                const user = window.firebaseAuthManager.getCurrentUser();
+                
+                // Show user info
+                userInfo.style.display = 'block';
+                loginSection.style.display = 'none';
+                logoutSection.style.display = 'block';
+                
+                // Update user info
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userAvatar').innerHTML = user.avatar;
+                
+                showStatus(`Welcome, ${user.name}!`, 'success');
+                
+            } else {
+                // Show login form
+                userInfo.style.display = 'none';
+                loginSection.style.display = 'block';
+                logoutSection.style.display = 'none';
+                
+                showStatus('Please sign in to test Firebase authentication', 'info');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+        
+        // Firebase Authentication Handlers
+        async function handleGoogleLogin() {
+            try {
+                showStatus('Signing in with Google...', 'info');
+                const result = await window.firebaseAuthManager.signInWithGoogle();
+                
+                if (result.success) {
+                    showStatus(`Welcome, ${result.user.name}!`, 'success');
+                } else {
+                    showStatus(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Google login error:', error);
+                showStatus('Google login failed. Please try again.', 'error');
+            }
+        }
+        
+        async function handleEmailLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showStatus('Please enter both email and password.', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Signing in...', 'info');
+                const result = await window.firebaseAuthManager.signInWithEmail(email, password);
+                
+                if (result.success) {
+                    showStatus(`Welcome back, ${result.user.name}!`, 'success');
+                } else {
+                    showStatus(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Email login error:', error);
+                showStatus('Login failed. Please try again.', 'error');
+            }
+        }
+        
+        async function handleEmailSignup() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showStatus('Please enter both email and password.', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showStatus('Password must be at least 6 characters.', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Creating account...', 'info');
+                const displayName = email.split('@')[0];
+                const result = await window.firebaseAuthManager.signUpWithEmail(email, password, displayName);
+                
+                if (result.success) {
+                    showStatus(`Account created! Welcome, ${result.user.name}!`, 'success');
+                } else {
+                    showStatus(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Email signup error:', error);
+                showStatus('Signup failed. Please try again.', 'error');
+            }
+        }
+        
+        async function handleLogout() {
+            try {
+                showStatus('Signing out...', 'info');
+                const result = await window.firebaseAuthManager.signOutUser();
+                
+                if (result.success) {
+                    showStatus('Successfully signed out!', 'success');
+                } else {
+                    showStatus(result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                showStatus('Logout failed. Please try again.', 'error');
+            }
+        }
+        
+        function testEnhancedTracking() {
+            if (window.firebaseAuthManager && window.firebaseAuthManager.isUserLoggedIn()) {
+                const user = window.firebaseAuthManager.getCurrentUser();
+                showStatus(`Enhanced tracking test: User ${user.name} (${user.id}) is logged in and ready for stranger matching!`, 'success');
+                
+                // Simulate enhanced tracking features
+                console.log('🔍 Testing enhanced tracking features...');
+                console.log('👤 Current user:', user);
+                console.log('🔐 Login method:', user.loginMethod);
+                console.log('✅ Verified:', user.verified);
+                console.log('🛡️ Security level:', user.securityLevel);
+            } else {
+                showStatus('Please login first to test enhanced tracking integration.', 'error');
+            }
+        }
+        
+        // Initialize UI when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                updateUI();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

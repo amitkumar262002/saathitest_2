@@ -42,6 +42,11 @@ class AutoJoinManager {
         console.log('👥 Generated', this.mockUsers.length, 'mock users');
     }
     
+    startAutoJoinSimulation() {
+        console.log('🚀 Auto-Join Manager initialized');
+        // Auto-join simulation started - ready for user interactions
+    }
+    
     setupEventListeners() {
         // Override the original startChat function
         if (window.saathiTV) {
